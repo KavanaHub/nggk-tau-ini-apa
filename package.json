@@ -1,0 +1,27 @@
+{
+  "name": "nggk-tau-ini-apa",
+  "version": "1.0.0",
+  "description": "this app make with express js for my university project",
+  "keywords": [
+    "expressjs",
+    "project"
+  ],
+  "homepage": "https://github.com/KavanaHub/nggk-tau-ini-apa#readme",
+  "bugs": {
+    "url": "https://github.com/KavanaHub/nggk-tau-ini-apa/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KavanaHub/nggk-tau-ini-apa.git"
+  },
+  "license": "ISC",
+  "author": "bagas, zahra",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
