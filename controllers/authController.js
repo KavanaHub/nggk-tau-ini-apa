@@ -1,6 +1,6 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const pool = require('../config/database');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import pool from '../config/database.js';
 
 const register = async (req, res) => {
   try {
@@ -55,4 +55,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+export { register, login };

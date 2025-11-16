@@ -1,4 +1,4 @@
-const pool = require('../config/database');
+import pool from '../config/database.js';
 
 const getAdvisors = async (req, res) => {
   try {
@@ -109,11 +109,4 @@ const getPendingAdvisorSelections = async (req, res) => {
   }
 };
 
-module.exports = {
-  getAdvisors,
-  selectAdvisor,
-  getAdvisorProposals,
-  approveProposal,
-  approveAdvisorSelection,
-  getPendingAdvisorSelections
-};
+export { getAdvisors, selectAdvisor, getAdvisorProposals, approveProposal, approveAdvisorSelection, getPendingAdvisorSelections };

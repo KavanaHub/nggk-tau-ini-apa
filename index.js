@@ -1,14 +1,15 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import authRoutes from './routes/auth.js';
+import proposalRoutes from './routes/proposals.js';
+import advisorRoutes from './routes/advisors.js';
+import guidanceRoutes from './routes/guidance.js';
+import reportRoutes from './routes/reports.js';
+import examRoutes from './routes/exams.js';
+import { healthCheck } from './controllers/healthController.js';
 
-const authRoutes = require('./routes/auth');
-const proposalRoutes = require('./routes/proposals');
-const advisorRoutes = require('./routes/advisors');
-const guidanceRoutes = require('./routes/guidance');
-const reportRoutes = require('./routes/reports');
-const examRoutes = require('./routes/exams');
-const { healthCheck } = require('./controllers/healthController');
+dotenv.config();
 
 const app = express();
 
@@ -32,5 +33,5 @@ app.get('/health', healthCheck);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`Access the API at http://localhost:${PORT}`)
+  console.log(`Access the API at http://localhost:${PORT}`);
 });

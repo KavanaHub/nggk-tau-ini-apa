@@ -1,13 +1,7 @@
-const express = require('express');
-const multer = require('multer');
-const { verifyToken, verifyRole } = require('../middleware/auth');
-const {
-  uploadExamSubmission,
-  getExamSubmissions,
-  approveExamSubmission,
-  assessExam,
-  getExamAssessments
-} = require('../controllers/examController');
+import express from 'express';
+import multer from 'multer';
+import { verifyToken, verifyRole } from '../middleware/auth.js';
+import { uploadExamSubmission, getExamSubmissions, approveExamSubmission, assessExam, getExamAssessments } from '../controllers/examController.js';
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -19,4 +13,4 @@ router.patch('/approve', verifyToken, verifyRole(['dosen']), approveExamSubmissi
 router.post('/assess', verifyToken, verifyRole(['dosen']), assessExam);
 router.get('/assessments', verifyToken, verifyRole(['dosen']), getExamAssessments);
 
-module.exports = router;
+export default router;

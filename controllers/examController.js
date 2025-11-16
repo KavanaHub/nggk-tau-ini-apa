@@ -1,4 +1,4 @@
-const pool = require('../config/database');
+import pool from '../config/database.js';
 
 const uploadExamSubmission = async (req, res) => {
   try {
@@ -97,10 +97,4 @@ const getExamAssessments = async (req, res) => {
   }
 };
 
-module.exports = {
-  uploadExamSubmission,
-  getExamSubmissions,
-  approveExamSubmission,
-  assessExam,
-  getExamAssessments
-};
+export { uploadExamSubmission, getExamSubmissions, approveExamSubmission, assessExam, getExamAssessments };

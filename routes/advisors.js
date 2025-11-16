@@ -1,13 +1,6 @@
-const express = require('express');
-const { verifyToken, verifyRole } = require('../middleware/auth');
-const {
-  getAdvisors,
-  selectAdvisor,
-  getAdvisorProposals,
-  approveProposal,
-  approveAdvisorSelection,
-  getPendingAdvisorSelections
-} = require('../controllers/advisorController');
+import express from 'express';
+import { verifyToken, verifyRole } from '../middleware/auth.js';
+import { getAdvisors, selectAdvisor, getAdvisorProposals, approveProposal, approveAdvisorSelection, getPendingAdvisorSelections } from '../controllers/advisorController.js';
 
 const router = express.Router();
 
@@ -20,4 +13,4 @@ router.patch('/approve', verifyToken, verifyRole(['dosen']), approveProposal);
 router.get('/coordinator/pending-selections', verifyToken, verifyRole(['koordinator']), getPendingAdvisorSelections);
 router.patch('/coordinator/approve-selection', verifyToken, verifyRole(['koordinator']), approveAdvisorSelection);
 
-module.exports = router;
+export default router;

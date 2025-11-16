@@ -1,4 +1,4 @@
-const pool = require('../config/database');
+import pool from '../config/database.js';
 
 const startGuidance = async (req, res) => {
   try {
@@ -72,9 +72,4 @@ const approveGuidance = async (req, res) => {
   }
 };
 
-module.exports = {
-  startGuidance,
-  getGuidanceSessions,
-  completeGuidance,
-  approveGuidance
-};
+export { startGuidance, getGuidanceSessions, completeGuidance, approveGuidance };

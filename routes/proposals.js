@@ -1,12 +1,7 @@
-const express = require('express');
-const multer = require('multer');
-const { verifyToken, verifyRole } = require('../middleware/auth');
-const {
-  uploadProposal,
-  getProposals,
-  getStudentProposals,
-  downloadProposal
-} = require('../controllers/proposalController');
+import express from 'express';
+import multer from 'multer';
+import { verifyToken, verifyRole } from '../middleware/auth.js';
+import { uploadProposal, getProposals, getStudentProposals, downloadProposal } from '../controllers/proposalController.js';
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -17,4 +12,4 @@ router.get('/', verifyToken, verifyRole(['dosen']), getProposals);
 router.get('/my-proposals', verifyToken, verifyRole(['mahasiswa']), getStudentProposals);
 router.get('/:id/download', verifyToken, downloadProposal);
 
-module.exports = router;
+export default router;

@@ -1,11 +1,6 @@
-const express = require('express');
-const { verifyToken, verifyRole } = require('../middleware/auth');
-const {
-  startGuidance,
-  getGuidanceSessions,
-  completeGuidance,
-  approveGuidance
-} = require('../controllers/guidanceController');
+import express from 'express';
+import { verifyToken, verifyRole } from '../middleware/auth.js';
+import { startGuidance, getGuidanceSessions, completeGuidance, approveGuidance } from '../controllers/guidanceController.js';
 
 const router = express.Router();
 
@@ -14,4 +9,4 @@ router.get('/sessions', verifyToken, getGuidanceSessions);
 router.patch('/complete', verifyToken, verifyRole(['dosen']), completeGuidance);
 router.patch('/approve', verifyToken, verifyRole(['mahasiswa', 'dosen']), approveGuidance);
 
-module.exports = router;
+export default router;

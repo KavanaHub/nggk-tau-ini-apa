@@ -1,4 +1,4 @@
-const pool = require('../config/database');
+import pool from '../config/database.js';
 
 const healthCheck = async (req, res) => {
   try {
@@ -55,4 +55,4 @@ const healthCheck = async (req, res) => {
   }
 };
 
-module.exports = { healthCheck };
+export { healthCheck };

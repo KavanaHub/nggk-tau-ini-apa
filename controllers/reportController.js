@@ -1,4 +1,4 @@
-const pool = require('../config/database');
+import pool from '../config/database.js';
 
 const uploadReport = async (req, res) => {
   try {
@@ -79,9 +79,4 @@ const approveReport = async (req, res) => {
   }
 };
 
-module.exports = {
-  uploadReport,
-  getReports,
-  downloadReport,
-  approveReport
-};
+export { uploadReport, getReports, downloadReport, approveReport };
