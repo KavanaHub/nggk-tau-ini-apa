@@ -1,16 +1,16 @@
 # nggk-tau-ini-apa
 
-Sistem Bimbingan Online Skripsi - Backend API dengan Express.js
+Sistem Bimbingan Online - Backend API dengan Express.js
 
 ## Deskripsi
-Aplikasi backend untuk sistem manajemen bimbingan skripsi universitas yang memungkinkan mahasiswa, dosen pembimbing, dan koordinator untuk mengelola proses bimbingan skripsi secara online.
+Aplikasi backend untuk sistem manajemen bimbingan online universitas yang memungkinkan mahasiswa, dosen pembimbing, dan koordinator untuk mengelola proses bimbingan secara online.
 
 ## Fitur Utama
 - Registrasi dan autentikasi pengguna (mahasiswa, dosen, koordinator)
-- Manajemen proposal skripsi
+- Manajemen proposal bimbingan
 - Sistem pemilihan dan persetujuan pembimbing
 - Pelacakan sesi bimbingan
-- Manajemen laporan dan ujian skripsi
+- Manajemen laporan dan pengajuan sidang
 - Sistem penilaian berbasis peran
 
 ## Tech Stack
