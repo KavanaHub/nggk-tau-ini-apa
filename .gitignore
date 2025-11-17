@@ -1,11 +1,195 @@
-# Dependencies
-.psci_modules
-.spago
-bower_components
-node_modules
+# ============================================
+# DEPENDENCIES & NODE
+# ============================================
+node_modules/
+package-lock.json
+yarn.lock
+.pnpm-lock.yaml
+.psci_modules/
+.spago/
+bower_components/
 
-# Generated files
-.psci
-output
-
+# ============================================
+# ENVIRONMENT & CONFIGURATION
+# ============================================
 .env
+.env.local
+.env.*.local
+.env.test
+.env.development
+.env.production
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ============================================
+# LOGGING & MONITORING
+# ============================================
+logs/
+log/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+.pnpm-store
+debug.log
+
+# ============================================
+# IDE & EDITOR FILES
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.vim
+.netrwhist
+*~
+
+# ============================================
+# BUILD & DIST OUTPUT
+# ============================================
+dist/
+build/
+output/
+.next/
+out/
+.nuxt/
+.cache/
+.parcel-cache
+.egg-info/
+*.egg
+
+# ============================================
+# TESTING & COVERAGE
+# ============================================
+coverage/
+.nyc_output/
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.jest-cache
+jest-coverage
+.mocha_output
+
+# ============================================
+# TEMPORARY FILES & DEVELOPMENT
+# ============================================
+temp/
+tmp/
+*.tmp
+*.temp
+*.bak
+*.backup
+~*
+.~*
+*.swp
+
+# ============================================
+# OS SPECIFIC FILES
+# ============================================
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# ============================================
+# LOCAL DEVELOPMENT TOOLS
+# ============================================
+.vscode-test/
+.vscode-test-remote/
+.dev/
+.local/
+.cache/
+.editorconfig
+
+# ============================================
+# GENERATED DOCUMENTATION & REPORTS
+# ============================================
+*_REPORT.md
+*_ANALYSIS.md
+*_QUICKSTART.md
+*_SUMMARY.md
+docs/generated/
+
+# ============================================
+# DATABASE & STORAGE
+# ============================================
+*.db
+*.sql
+*.sqlite
+*.sqlite3
+uploads/
+storage/
+
+# ============================================
+# ORCHESTRATOR & DROID DIRECTORIES (LOCAL ONLY)
+# ============================================
+droids/
+orchestrator/
+tasks/
+
+# ============================================
+# COMPILED FILES
+# ============================================
+*.class
+*.jar
+*.pyc
+*.pyo
+__pycache__/
+*.o
+*.a
+*.so
+
+# ============================================
+# MISC DEVELOPMENT
+# ============================================
+.psci
+.idea
+.vscode
+.ruby-version
+.ruby-gemset
+.env.*.example
+docker-compose.override.yml
+.docker/
+.dockerignore
+
+# === LOCAL DOCUMENTATION / INTERNAL REPORTS ===
+# Ignore semua laporan, review, audit, dan dokumen internal
+API_USAGE.md
+CODE_REVIEW_REPORT.md
+DATABASE_PERFORMANCE.md
+database-optimization.md
+OPTIMIZATION_QUICKSTEPS.md
+PERFORMANCE_METRICS.md
+SECURITY_AUDIT_REPORT.md
+SECURITY_FIXES_QUICKLIST.md
+SECURITY_SUMMARY.md
+TEST_COVERAGE_ANALYSIS.md
+TEST_SUITE_SUMMARY.md
+TEST_SETUP.md
+TESTING_CHEATSHEET.md
+TESTING_QUICKSTART.md
+WORKFLOW.md
+
+__tests__/README.md
+
+docs/
