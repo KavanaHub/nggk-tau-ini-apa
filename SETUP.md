@@ -16,7 +16,7 @@
 
 3. Verifikasi database sudah dibuat:
    ```
-   USE university_project;
+   USE Bimbingan_Online;
    SHOW TABLES;
    ```
 
@@ -27,7 +27,7 @@
    DB_HOST=localhost
    DB_USER=root
    DB_PASSWORD=your_password
-   DB_NAME=university_project
+   DB_NAME=Bimbingan_Online
    DB_PORT=3306
    JWT_SECRET=your_jwt_secret_key_here_change_in_production
    PORT=3000
