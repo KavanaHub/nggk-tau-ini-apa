@@ -25,7 +25,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/exams', examRoutes);
 
 app.get('/', (req, res) => {
-  res.json({ message: 'University Project Management API' });
+  res.json({ message: 'Bimbingan Onlinen' });
 });
 
 app.get('/health', healthCheck);
