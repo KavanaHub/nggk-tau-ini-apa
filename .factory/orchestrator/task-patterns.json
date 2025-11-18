@@ -1,0 +1,86 @@
+{
+  "taskPatterns": {
+    "api_development": {
+      "name": "API Development",
+      "priority": "high",
+      "phases": ["requirements", "design", "implementation", "testing", "documentation"],
+      "recommendedDroids": ["backend-security-coder", "nodejs-pro"],
+      "dependencies": [],
+      "riskLevel": "medium",
+      "estimatedEffort": "8-16 hours"
+    },
+    "security_audit": {
+      "name": "Security Audit",
+      "priority": "high",
+      "phases": ["discovery", "analysis", "reporting", "remediation"],
+      "recommendedDroids": ["backend-security-coder", "incident-responder"],
+      "dependencies": ["code_review"],
+      "riskLevel": "low",
+      "estimatedEffort": "4-8 hours"
+    },
+    "database_optimization": {
+      "name": "Database Optimization",
+      "priority": "medium",
+      "phases": ["analysis", "indexing", "query_optimization", "testing"],
+      "recommendedDroids": ["database-optimizer", "sql-pro"],
+      "dependencies": ["performance_analysis"],
+      "riskLevel": "medium",
+      "estimatedEffort": "6-12 hours"
+    },
+    "authentication_implementation": {
+      "name": "Authentication Implementation",
+      "priority": "high",
+      "phases": ["design", "jwt_setup", "password_hashing", "session_management", "testing"],
+      "recommendedDroids": ["backend-security-coder"],
+      "dependencies": [],
+      "riskLevel": "high",
+      "estimatedEffort": "8-16 hours"
+    },
+    "file_upload_handling": {
+      "name": "File Upload Handling",
+      "priority": "medium",
+      "phases": ["design", "multer_setup", "validation", "security", "testing"],
+      "recommendedDroids": ["backend-security-coder"],
+      "dependencies": [],
+      "riskLevel": "medium",
+      "estimatedEffort": "4-8 hours"
+    },
+    "error_handling_improvement": {
+      "name": "Error Handling Improvement",
+      "priority": "medium",
+      "phases": ["analysis", "design", "implementation", "testing"],
+      "recommendedDroids": ["error-detective", "backend-security-coder"],
+      "dependencies": [],
+      "riskLevel": "low",
+      "estimatedEffort": "6-10 hours"
+    },
+    "test_suite_creation": {
+      "name": "Test Suite Creation",
+      "priority": "high",
+      "phases": ["setup", "unit_tests", "integration_tests", "e2e_tests"],
+      "recommendedDroids": ["tdd-orchestrator"],
+      "dependencies": [],
+      "riskLevel": "low",
+      "estimatedEffort": "10-20 hours"
+    },
+    "performance_optimization": {
+      "name": "Performance Optimization",
+      "priority": "medium",
+      "phases": ["profiling", "analysis", "optimization", "benchmarking"],
+      "recommendedDroids": ["database-optimizer", "backend-security-coder"],
+      "dependencies": ["monitoring_setup"],
+      "riskLevel": "low",
+      "estimatedEffort": "8-16 hours"
+    }
+  },
+  "taskSelection": {
+    "criteria": [
+      "project_complexity",
+      "risk_level",
+      "dependencies",
+      "team_expertise",
+      "timeline"
+    ],
+    "defaultStrategy": "risk_mitigation"
+  }
+}

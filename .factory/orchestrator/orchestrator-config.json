@@ -1,0 +1,49 @@
+{
+  "projectName": "nggk-tau-ini-apa",
+  "projectType": "backend-expressjs",
+  "techStack": {
+    "runtime": "nodejs",
+    "framework": "express",
+    "language": "javascript",
+    "moduleSystem": "esm",
+    "database": "mysql2",
+    "authentication": "jsonwebtoken",
+    "passwordHashing": "bcryptjs",
+    "fileUpload": "multer",
+    "cors": "cors",
+    "environment": "dotenv"
+  },
+  "orchestratorVersion": "1.0.0",
+  "createdAt": "2025-11-17",
+  "autoDetectEnabled": true,
+  "specialistDroids": {
+    "default": "backend-security-coder",
+    "categories": {
+      "backend": ["backend-security-coder", "nodejs-pro", "express-optimizer"],
+      "database": ["database-architect", "database-optimizer", "sql-pro"],
+      "security": ["backend-security-coder", "incident-responder"],
+      "testing": ["tdd-orchestrator", "error-detective"],
+      "devops": ["devops-specialist"]
+    }
+  },
+  "executionStrategy": {
+    "mode": "adaptive",
+    "parallelization": true,
+    "checkpoints": true,
+    "errorRecovery": true,
+    "riskMitigation": true
+  },
+  "commonPatterns": {
+    "fileUpload": ["use_multer", "validate_files", "secure_upload"],
+    "authentication": ["jwt_token", "bcrypt_hashing", "session_management"],
+    "database": ["connection_pooling", "query_optimization", "migration_safety"],
+    "api": ["input_validation", "error_handling", "cors_configuration"]
+  },
+  "monitoringConfig": {
+    "progressTracking": true,
+    "bottleneckDetection": true,
+    "performanceMetrics": true,
+    "qualityGates": true,
+    "adaptiveScheduling": true
+  }
+}

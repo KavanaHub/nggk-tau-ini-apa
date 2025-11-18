@@ -124,10 +124,7 @@ ehthumbs.db
 # ============================================
 # GENERATED DOCUMENTATION & REPORTS
 # ============================================
-*_REPORT.md
-*_ANALYSIS.md
-*_QUICKSTART.md
-*_SUMMARY.md
+*.md
 docs/generated/
 
 # ============================================
@@ -143,9 +140,6 @@ storage/
 # ============================================
 # ORCHESTRATOR & DROID DIRECTORIES (LOCAL ONLY)
 # ============================================
-droids/
-orchestrator/
-tasks/
 
 # ============================================
 # COMPILED FILES
@@ -173,23 +167,6 @@ docker-compose.override.yml
 .dockerignore
 
 # === LOCAL DOCUMENTATION / INTERNAL REPORTS ===
-# Ignore semua laporan, review, audit, dan dokumen internal
-API_USAGE.md
-CODE_REVIEW_REPORT.md
-DATABASE_PERFORMANCE.md
-database-optimization.md
-OPTIMIZATION_QUICKSTEPS.md
-PERFORMANCE_METRICS.md
-SECURITY_AUDIT_REPORT.md
-SECURITY_FIXES_QUICKLIST.md
-SECURITY_SUMMARY.md
-TEST_COVERAGE_ANALYSIS.md
-TEST_SUITE_SUMMARY.md
-TEST_SETUP.md
-TESTING_CHEATSHEET.md
-TESTING_QUICKSTART.md
-WORKFLOW.md
-
-__tests__/README.md
+# All markdown files are now ignored via *.md pattern above
 
 docs/
