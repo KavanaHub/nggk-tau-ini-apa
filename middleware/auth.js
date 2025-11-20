@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { AuthenticationError, AuthorizationError } from '../utils/errors.js';
-import { logAuth, logWarning } from '../utils/logger.js';
+import { AuthenticationError, AuthorizationError } from '../docs/utils/errors.js';
+import { logAuth, logWarning } from '../docs/utils/logger.js';
 
 /**
  * Verify JWT token from Authorization header

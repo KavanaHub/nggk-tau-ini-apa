@@ -124,7 +124,6 @@ ehthumbs.db
 # ============================================
 # GENERATED DOCUMENTATION & REPORTS
 # ============================================
-*.md
 docs/generated/
 
 # ============================================
@@ -172,3 +171,6 @@ docker-compose.override.yml
 docs/
 
 alur proyek 2.txt
+task/
+droids/
+orchestrator/

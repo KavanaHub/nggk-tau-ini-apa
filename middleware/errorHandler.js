@@ -7,8 +7,8 @@
  * Prevents sensitive information leakage
  */
 
-import { AppError } from '../utils/errors.js';
-import { logError } from '../utils/logger.js';
+import { AppError } from '../docs/utils/errors.js';
+import { logError } from '../docs/utils/logger.js';
 
 /**
  * Parse MySQL/Database errors into user-friendly messages
