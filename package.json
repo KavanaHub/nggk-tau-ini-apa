@@ -26,7 +26,8 @@
     "test:integration": "NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js __tests__/integration",
     "test:security": "NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js __tests__/security",
     "test:verbose": "NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose",
-    "test:ci": "NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --ci --coverage --maxWorkers=2"
+    "test:ci": "NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --ci --coverage --maxWorkers=2",
+    "dev" : "nodemon index.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

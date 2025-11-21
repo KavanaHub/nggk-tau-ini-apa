@@ -1,211 +1,66 @@
-import pool from "../config/database.js";
-import {
-  hashPassword,
-  comparePassword,
-  generateToken,
-  sanitizeUserData,
-} from "./helpers/auth.js";
-import {
-  isValidEmail,
-  isValidNPM,
-  isValidPassword,
-  isValidProgramStudi,
-  isValidWhatsApp,
-  isRequired,
-} from "./helpers/validation.js";
-import {
-  emailExists,
-  npmExists,
-  getUserByEmail,
-  getConnection,
-  releaseConnection,
-} from "./helpers/database.js";
-import { sendSuccess, sendError, sendServerError } from "./helpers/response.js";
+import pool from '../config/db.js';
+import { hashPassword, comparePassword } from '../utils/password.js';
+import { generateToken } from '../utils/jwt.js';
 
-const register = async (req, res) => {
-  let conn = null;
+const authController = {
+  registerMahasiswa: async (req, res, next) => {
+    const { email, password, npm, nama, prodi_id, no_wa, angkatan } = req.body;
 
-  try {
-    const { name, email, password, npm, program_studi } = req.body;
+    try {
+      const conn = await pool.getConnection();
+      await conn.beginTransaction();
 
-    const nameValidation = isRequired(name, "Name");
-    if (!nameValidation.valid) {
-      return sendError(res, nameValidation.error, 400);
+      const [existing] = await conn.query('SELECT id FROM users WHERE email = ?', [email]);
+      if (existing.length > 0) {
+        await conn.rollback();
+        conn.release();
+        return res.status(400).json({ message: 'Email already registered' });
+      }
+
+      const password_hash = await hashPassword(password);
+
+      const [userResult] = await conn.query(
+        'INSERT INTO users (email, password_hash, role) VALUES (?, ?, ?)',
+        [email, password_hash, 'mahasiswa']
+      );
+
+      const userId = userResult.insertId;
+
+      await conn.query(
+        'INSERT INTO mahasiswa (user_id, npm, nama, prodi_id, no_wa, angkatan) VALUES (?, ?, ?, ?, ?, ?)',
+        [userId, npm, nama, prodi_id, no_wa || null, angkatan || null]
+      );
+
+      await conn.commit();
+      conn.release();
+
+      res.status(201).json({ message: 'Mahasiswa registered successfully' });
+    } catch (err) {
+      next(err);
     }
+  },
 
-    const emailValidation = isValidEmail(email);
-    if (!emailValidation.valid) {
-      return sendError(res, emailValidation.error, 400);
-    }
-
-    const passwordValidation = isValidPassword(password);
-    if (!passwordValidation.valid) {
-      return sendError(res, passwordValidation.error, 400);
-    }
-
-    const npmValidation = isValidNPM(npm);
-    if (!npmValidation.valid) {
-      return sendError(res, npmValidation.error, 400);
-    }
-
-    const programStudiValidation = isValidProgramStudi(program_studi);
-    if (!programStudiValidation.valid) {
-      return sendError(res, programStudiValidation.error, 400);
-    }
-
-    conn = await getConnection();
-
-    const isEmailTaken = await emailExists(conn, email);
-    if (isEmailTaken) {
-      releaseConnection(conn);
-      return sendError(res, "Email already registered", 400);
-    }
-
-    const isNpmTaken = await npmExists(conn, npm);
-    if (isNpmTaken) {
-      releaseConnection(conn);
-      return sendError(res, "NPM already registered", 400);
-    }
-
-    const hashedPassword = await hashPassword(password);
-
-    const role = "mahasiswa";
-
-    await conn.query(
-      `INSERT INTO users (name, email, password, role, npm, program_studi)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [name, email, hashedPassword, role, npm, program_studi]
-    );
-
-    releaseConnection(conn);
-
-    return sendSuccess(
-      res,
-      { name, email, role, npm, program_studi },
-      "Mahasiswa registered successfully",
-      201
-    );
-  } catch (error) {
-    releaseConnection(conn);
-    return sendServerError(res, error);
-  }
-};
-
-const registerDosen = async (req, res) => {
-  let conn = null;
-
-  try {
-    const { name, email, password, whatsapp_number, sub_role } = req.body;
-
-    const nameValidation = isRequired(name, "Name");
-    if (!nameValidation.valid) {
-      return sendError(res, nameValidation.error, 400);
-    }
-
-    const emailValidation = isValidEmail(email);
-    if (!emailValidation.valid) {
-      return sendError(res, emailValidation.error, 400);
-    }
-
-    const passwordValidation = isValidPassword(password);
-    if (!passwordValidation.valid) {
-      return sendError(res, passwordValidation.error, 400);
-    }
-
-    const whatsappValidation = isValidWhatsApp(whatsapp_number);
-    if (!whatsappValidation.valid) {
-      return sendError(res, whatsappValidation.error, 400);
-    }
-
-    conn = await getConnection();
-
-    const isEmailTaken = await emailExists(conn, email);
-    if (isEmailTaken) {
-      releaseConnection(conn);
-      return sendError(res, "Email already registered", 400);
-    }
-
-    const hashedPassword = await hashPassword(password);
-
-    const role = "dosen";
-    const finalSubRole = sub_role || "pembimbing";
-
-    await conn.query(
-      `INSERT INTO users (name, email, password, role, sub_role, whatsapp_number)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [name, email, hashedPassword, role, finalSubRole, whatsapp_number]
-    );
-
-    releaseConnection(conn);
-
-    return sendSuccess(
-      res,
-      { name, email, role, sub_role: finalSubRole, whatsapp_number },
-      "Dosen registered successfully",
-      201
-    );
-  } catch (error) {
-    releaseConnection(conn);
-    return sendServerError(res, error);
-  }
-};
-
-const login = async (req, res) => {
-  let conn = null;
-
-  try {
+  login: async (req, res, next) => {
     const { email, password } = req.body;
 
-    const emailValidation = isValidEmail(email);
-    if (!emailValidation.valid) {
-      return sendError(res, emailValidation.error, 400);
+    try {
+      const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+      if (rows.length === 0) {
+        return res.status(400).json({ message: 'Invalid credentials' });
+      }
+
+      const user = rows[0];
+      const match = await comparePassword(password, user.password_hash);
+      if (!match) {
+        return res.status(400).json({ message: 'Invalid credentials' });
+      }
+
+      const token = generateToken(user);
+      res.json({ token, role: user.role, user_id: user.id });
+    } catch (err) {
+      next(err);
     }
-
-    const passwordValidation = isRequired(password, "Password");
-    if (!passwordValidation.valid) {
-      return sendError(res, passwordValidation.error, 400);
-    }
-
-    conn = await getConnection();
-
-    const user = await getUserByEmail(conn, email);
-    releaseConnection(conn);
-
-    if (!user) {
-      return sendError(res, "Invalid email or password", 401);
-    }
-
-    const isPasswordValid = await comparePassword(password, user.password);
-
-    if (!isPasswordValid) {
-      return sendError(res, "Invalid email or password", 401);
-    }
-
-    const token = generateToken({
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      sub_role: user.sub_role,
-      npm: user.npm,
-      program_studi: user.program_studi,
-    });
-
-    const userDataWithoutPassword = sanitizeUserData(user);
-
-    return sendSuccess(
-      res,
-      {
-        token: token,
-        user: userDataWithoutPassword,
-      },
-      "Login successful",
-      200
-    );
-  } catch (error) {
-    releaseConnection(conn);
-    return sendServerError(res, error);
-  }
+  },
 };
 
-export { register, registerDosen, login };
+export default authController;
