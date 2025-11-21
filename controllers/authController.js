@@ -1,58 +1,211 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import pool from '../config/database.js';
+import pool from "../config/database.js";
+import {
+  hashPassword,
+  comparePassword,
+  generateToken,
+  sanitizeUserData,
+} from "./helpers/auth.js";
+import {
+  isValidEmail,
+  isValidNPM,
+  isValidPassword,
+  isValidProgramStudi,
+  isValidWhatsApp,
+  isRequired,
+} from "./helpers/validation.js";
+import {
+  emailExists,
+  npmExists,
+  getUserByEmail,
+  getConnection,
+  releaseConnection,
+} from "./helpers/database.js";
+import { sendSuccess, sendError, sendServerError } from "./helpers/response.js";
 
 const register = async (req, res) => {
-  try {
-    const { name, email, password, role } = req.body;
-    const conn = await pool.getConnection();
+  let conn = null;
 
-    const [existing] = await conn.query('SELECT email FROM users WHERE email = ?', [email]);
-    if (existing.length > 0) {
-      conn.release();
-      return res.status(400).json({ message: 'Email already exists' });
+  try {
+    const { name, email, password, npm, program_studi } = req.body;
+
+    const nameValidation = isRequired(name, "Name");
+    if (!nameValidation.valid) {
+      return sendError(res, nameValidation.error, 400);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    await conn.query('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)', 
-      [name, email, hashedPassword, role]);
-    
-    conn.release();
-    res.status(201).json({ message: 'User registered successfully' });
+    const emailValidation = isValidEmail(email);
+    if (!emailValidation.valid) {
+      return sendError(res, emailValidation.error, 400);
+    }
+
+    const passwordValidation = isValidPassword(password);
+    if (!passwordValidation.valid) {
+      return sendError(res, passwordValidation.error, 400);
+    }
+
+    const npmValidation = isValidNPM(npm);
+    if (!npmValidation.valid) {
+      return sendError(res, npmValidation.error, 400);
+    }
+
+    const programStudiValidation = isValidProgramStudi(program_studi);
+    if (!programStudiValidation.valid) {
+      return sendError(res, programStudiValidation.error, 400);
+    }
+
+    conn = await getConnection();
+
+    const isEmailTaken = await emailExists(conn, email);
+    if (isEmailTaken) {
+      releaseConnection(conn);
+      return sendError(res, "Email already registered", 400);
+    }
+
+    const isNpmTaken = await npmExists(conn, npm);
+    if (isNpmTaken) {
+      releaseConnection(conn);
+      return sendError(res, "NPM already registered", 400);
+    }
+
+    const hashedPassword = await hashPassword(password);
+
+    const role = "mahasiswa";
+
+    await conn.query(
+      `INSERT INTO users (name, email, password, role, npm, program_studi)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [name, email, hashedPassword, role, npm, program_studi]
+    );
+
+    releaseConnection(conn);
+
+    return sendSuccess(
+      res,
+      { name, email, role, npm, program_studi },
+      "Mahasiswa registered successfully",
+      201
+    );
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    releaseConnection(conn);
+    return sendServerError(res, error);
+  }
+};
+
+const registerDosen = async (req, res) => {
+  let conn = null;
+
+  try {
+    const { name, email, password, whatsapp_number, sub_role } = req.body;
+
+    const nameValidation = isRequired(name, "Name");
+    if (!nameValidation.valid) {
+      return sendError(res, nameValidation.error, 400);
+    }
+
+    const emailValidation = isValidEmail(email);
+    if (!emailValidation.valid) {
+      return sendError(res, emailValidation.error, 400);
+    }
+
+    const passwordValidation = isValidPassword(password);
+    if (!passwordValidation.valid) {
+      return sendError(res, passwordValidation.error, 400);
+    }
+
+    const whatsappValidation = isValidWhatsApp(whatsapp_number);
+    if (!whatsappValidation.valid) {
+      return sendError(res, whatsappValidation.error, 400);
+    }
+
+    conn = await getConnection();
+
+    const isEmailTaken = await emailExists(conn, email);
+    if (isEmailTaken) {
+      releaseConnection(conn);
+      return sendError(res, "Email already registered", 400);
+    }
+
+    const hashedPassword = await hashPassword(password);
+
+    const role = "dosen";
+    const finalSubRole = sub_role || "pembimbing";
+
+    await conn.query(
+      `INSERT INTO users (name, email, password, role, sub_role, whatsapp_number)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [name, email, hashedPassword, role, finalSubRole, whatsapp_number]
+    );
+
+    releaseConnection(conn);
+
+    return sendSuccess(
+      res,
+      { name, email, role, sub_role: finalSubRole, whatsapp_number },
+      "Dosen registered successfully",
+      201
+    );
+  } catch (error) {
+    releaseConnection(conn);
+    return sendServerError(res, error);
   }
 };
 
 const login = async (req, res) => {
+  let conn = null;
+
   try {
     const { email, password } = req.body;
-    const conn = await pool.getConnection();
 
-    const [users] = await conn.query('SELECT * FROM users WHERE email = ?', [email]);
-    conn.release();
-
-    if (users.length === 0) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    const emailValidation = isValidEmail(email);
+    if (!emailValidation.valid) {
+      return sendError(res, emailValidation.error, 400);
     }
 
-    const user = users[0];
-    const validPassword = await bcrypt.compare(password, user.password);
-
-    if (!validPassword) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    const passwordValidation = isRequired(password, "Password");
+    if (!passwordValidation.valid) {
+      return sendError(res, passwordValidation.error, 400);
     }
 
-    const token = jwt.sign(
-      { id: user.id, name: user.name, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRE }
+    conn = await getConnection();
+
+    const user = await getUserByEmail(conn, email);
+    releaseConnection(conn);
+
+    if (!user) {
+      return sendError(res, "Invalid email or password", 401);
+    }
+
+    const isPasswordValid = await comparePassword(password, user.password);
+
+    if (!isPasswordValid) {
+      return sendError(res, "Invalid email or password", 401);
+    }
+
+    const token = generateToken({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      sub_role: user.sub_role,
+      npm: user.npm,
+      program_studi: user.program_studi,
+    });
+
+    const userDataWithoutPassword = sanitizeUserData(user);
+
+    return sendSuccess(
+      res,
+      {
+        token: token,
+        user: userDataWithoutPassword,
+      },
+      "Login successful",
+      200
     );
-
-    res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    releaseConnection(conn);
+    return sendServerError(res, error);
   }
 };
 
-export { register, login };
+export { register, registerDosen, login };

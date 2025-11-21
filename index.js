@@ -8,6 +8,8 @@ import guidanceRoutes from './routes/guidance.js';
 import reportRoutes from './routes/reports.js';
 import examRoutes from './routes/exams.js';
 import projectRoutes from './routes/projects.js';
+import coordinatorRoutes from './routes/coordinators.js';
+import kepalaProdiRoutes from './routes/kepala-prodi.js';
 import { healthCheck } from './controllers/healthController.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { httpLogger } from './docs/utils/logger.js';
@@ -33,6 +35,8 @@ app.use('/api/guidance', guidanceRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/exams', examRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/coordinators', coordinatorRoutes);
+app.use('/api/kepala-prodi', kepalaProdiRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
