@@ -1,0 +1,46 @@
+name: Google Cloud Function Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Cloud Functions
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 1. Auth ke GCP
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      # 2. Setup gcloud
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      # 3. Deploy Cloud Function Gen 2 (Express / Node.js)
+      - name: Deploy Cloud Function (Gen 2)
+        run: |
+          gcloud functions deploy kavana \
+            --region=asia-southeast2 \
+            --runtime=nodejs20 \
+            --gen2 \
+            --source=. \
+            --entry-point=kavana \
+            --trigger-http \
+            --allow-unauthenticated \
+            --timeout=540s \
+            --service-account=renz-cloud@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
+            --set-env-vars=DB_HOST=${{ secrets.DB_HOST }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_NAME=${{ secrets.DB_NAME }},DB_PORT=${{ secrets.DB_PORT }},JWT_SECRET=${{ secrets.JWT_SECRET }},JWT_EXPIRE_IN=${{ secrets.JWT_EXPIRE_IN}},NODE_ENV=${{ secrets.NODE_ENV }}
+
+      # 4. Optional: Cek apakah function sudah berhasil
+      - name: Check Function Exists
+        run: gcloud functions describe kavana --region=asia-southeast2
