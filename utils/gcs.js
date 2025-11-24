@@ -1,25 +1,34 @@
 import { Storage } from "@google-cloud/storage";
 
-const storage = new Storage();
-const bucketName = "kavana-files"; // ganti bucketmu
+const storage = new Storage({
+  projectId: "renzip-478811",
+});
+
+const bucketName = "kavana-files"; // ganti dengan bucket kamu
 const bucket = storage.bucket(bucketName);
 
-export const uploadFileGCS = (file, destinationPath) => {
+export const uploadToGCS = (file) => {
   return new Promise((resolve, reject) => {
-    if (!file) return reject("File tidak ditemukan");
+    if (!file) {
+      reject("No file uploaded");
+      return;
+    }
 
-    const gcsFile = bucket.file(destinationPath);
+    const gcsFileName = `uploads/${Date.now()}-${file.originalname}`;
+    const fileUpload = bucket.file(gcsFileName);
 
-    const stream = gcsFile.createWriteStream({
+    const stream = fileUpload.createWriteStream({
       resumable: false,
       contentType: file.mimetype,
-      gzip: true,
+      gzip: true
     });
 
-    stream.on("error", (err) => reject(err));
+    stream.on("error", (err) => {
+      reject(err);
+    });
 
-    stream.on("finish", () => {
-      const publicUrl = `https://storage.googleapis.com/${bucketName}/${destinationPath}`;
+    stream.on("finish", async () => {
+      const publicUrl = `https://storage.googleapis.com/${bucketName}/${gcsFileName}`;
       resolve(publicUrl);
     });
 
