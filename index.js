@@ -9,6 +9,10 @@ import koordinatorRoutes from './routes/koordinatorRoutes.js';
 import dosenRoutes from './routes/dosenRoutes.js';
 import bimbinganRoutes from './routes/bimbinganRoutes.js';
 import sidangRoutes from './routes/sidangRoutes.js';
+import proposalRoutes from './routes/proposalRoutes.js';
+import reportRoutes from './routes/reportRoutes.js';
+import sidangRoutes from './routes/sidangRoutes.js';
+import profileRoutes from './routes/profileRoutes.js';
 
 dotenv.config();
 
@@ -23,7 +27,10 @@ app.use('/api/kaprodi', kaprodiRoutes);
 app.use('/api/koordinator', koordinatorRoutes);
 app.use('/api/dosen', dosenRoutes);
 app.use('/api/bimbingan', bimbinganRoutes);
+app.use('/api/proposal', proposalRoutes);
+app.use('/api/report', reportRoutes);
 app.use('/api/sidang', sidangRoutes);
+app.use('/api/profile', profileRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Bimbingan Online API OK' });

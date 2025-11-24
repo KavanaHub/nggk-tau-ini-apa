@@ -29,4 +29,24 @@ router.post(
   sidangController.inputGrade
 );
 
+router.post(
+  "/upload",
+  upload.single("file"),
+  async (req, res) => {
+    try {
+      const { group_id } = req.body;
+      const filename = `sidang/${group_id}/sidang-${Date.now()}.pdf`;
+
+      const fileUrl = await uploadFileGCS(req.file, filename);
+
+      res.json({
+        message: "Berkas sidang uploaded successfully",
+        file_url: fileUrl,
+      });
+    } catch (err) {
+      res.status(500).json({ error: String(err) });
+    }
+  }
+);
+
 export default router;
