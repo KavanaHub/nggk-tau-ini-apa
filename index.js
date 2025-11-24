@@ -41,10 +41,3 @@ app.use((err, req, res, next) => {
 });
 
 export const kavana = app;
-
-if (process.env.NODE_ENV === "development") {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Local server running at http://localhost:${PORT}`);
-  });
-}
