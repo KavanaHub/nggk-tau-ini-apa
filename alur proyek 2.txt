@@ -1,0 +1,22 @@
+untuk proyek 1,2,3 setiap mahasiswa membuat kelompok yang terdiri dari 2 orang setiap kelompok nya
+untuk intership 1 dan 2 hanya 1 mahasiswa saja
+
+untuk proyek 1,2,3 mahasiswa saat ingin mengupload proposal memasukan terlebih dahulu judul proyek nya, nama setiap mahasiswa nya, npm masing" mahasiswa dan prodi nya
+prodi terdiri dari d3 dan d4 Teknik informatika
+
+intership terdiri dari 1 mahasiswa, sama seperti proyek untuk identitas nya, lalu memilih untuk intership 1 dan 2 terdiri dari 2 pembimbing yaitu pembimbing Utama dan pembimbing 2
+
+mahasiswa bisa upload proposal dan ada pilihan untuk memilih dosen mana yang akan di ajukan oleh mahasiswa untuk menjadi pembimbing nya. lalu proposal akan di validasi oleh koordinator proyek untuk mengecek apakah sesuai atau tidak proposal nya. lalu setelah di validasi dan sesuai, koordinator melakukan approve pembimbing untuk mahasiswa itu. setelah nya jika sudah di approve maka akan muncul tampilan untuk setiap user/mahasiswa siapa dosen pembimbing nya. lalu mahasiswa bisa mengguhubungi nomor WhatsApp yaang tertera di tampilan itu. mahasiswa melakukan proses bimbingan online di website itu, jadi mahasiswa hanya tinggal mengisi melakukan bimbingan apa saja setiap minggu nya maksimal 8 kali bimbingan dan dosen pembimbing mengapprove bimbingan tersebut, setelah sudah melakukan 8 kali bimbingan maka mahasiswa bisa mengajukan sidang dengan cara yaitu dengan cara mengupload laporan yang sudah di buat lalu pembimbing mengapprove laporan tersebut dan menyetujui mahasiswa tersebut untuk melakukan sidang, dan jika sudah melakukan sidang dosen penguji dan dosen pembimbing memasukan nilai untuk mahasiswa tersebut
+
+untuk mahasiswa saat register mengisi identitas pribadi nya masing"
+untuk dosen di isi manual oleh developer dan juga buat untuk role dosen yaitu ada kepala prodi, dosen biasa, koordinator, dan pembimbing
+untuk kepala prodi dapat memilih siapa koordinator untuk missal proyek 1,2,3 dan juga intership 1,2
+kepala prodi ada 2 yaitu prodi d3 dan d4
+
+
+yang blom ada di backend nya
+1. Cek bahwa dosen yang akses route koordinator benar-benar koordinator track tersebut.
+2. Cek bahwa mahasiswa yang submit proposal adalah anggota group itu.
+3. Validasi bahwa Internship punya 2 pembimbing (utama & kedua) setelah ACC.
+4. Endpoint untuk list usulan dosbim per proposal (biar koordinator gampang milih).
+5. (Tahap selanjutnya) Hubungkan bimbingan & sidang dengan status proposal/pembimbing.
