@@ -2,6 +2,8 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import requireRole from '../middleware/role.js';
 import bimbinganController from '../controllers/bimbinganController.js';
+import { upload } from '../middleware/upload.js';
+import { uploadFileGCS } from '../utils/gcs.js';
 
 const router = express.Router();
 
