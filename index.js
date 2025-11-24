@@ -11,7 +11,6 @@ import bimbinganRoutes from './routes/bimbinganRoutes.js';
 import sidangRoutes from './routes/sidangRoutes.js';
 import proposalRoutes from './routes/proposalRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
-import sidangRoutes from './routes/sidangRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 
 dotenv.config();
