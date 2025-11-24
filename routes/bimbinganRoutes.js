@@ -3,7 +3,7 @@ import auth from '../middleware/auth.js';
 import requireRole from '../middleware/role.js';
 import bimbinganController from '../controllers/bimbinganController.js';
 import { upload } from '../middleware/upload.js';
-import { uploadFileGCS } from '../utils/gcs.js';
+import { uploadToGCS } from '../utils/gcs.js';
 
 const router = express.Router();
 
@@ -17,7 +17,7 @@ router.post(
       const { group_id, session_id } = req.body;
       const filename = `bimbingan/${group_id}/session-${session_id}-${Date.now()}.${req.file.originalname.split(".").pop()}`;
 
-      const fileUrl = await uploadFileGCS(req.file, filename);
+      const fileUrl = await uploadToGCS(req.file, filename);
 
       res.json({
         message: "Lampiran bimbingan uploaded successfully",

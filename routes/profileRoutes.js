@@ -1,6 +1,6 @@
 import express from "express";
 import { upload } from "../middleware/upload.js";
-import { uploadFileGCS } from "../utils/gcs.js";
+import { uploadToGCS } from "../utils/gcs.js";
 import authMiddleware from "../middleware/auth.js"; 
 
 const router = express.Router();
@@ -30,7 +30,7 @@ router.post(
 
       const filename = `profile/${user_id}/avatar-${Date.now()}.${ext}`;
 
-      const fileUrl = await uploadFileGCS(req.file, filename);
+      const fileUrl = await uploadToGCS(req.file, filename);
 
       return res.json({
         message: "Foto profil berhasil diupload",

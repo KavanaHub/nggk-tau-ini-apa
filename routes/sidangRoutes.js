@@ -3,7 +3,7 @@ import auth from '../middleware/auth.js';
 import requireRole from '../middleware/role.js';
 import sidangController from '../controllers/sidangController.js';
 import { upload } from '../middleware/upload.js';
-import { uploadFileGCS } from '../utils/gcs.js';
+import { uploadToGCS } from '../utils/gcs.js';
 
 const router = express.Router();
 
@@ -39,7 +39,7 @@ router.post(
       const { group_id } = req.body;
       const filename = `sidang/${group_id}/sidang-${Date.now()}.pdf`;
 
-      const fileUrl = await uploadFileGCS(req.file, filename);
+      const fileUrl = await uploadToGCS(req.file, filename);
 
       res.json({
         message: "Berkas sidang uploaded successfully",

@@ -1,6 +1,6 @@
 import express from "express";
 import { upload } from "../middleware/upload.js";
-import { uploadFileGCS } from "../utils/gcs.js";
+import { uploadToGCS } from "../utils/gcs.js";
 
 const router = express.Router();
 
@@ -9,7 +9,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     const { group_id } = req.body;
     const filename = `reports/${group_id}/report-${Date.now()}.pdf`;
 
-    const fileUrl = await uploadFileGCS(req.file, filename);
+    const fileUrl = await uploadToGCS(req.file, filename);
 
     res.json({
       message: "Report uploaded successfully",
