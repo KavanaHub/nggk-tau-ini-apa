@@ -1,11 +1,53 @@
 import pool from "../config/db.js";
 
+async function getDosenIdByUser(db, userId) {
+  const [dosenRows] = await db.query("SELECT id FROM dosen WHERE user_id = ?", [
+    userId,
+  ]);
+  if (dosenRows.length === 0) {
+    return null;
+  }
+  return dosenRows[0].id;
+}
+
+async function ensureKoordinatorForTrack(db, userId, trackId) {
+  const dosenId = await getDosenIdByUser(db, userId);
+  if (!dosenId) {
+    return { error: "Koordinator tidak terdaftar sebagai dosen" };
+  }
+
+  const [koorRows] = await db.query(
+    `
+    SELECT id
+    FROM koordinator
+    WHERE dosen_id = ? AND track_id = ? AND is_active = 1
+    `,
+    [dosenId, trackId]
+  );
+
+  if (koorRows.length === 0) {
+    return { error: "Anda bukan koordinator aktif untuk track ini" };
+  }
+
+  return { dosenId };
+}
+
 const koordinatorController = {
   // LIST PROPOSAL PER TRACK (bisa dipakai di dashboard koordinator)
   listProposalsByTrack: async (req, res, next) => {
     const { track_id } = req.query;
+    const userId = req.user.id;
+
+    if (!track_id) {
+      return res.status(400).json({ message: "track_id wajib diisi" });
+    }
 
     try {
+      const { error } = await ensureKoordinatorForTrack(pool, userId, track_id);
+      if (error) {
+        return res.status(403).json({ message: error });
+      }
+
       const [rows] = await pool.query(
         `
         SELECT p.id AS proposal_id,
@@ -35,16 +77,31 @@ const koordinatorController = {
     const userId = req.user.id;
 
     try {
-      const [dosenRows] = await pool.query(
-        "SELECT id FROM dosen WHERE user_id = ?",
-        [userId]
+      const [trackRows] = await pool.query(
+        `
+        SELECT t.id AS track_id
+        FROM proposals p
+        JOIN student_groups g ON p.group_id = g.id
+        JOIN tracks t ON g.track_id = t.id
+        WHERE p.id = ?
+        `,
+        [id]
       );
-      if (dosenRows.length === 0) {
-        return res
-          .status(400)
-          .json({ message: "Koordinator tidak terdaftar sebagai dosen" });
+
+      if (trackRows.length === 0) {
+        return res.status(404).json({ message: "Proposal tidak ditemukan" });
       }
-      const dosenId = dosenRows[0].id;
+
+      const trackId = trackRows[0].track_id;
+      const { error, dosenId } = await ensureKoordinatorForTrack(
+        pool,
+        userId,
+        trackId
+      );
+
+      if (error) {
+        return res.status(403).json({ message: error });
+      }
 
       await pool.query(
         `
@@ -78,23 +135,15 @@ const koordinatorController = {
       const conn = await pool.getConnection();
       await conn.beginTransaction();
 
-      // cari dosen_id koordinator dari user_id
-      const [dosenRows] = await conn.query(
-        "SELECT id FROM dosen WHERE user_id = ?",
-        [userId]
-      );
-      if (dosenRows.length === 0) {
-        await conn.rollback();
-        conn.release();
-        return res
-          .status(400)
-          .json({ message: "Koordinator tidak terdaftar sebagai dosen" });
-      }
-      const koorDosenId = dosenRows[0].id;
-
-      // ambil proposal untuk tahu group_id
+      // ambil proposal untuk tahu group_id dan track
       const [proposalRows] = await conn.query(
-        "SELECT group_id FROM proposals WHERE id = ?",
+        `
+        SELECT p.group_id, t.id AS track_id
+        FROM proposals p
+        JOIN student_groups g ON p.group_id = g.id
+        JOIN tracks t ON g.track_id = t.id
+        WHERE p.id = ?
+        `,
         [id]
       );
       if (proposalRows.length === 0) {
@@ -102,7 +151,18 @@ const koordinatorController = {
         conn.release();
         return res.status(404).json({ message: "Proposal tidak ditemukan" });
       }
-      const groupId = proposalRows[0].group_id;
+      const { group_id: groupId, track_id: trackId } = proposalRows[0];
+
+      const { error, dosenId: koorDosenId } = await ensureKoordinatorForTrack(
+        conn,
+        userId,
+        trackId
+      );
+      if (error) {
+        await conn.rollback();
+        conn.release();
+        return res.status(403).json({ message: error });
+      }
 
       // ambil usulan dosbim yang dipilih koordinator
       const [requestRows] = await conn.query(
@@ -117,11 +177,9 @@ const koordinatorController = {
       if (requestRows.length === 0) {
         await conn.rollback();
         conn.release();
-        return res
-          .status(400)
-          .json({
-            message: "Tidak ada usulan dosbim yang cocok dengan request_ids",
-          });
+        return res.status(400).json({
+          message: "Tidak ada usulan dosbim yang cocok dengan request_ids",
+        });
       }
 
       // insert ke supervisor_assignments (pembimbing resmi)
