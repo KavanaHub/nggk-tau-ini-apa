@@ -15,8 +15,7 @@ kepala prodi ada 2 yaitu prodi d3 dan d4
 
 
 yang blom ada di backend nya
-1. Cek bahwa dosen yang akses route koordinator benar-benar koordinator track tersebut.
-2. Cek bahwa mahasiswa yang submit proposal adalah anggota group itu.
+1. Cek bahwa dosen yang akses route koordinator benar-benar koordinator track tersebut. (Done)
 3. Validasi bahwa Internship punya 2 pembimbing (utama & kedua) setelah ACC.
 4. Endpoint untuk list usulan dosbim per proposal (biar koordinator gampang milih).
 5. (Tahap selanjutnya) Hubungkan bimbingan & sidang dengan status proposal/pembimbing.
