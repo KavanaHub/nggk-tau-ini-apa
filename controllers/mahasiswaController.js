@@ -118,6 +118,31 @@ const mahasiswaController = {
       const conn = await pool.getConnection();
       await conn.beginTransaction();
 
+      // Pastikan mahasiswa pemilik token adalah anggota group yang akan submit
+      const userId = req.user.id;
+      const [[mhsRow]] = await conn.query(
+        "SELECT id FROM mahasiswa WHERE user_id = ?",
+        [userId]
+      );
+      if (!mhsRow) {
+        await conn.rollback();
+        conn.release();
+        return res.status(403).json({ message: "Mahasiswa tidak ditemukan" });
+      }
+
+      const mahasiswaId = mhsRow.id;
+      const [[memberRow]] = await conn.query(
+        "SELECT 1 FROM group_members WHERE group_id = ? AND mahasiswa_id = ?",
+        [group_id, mahasiswaId]
+      );
+      if (!memberRow) {
+        await conn.rollback();
+        conn.release();
+        return res.status(403).json({
+          message: "Kamu bukan anggota group ini, tidak bisa submit proposal",
+        });
+      }
+
       // pastikan group ada
       const [groupRows] = await conn.query(
         "SELECT id FROM student_groups WHERE id = ?",

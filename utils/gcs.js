@@ -7,14 +7,15 @@ const storage = new Storage({
 const bucketName = "kavana-files"; // ganti dengan bucket kamu
 const bucket = storage.bucket(bucketName);
 
-export const uploadToGCS = (file) => {
+export const uploadToGCS = (file, customPath) => {
   return new Promise((resolve, reject) => {
     if (!file) {
       reject("No file uploaded");
       return;
     }
 
-    const gcsFileName = `uploads/${Date.now()}-${file.originalname}`;
+    const gcsFileName =
+      customPath || `uploads/${Date.now()}-${file.originalname}`;
     const fileUpload = bucket.file(gcsFileName);
 
     const stream = fileUpload.createWriteStream({
