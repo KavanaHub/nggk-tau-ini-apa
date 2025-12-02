@@ -112,11 +112,12 @@ export const uploadToGDrive = async (file, customPath) => {
 
     console.log("Creating file in Google Drive...");
 
-    // Upload file
+    // Upload file with supportsAllDrives for shared folders
     const response = await drive.files.create({
       requestBody: fileMetadata,
       media: media,
       fields: "id, webViewLink, webContentLink",
+      supportsAllDrives: true,
     });
 
     const fileId = response.data.id;
@@ -129,6 +130,7 @@ export const uploadToGDrive = async (file, customPath) => {
         role: "reader",
         type: "anyone",
       },
+      supportsAllDrives: true,
     });
 
     console.log("Permissions set to public");
