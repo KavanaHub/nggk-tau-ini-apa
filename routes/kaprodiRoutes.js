@@ -5,12 +5,20 @@ import kaprodiController from '../controllers/kaprodiController.js';
 
 const router = express.Router();
 
-// user harus punya role 'dosen', tapi dicek lagi di controller apakah dia memang kaprodi
-router.post(
-  '/koordinator',
-  auth,
-  requireRole('dosen', 'admin'),
-  kaprodiController.setKoordinator
-);
+// Profile
+router.get('/profile', auth, requireRole('kaprodi'), kaprodiController.getProfile);
+
+// Dashboard Stats
+router.get('/stats', auth, requireRole('kaprodi'), kaprodiController.getDashboardStats);
+
+// List data
+router.get('/mahasiswa', auth, requireRole('kaprodi'), kaprodiController.getAllMahasiswa);
+router.get('/dosen-pembimbing', auth, requireRole('kaprodi'), kaprodiController.getAllDosenPembimbing);
+router.get('/koordinator', auth, requireRole('kaprodi'), kaprodiController.getAllKoordinator);
+router.get('/penguji', auth, requireRole('kaprodi'), kaprodiController.getAllPenguji);
+
+// Actions
+router.post('/assign-dosen', auth, requireRole('kaprodi'), kaprodiController.assignDosenPembimbing);
+router.patch('/proposal/status', auth, requireRole('kaprodi'), kaprodiController.updateProposalStatus);
 
 export default router;

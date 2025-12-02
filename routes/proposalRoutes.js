@@ -3,67 +3,37 @@ import auth from "../middleware/auth.js";
 import requireRole from "../middleware/role.js";
 import { upload } from "../middleware/upload.js";
 import pool from "../config/db.js";
-import { uploadToGCS } from "../utils/gcs.js";
+import { uploadToGDrive } from "../utils/gdrive.js";
 
 const router = express.Router();
 
-// Pastikan mahasiswa yang upload adalah anggota group yang bersangkutan
-async function ensureGroupMember(req, res, next) {
-  const { group_id } = req.body;
-
-  if (!group_id) {
-    return res.status(400).json({ message: "group_id wajib diisi" });
-  }
-
-  try {
-    const [[mhsRow]] = await pool.query(
-      "SELECT id FROM mahasiswa WHERE user_id = ?",
-      [req.user.id]
-    );
-    if (!mhsRow) {
-      return res.status(403).json({ message: "Mahasiswa tidak ditemukan" });
-    }
-
-    const [[memberRow]] = await pool.query(
-      "SELECT 1 FROM group_members WHERE group_id = ? AND mahasiswa_id = ?",
-      [group_id, mhsRow.id]
-    );
-
-    if (!memberRow) {
-      return res
-        .status(403)
-        .json({ message: "Kamu bukan anggota group ini" });
-    }
-
-    next();
-  } catch (err) {
-    next(err);
-  }
-}
-
+// Upload proposal file
 router.post(
   "/upload",
   auth,
   requireRole("mahasiswa"),
   upload.single("file"),
-  ensureGroupMember,
   async (req, res) => {
     try {
+      const mahasiswaId = req.user.id;
+
       if (!req.file) {
-        return res.status(400).json({ message: "File wajib diunggah" });
+        return res.status(400).json({ error: "Tidak ada file yang diupload" });
       }
 
-      const isPdf =
-        req.file.mimetype === "application/pdf" ||
-        req.file.originalname?.toLowerCase().endsWith(".pdf");
-      if (!isPdf) {
-        return res.status(400).json({ message: "File harus berformat PDF" });
+      const ext = req.file.originalname.split(".").pop().toLowerCase();
+      if (ext !== "pdf") {
+        return res.status(400).json({ error: "Format file harus PDF" });
       }
 
-      const { group_id } = req.body;
-      const filename = `proposals/${group_id}/proposal-${Date.now()}.pdf`;
+      const filename = `proposals/${mahasiswaId}/proposal-${Date.now()}.pdf`;
+      const fileUrl = await uploadToGDrive(req.file, filename);
 
-      const fileUrl = await uploadToGCS(req.file, filename);
+      // Update file_proposal di mahasiswa
+      await pool.query(
+        "UPDATE mahasiswa SET file_proposal = ? WHERE id = ?",
+        [fileUrl, mahasiswaId]
+      );
 
       res.json({
         message: "Proposal uploaded successfully",

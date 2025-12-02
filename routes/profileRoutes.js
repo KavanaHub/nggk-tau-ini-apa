@@ -1,21 +1,19 @@
 import express from "express";
 import { upload } from "../middleware/upload.js";
-import { uploadToGCS } from "../utils/gcs.js";
+import { uploadToGDrive } from "../utils/gdrive.js";
 import authMiddleware from "../middleware/auth.js"; 
 
 const router = express.Router();
 
+// Upload foto profil (untuk semua role)
 router.post(
   "/upload",
   authMiddleware,
   upload.single("file"),
   async (req, res) => {
     try {
-      const { user_id } = req.body;
-
-      if (!user_id) {
-        return res.status(400).json({ error: "user_id wajib diisi" });
-      }
+      const userId = req.user.id;
+      const role = req.user.role;
 
       if (!req.file) {
         return res.status(400).json({ error: "Tidak ada file yang diupload" });
@@ -28,9 +26,8 @@ router.post(
         return res.status(400).json({ error: "Format file tidak didukung. Gunakan JPG/PNG." });
       }
 
-      const filename = `profile/${user_id}/avatar-${Date.now()}.${ext}`;
-
-      const fileUrl = await uploadToGCS(req.file, filename);
+      const filename = `profile/${role}/${userId}/avatar-${Date.now()}.${ext}`;
+      const fileUrl = await uploadToGDrive(req.file, filename);
 
       return res.json({
         message: "Foto profil berhasil diupload",

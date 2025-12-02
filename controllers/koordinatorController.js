@@ -1,67 +1,36 @@
 import pool from "../config/db.js";
 
-async function getDosenIdByUser(db, userId) {
-  const [dosenRows] = await db.query("SELECT id FROM dosen WHERE user_id = ?", [
-    userId,
-  ]);
-  if (dosenRows.length === 0) {
-    return null;
-  }
-  return dosenRows[0].id;
-}
-
-async function ensureKoordinatorForTrack(db, userId, trackId) {
-  const dosenId = await getDosenIdByUser(db, userId);
-  if (!dosenId) {
-    return { error: "Koordinator tidak terdaftar sebagai dosen" };
-  }
-
-  const [koorRows] = await db.query(
-    `
-    SELECT id
-    FROM koordinator
-    WHERE dosen_id = ? AND track_id = ? AND is_active = 1
-    `,
-    [dosenId, trackId]
-  );
-
-  if (koorRows.length === 0) {
-    return { error: "Anda bukan koordinator aktif untuk track ini" };
-  }
-
-  return { dosenId };
-}
-
 const koordinatorController = {
-  // LIST PROPOSAL PER TRACK (bisa dipakai di dashboard koordinator)
-  listProposalsByTrack: async (req, res, next) => {
-    const { track_id } = req.query;
-    const userId = req.user.id;
-
-    if (!track_id) {
-      return res.status(400).json({ message: "track_id wajib diisi" });
-    }
-
+  // GET PROFILE KOORDINATOR
+  getProfile: async (req, res, next) => {
     try {
-      const { error } = await ensureKoordinatorForTrack(pool, userId, track_id);
-      if (error) {
-        return res.status(403).json({ message: error });
+      const koordinatorId = req.user.id;
+      const [rows] = await pool.query(
+        `SELECT id, email, nidn, nama, no_wa, is_active, created_at
+         FROM koordinator WHERE id = ?`,
+        [koordinatorId]
+      );
+
+      if (rows.length === 0) {
+        return res.status(404).json({ message: "Koordinator tidak ditemukan" });
       }
 
+      res.json(rows[0]);
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  // GET SEMUA MAHASISWA
+  getAllMahasiswa: async (req, res, next) => {
+    try {
       const [rows] = await pool.query(
-        `
-        SELECT p.id AS proposal_id,
-                p.status,
-                p.file_url,
-                g.id AS group_id,
-                g.title,
-                t.name AS track_name
-        FROM proposals p
-        JOIN student_groups g ON p.group_id = g.id
-        JOIN tracks t ON g.track_id = t.id
-        WHERE g.track_id = ?
-        `,
-        [track_id]
+        `SELECT m.id, m.npm, m.nama, m.email, m.no_wa, m.angkatan, 
+                m.judul_proyek, m.status_proposal, m.dosen_pembimbing_id,
+                dp.nama as dosen_pembimbing_nama
+         FROM mahasiswa m
+         LEFT JOIN dosen_pembimbing dp ON m.dosen_pembimbing_id = dp.id
+         ORDER BY m.angkatan DESC, m.nama ASC`
       );
 
       res.json(rows);
@@ -70,134 +39,110 @@ const koordinatorController = {
     }
   },
 
-  // VALIDASI PROPOSAL (ACC / TOLAK)
-  validateProposal: async (req, res, next) => {
-    const { id } = req.params; // proposal id
-    const { status, note } = req.body; // 'approved' / 'rejected'
-    const userId = req.user.id;
-
+  // GET SEMUA DOSEN PEMBIMBING
+  getAllDosenPembimbing: async (req, res, next) => {
     try {
-      const [trackRows] = await pool.query(
-        `
-        SELECT t.id AS track_id
-        FROM proposals p
-        JOIN student_groups g ON p.group_id = g.id
-        JOIN tracks t ON g.track_id = t.id
-        WHERE p.id = ?
-        `,
-        [id]
+      const [rows] = await pool.query(
+        `SELECT id, nidn, nama, email, no_wa, is_active FROM dosen_pembimbing ORDER BY nama ASC`
       );
 
-      if (trackRows.length === 0) {
-        return res.status(404).json({ message: "Proposal tidak ditemukan" });
-      }
-
-      const trackId = trackRows[0].track_id;
-      const { error, dosenId } = await ensureKoordinatorForTrack(
-        pool,
-        userId,
-        trackId
-      );
-
-      if (error) {
-        return res.status(403).json({ message: error });
-      }
-
-      await pool.query(
-        `
-        UPDATE proposals
-        SET status = ?, note = ?, validated_by = ?, validated_at = NOW()
-        WHERE id = ?
-        `,
-        [status, note || null, dosenId, id]
-      );
-
-      res.json({ message: "Proposal updated" });
+      res.json(rows);
     } catch (err) {
       next(err);
     }
   },
 
-  // KOORDINATOR MENG-ACC USULAN DOSBIM DARI MAHASISWA
-  approveSupervisorRequests: async (req, res, next) => {
-    const { id } = req.params; // proposal_id
-    const { request_ids } = req.body; // array of id dari proposal_supervisor_requests
+  // GET MAHASISWA YANG PROPOSAL PENDING
+  getPendingProposals: async (req, res, next) => {
+    try {
+      const [rows] = await pool.query(
+        `SELECT m.id, m.npm, m.nama, m.email, m.judul_proyek, m.file_proposal, m.created_at
+         FROM mahasiswa m
+         WHERE m.status_proposal = 'pending' AND m.judul_proyek IS NOT NULL
+         ORDER BY m.created_at ASC`
+      );
 
-    if (!Array.isArray(request_ids) || request_ids.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "request_ids wajib diisi (array id usulan)" });
+      res.json(rows);
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  // VALIDASI PROPOSAL (APPROVE / REJECT)
+  validateProposal: async (req, res, next) => {
+    const { mahasiswa_id, status } = req.body;
+
+    if (!mahasiswa_id || !status) {
+      return res.status(400).json({ message: 'mahasiswa_id dan status wajib diisi' });
     }
 
-    const userId = req.user.id;
+    if (!['approved', 'rejected'].includes(status)) {
+      return res.status(400).json({ message: 'Status harus approved atau rejected' });
+    }
 
     try {
-      const conn = await pool.getConnection();
-      await conn.beginTransaction();
-
-      // ambil proposal untuk tahu group_id dan track
-      const [proposalRows] = await conn.query(
-        `
-        SELECT p.group_id, t.id AS track_id
-        FROM proposals p
-        JOIN student_groups g ON p.group_id = g.id
-        JOIN tracks t ON g.track_id = t.id
-        WHERE p.id = ?
-        `,
-        [id]
-      );
-      if (proposalRows.length === 0) {
-        await conn.rollback();
-        conn.release();
-        return res.status(404).json({ message: "Proposal tidak ditemukan" });
-      }
-      const { group_id: groupId, track_id: trackId } = proposalRows[0];
-
-      const { error, dosenId: koorDosenId } = await ensureKoordinatorForTrack(
-        conn,
-        userId,
-        trackId
-      );
-      if (error) {
-        await conn.rollback();
-        conn.release();
-        return res.status(403).json({ message: error });
+      // Cek mahasiswa ada
+      const [mhsRows] = await pool.query('SELECT id FROM mahasiswa WHERE id = ?', [mahasiswa_id]);
+      if (mhsRows.length === 0) {
+        return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
       }
 
-      // ambil usulan dosbim yang dipilih koordinator
-      const [requestRows] = await conn.query(
-        `
-        SELECT id, dosen_id, role
-        FROM proposal_supervisor_requests
-        WHERE proposal_id = ? AND id IN (?)
-        `,
-        [id, request_ids]
+      await pool.query(
+        'UPDATE mahasiswa SET status_proposal = ? WHERE id = ?',
+        [status, mahasiswa_id]
       );
 
-      if (requestRows.length === 0) {
-        await conn.rollback();
-        conn.release();
-        return res.status(400).json({
-          message: "Tidak ada usulan dosbim yang cocok dengan request_ids",
-        });
+      res.json({ message: `Proposal ${status}` });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  // ASSIGN DOSEN PEMBIMBING KE MAHASISWA
+  assignDosenPembimbing: async (req, res, next) => {
+    const { mahasiswa_id, dosen_pembimbing_id } = req.body;
+
+    if (!mahasiswa_id || !dosen_pembimbing_id) {
+      return res.status(400).json({ message: 'mahasiswa_id dan dosen_pembimbing_id wajib diisi' });
+    }
+
+    try {
+      // Cek mahasiswa ada
+      const [mhsRows] = await pool.query('SELECT id FROM mahasiswa WHERE id = ?', [mahasiswa_id]);
+      if (mhsRows.length === 0) {
+        return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
       }
 
-      // insert ke supervisor_assignments (pembimbing resmi)
-      for (const r of requestRows) {
-        await conn.query(
-          `
-          INSERT INTO supervisor_assignments (group_id, dosen_id, role, assigned_by)
-          VALUES (?, ?, ?, ?)
-          `,
-          [groupId, r.dosen_id, r.role, koorDosenId]
-        );
+      // Cek dosen ada
+      const [dosenRows] = await pool.query('SELECT id FROM dosen_pembimbing WHERE id = ?', [dosen_pembimbing_id]);
+      if (dosenRows.length === 0) {
+        return res.status(404).json({ message: 'Dosen pembimbing tidak ditemukan' });
       }
 
-      await conn.commit();
-      conn.release();
+      await pool.query(
+        'UPDATE mahasiswa SET dosen_pembimbing_id = ? WHERE id = ?',
+        [dosen_pembimbing_id, mahasiswa_id]
+      );
+
+      res.json({ message: 'Dosen pembimbing berhasil ditugaskan' });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  // GET STATISTIK KOORDINATOR
+  getStats: async (req, res, next) => {
+    try {
+      const [[{ total_mahasiswa }]] = await pool.query('SELECT COUNT(*) as total_mahasiswa FROM mahasiswa');
+      const [[{ proposal_pending }]] = await pool.query("SELECT COUNT(*) as proposal_pending FROM mahasiswa WHERE status_proposal = 'pending'");
+      const [[{ proposal_approved }]] = await pool.query("SELECT COUNT(*) as proposal_approved FROM mahasiswa WHERE status_proposal = 'approved'");
+      const [[{ mahasiswa_tanpa_dosen }]] = await pool.query('SELECT COUNT(*) as mahasiswa_tanpa_dosen FROM mahasiswa WHERE dosen_pembimbing_id IS NULL');
 
       res.json({
-        message: "Dosen pembimbing berhasil di-ACC dari usulan mahasiswa",
+        total_mahasiswa,
+        proposal_pending,
+        proposal_approved,
+        mahasiswa_tanpa_dosen
       });
     } catch (err) {
       next(err);

@@ -2,29 +2,27 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import requireRole from '../middleware/role.js';
 import koordinatorController from '../controllers/koordinatorController.js';
+import sidangController from '../controllers/sidangController.js';
 
 const router = express.Router();
 
-router.get(
-  '/proposals',
-  auth,
-  requireRole('dosen'),
-  koordinatorController.listProposalsByTrack
-);
+// Profile
+router.get('/profile', auth, requireRole('koordinator'), koordinatorController.getProfile);
 
-router.patch(
-  '/proposals/:id/validate',
-  auth,
-  requireRole('dosen'),
-  koordinatorController.validateProposal
-);
+// Stats
+router.get('/stats', auth, requireRole('koordinator'), koordinatorController.getStats);
 
-// KOORDINATOR ACC DOSBIM YANG DIAJUKAN MAHASISWA
-router.post(
-  '/proposals/:id/approve-supervisors',
-  auth,
-  requireRole('dosen'),
-  koordinatorController.approveSupervisorRequests
-);
+// List data
+router.get('/mahasiswa', auth, requireRole('koordinator'), koordinatorController.getAllMahasiswa);
+router.get('/dosen-pembimbing', auth, requireRole('koordinator'), koordinatorController.getAllDosenPembimbing);
+router.get('/proposals/pending', auth, requireRole('koordinator'), koordinatorController.getPendingProposals);
+
+// Actions
+router.patch('/proposal/validate', auth, requireRole('koordinator'), koordinatorController.validateProposal);
+router.post('/assign-dosen', auth, requireRole('koordinator'), koordinatorController.assignDosenPembimbing);
+
+// Sidang
+router.post('/sidang/schedule', auth, requireRole('koordinator'), sidangController.scheduleSidang);
+router.get('/sidang', auth, requireRole('koordinator'), sidangController.getAllSidang);
 
 export default router;

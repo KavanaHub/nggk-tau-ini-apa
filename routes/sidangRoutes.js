@@ -7,37 +7,24 @@ import { uploadToGCS } from '../utils/gcs.js';
 
 const router = express.Router();
 
-// mahasiswa upload laporan
-router.post(
-  '/reports',
-  auth,
-  requireRole('mahasiswa'),
-  sidangController.submitReport
-);
+// Get all sidang (public)
+router.get('/', auth, sidangController.getAllSidang);
 
-// dosen pembimbing approve / reject laporan
-router.patch(
-  '/reports/:id/approve',
-  auth,
-  requireRole('dosen'),
-  sidangController.approveReport
-);
+// Get nilai sidang
+router.get('/:sidang_id/nilai', auth, sidangController.getNilaiSidang);
 
-// dosen pembimbing/penguji input nilai sidang
-router.post(
-  '/grades',
-  auth,
-  requireRole('dosen'),
-  sidangController.inputGrade
-);
+// Penguji input nilai
+router.post('/nilai', auth, requireRole('penguji'), sidangController.inputNilai);
 
+// Upload berkas sidang
 router.post(
   "/upload",
+  auth,
   upload.single("file"),
   async (req, res) => {
     try {
-      const { group_id } = req.body;
-      const filename = `sidang/${group_id}/sidang-${Date.now()}.pdf`;
+      const { mahasiswa_id } = req.body;
+      const filename = `sidang/${mahasiswa_id}/sidang-${Date.now()}.pdf`;
 
       const fileUrl = await uploadToGCS(req.file, filename);
 
