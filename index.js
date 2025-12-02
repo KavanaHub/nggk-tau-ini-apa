@@ -35,6 +35,16 @@ app.get('/', (req, res) => {
   res.json({ message: 'Bimbingan Online API OK' });
 });
 
+// Ping endpoint for testing
+app.get('/ping', (req, res) => {
+  res.json({ 
+    status: 'ok',
+    message: 'pong',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ message: 'Internal server error' });
