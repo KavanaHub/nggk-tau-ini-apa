@@ -95,6 +95,8 @@ export const uploadToGDrive = async (file, customPath) => {
   const folderId = getFolderId(customPath);
   const fileName = customPath.split("/").pop() || `${Date.now()}-${file.originalname}`;
 
+  console.log("Upload to GDrive:", { fileName, folderId, mimeType: file.mimetype });
+
   try {
     // Create file metadata
     const fileMetadata = {
@@ -108,6 +110,8 @@ export const uploadToGDrive = async (file, customPath) => {
       body: bufferToStream(file.buffer),
     };
 
+    console.log("Creating file in Google Drive...");
+
     // Upload file
     const response = await drive.files.create({
       requestBody: fileMetadata,
@@ -116,6 +120,7 @@ export const uploadToGDrive = async (file, customPath) => {
     });
 
     const fileId = response.data.id;
+    console.log("File created with ID:", fileId);
 
     // Make file publicly accessible
     await drive.permissions.create({
@@ -125,6 +130,8 @@ export const uploadToGDrive = async (file, customPath) => {
         type: "anyone",
       },
     });
+
+    console.log("Permissions set to public");
 
     // Get the public link
     // webViewLink = view in browser, webContentLink = direct download

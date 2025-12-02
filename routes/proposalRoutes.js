@@ -40,7 +40,11 @@ router.post(
         file_url: fileUrl,
       });
     } catch (err) {
-      res.status(500).json({ error: String(err) });
+      console.error("Upload proposal error:", err);
+      res.status(500).json({ 
+        message: "Internal server error",
+        error: err.message || String(err)
+      });
     }
   }
 );
