@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import functions from '@google-cloud/functions-framework';
 
 import authRoutes from './routes/authRoutes.js';
 import mahasiswaRoutes from './routes/mahasiswaRoutes.js';
@@ -51,5 +52,8 @@ app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ message: 'Internal server error' });
 });
+
+// Register the HTTP function entry point for Cloud Functions Gen 2.
+functions.http('kavana', app);
 
 export const kavana = app;
