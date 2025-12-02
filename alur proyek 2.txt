@@ -11,12 +11,16 @@ mahasiswa bisa upload proposal dan ada pilihan untuk memilih dosen mana yang aka
 untuk mahasiswa saat register mengisi identitas pribadi nya masing"
 untuk dosen di isi manual oleh developer dan juga buat untuk role dosen yaitu ada kepala prodi, dosen biasa, koordinator, dan pembimbing
 untuk kepala prodi dapat memilih siapa koordinator untuk missal proyek 1,2,3 dan juga intership 1,2
-kepala prodi ada 2 yaitu prodi d3 dan d4
+kepala prodi ada yaitu prodi d4
 
 
 yang blom ada di backend nya
 1. Cek bahwa dosen yang akses route koordinator benar-benar koordinator track tersebut. (Done)
-2. Cek bahwa mahasiswa yang submit proposal adalah anggota group itu.
 3. Validasi bahwa Internship punya 2 pembimbing (utama & kedua) setelah ACC.
 4. Endpoint untuk list usulan dosbim per proposal (biar koordinator gampang milih).
 5. (Tahap selanjutnya) Hubungkan bimbingan & sidang dengan status proposal/pembimbing.
+Implementasi CI/CD menggunakan espress.js untuk capstone project d4 ti berbasis website
+Penggunaan express.js untuk aplikasi bimbingan online mahasiswa
+
+Proyek 3
+GCS
