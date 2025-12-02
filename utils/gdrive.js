@@ -93,6 +93,11 @@ export const uploadToGDrive = async (file, customPath) => {
   }
 
   const folderId = getFolderId(customPath);
+  if (!folderId) {
+    throw new Error(
+      "Missing Google Drive folder ID env vars. Set GDRIVE_FOLDER_PROPOSALS / REPORTS / PROFILES / BIMBINGAN / DEFAULT to Shared Drive folder IDs and redeploy."
+    );
+  }
   const fileName = customPath.split("/").pop() || `${Date.now()}-${file.originalname}`;
 
   console.log("Upload to GDrive:", { fileName, folderId, mimeType: file.mimetype });
