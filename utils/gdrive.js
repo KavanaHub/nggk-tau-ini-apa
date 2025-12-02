@@ -2,14 +2,15 @@ import { google } from "googleapis";
 import { Readable } from "stream";
 
 // Initialize Google Drive API
-// Supports both:
-// 1. Service account JSON file (for local development)
-// 2. Base64 encoded JSON in environment variable (for production/CI)
+// Supports:
+// 1. Application Default Credentials (ADC) - for Cloud Functions with service account
+// 2. GOOGLE_CREDENTIALS env var (JSON string or base64)
+// 3. Service account JSON file (for local development)
 
 let auth;
 
 if (process.env.GOOGLE_CREDENTIALS) {
-  // Production: Use credentials from environment variable (JSON string or base64)
+  // Use credentials from environment variable (JSON string or base64)
   let credentials;
   try {
     // Try parsing as JSON first
@@ -34,8 +35,13 @@ if (process.env.GOOGLE_CREDENTIALS) {
     keyFile: process.env.GOOGLE_SERVICE_ACCOUNT_KEY,
     scopes: ["https://www.googleapis.com/auth/drive.file"],
   });
+} else if (process.env.K_SERVICE || process.env.FUNCTION_NAME) {
+  // Running on Cloud Functions/Cloud Run - use Application Default Credentials
+  auth = new google.auth.GoogleAuth({
+    scopes: ["https://www.googleapis.com/auth/drive.file"],
+  });
 } else {
-  // Fallback: Try default service account file
+  // Fallback: Try default service account file for local dev
   auth = new google.auth.GoogleAuth({
     keyFile: "./service-account.json",
     scopes: ["https://www.googleapis.com/auth/drive.file"],
