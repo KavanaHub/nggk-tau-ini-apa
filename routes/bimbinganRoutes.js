@@ -2,7 +2,7 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import requireRole from '../middleware/role.js';
 import bimbinganController from '../controllers/bimbinganController.js';
-import { upload } from '../middleware/upload.js';
+import { parseMultipart } from '../middleware/upload.js';
 import { uploadToGDrive } from '../utils/gdrive.js';
 
 const router = express.Router();
@@ -14,7 +14,7 @@ router.get('/:id', auth, bimbinganController.getBimbinganById);
 router.post(
   "/upload",
   auth,
-  upload.single("file"),
+  parseMultipart,
   async (req, res) => {
     try {
       const { mahasiswa_id, bimbingan_id } = req.body;

@@ -1,5 +1,5 @@
 import express from "express";
-import { upload } from "../middleware/upload.js";
+import { parseMultipart } from "../middleware/upload.js";
 import { uploadToGDrive } from "../utils/gdrive.js";
 import authMiddleware from "../middleware/auth.js"; 
 
@@ -9,7 +9,7 @@ const router = express.Router();
 router.post(
   "/upload",
   authMiddleware,
-  upload.single("file"),
+  parseMultipart,
   async (req, res) => {
     try {
       const userId = req.user.id;

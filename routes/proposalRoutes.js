@@ -1,7 +1,7 @@
 import express from "express";
 import auth from "../middleware/auth.js";
 import requireRole from "../middleware/role.js";
-import { upload } from "../middleware/upload.js";
+import { parseMultipart } from "../middleware/upload.js";
 import pool from "../config/db.js";
 import { uploadToGDrive } from "../utils/gdrive.js";
 
@@ -12,7 +12,7 @@ router.post(
   "/upload",
   auth,
   requireRole("mahasiswa"),
-  upload.single("file"),
+  parseMultipart,
   async (req, res) => {
     try {
       const mahasiswaId = req.user.id;
