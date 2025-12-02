@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@google-cloud/functions-framework": "^3.5.1",
+    "@google-cloud/storage": "^7.12.1",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
