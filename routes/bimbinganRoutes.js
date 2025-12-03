@@ -18,6 +18,16 @@ router.post(
   async (req, res) => {
     try {
       const { mahasiswa_id, bimbingan_id } = req.body;
+
+      // Allow direct Drive link submission (no upload)
+      if (req.body.file_url) {
+        const link = String(req.body.file_url).trim();
+        return res.json({
+          message: "Lampiran bimbingan link saved successfully",
+          file_url: link,
+        });
+      }
+
       const filename = `bimbingan/${mahasiswa_id}/session-${bimbingan_id}-${Date.now()}.${req.file.originalname.split(".").pop()}`;
 
       const fileUrl = await uploadToGCS(req.file, filename);

@@ -17,6 +17,20 @@ router.post(
     try {
       const mahasiswaId = req.user.id;
 
+      // Allow direct Drive link submission (no upload)
+      if (req.body.file_url) {
+        const link = String(req.body.file_url).trim();
+        await pool.query(
+          "UPDATE mahasiswa SET file_proposal = ? WHERE id = ?",
+          [link, mahasiswaId]
+        );
+
+        return res.json({
+          message: "Proposal link saved successfully",
+          file_url: link,
+        });
+      }
+
       if (!req.file) {
         return res.status(400).json({ error: "Tidak ada file yang diupload" });
       }

@@ -17,6 +17,20 @@ router.post(
     try {
       const mahasiswaId = req.user.id;
 
+      // Allow direct Drive link submission (no upload)
+      if (req.body.file_url) {
+        const link = String(req.body.file_url).trim();
+        await pool.query(
+          "UPDATE laporan_sidang SET file_url = ?, status = 'submitted' WHERE mahasiswa_id = ?",
+          [link, mahasiswaId]
+        );
+
+        return res.json({
+          message: "Report link saved successfully",
+          file_url: link,
+        });
+      }
+
       if (!req.file) {
         return res.status(400).json({ error: "Tidak ada file yang diupload" });
       }
