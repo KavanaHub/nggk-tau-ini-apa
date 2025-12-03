@@ -3,7 +3,7 @@ import auth from "../middleware/auth.js";
 import requireRole from "../middleware/role.js";
 import { parseMultipart } from "../middleware/upload.js";
 import pool from "../config/db.js";
-import { uploadToGDrive } from "../utils/gdrive.js";
+import { uploadToGCS } from "../utils/gcs.js";
 
 const router = express.Router();
 
@@ -27,7 +27,7 @@ router.post(
       }
 
       const filename = `proposals/${mahasiswaId}/proposal-${Date.now()}.pdf`;
-      const fileUrl = await uploadToGDrive(req.file, filename);
+      const fileUrl = await uploadToGCS(req.file, filename);
 
       // Update file_proposal di mahasiswa
       await pool.query(

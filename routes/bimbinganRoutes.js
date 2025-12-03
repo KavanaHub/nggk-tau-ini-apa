@@ -3,7 +3,7 @@ import auth from '../middleware/auth.js';
 import requireRole from '../middleware/role.js';
 import bimbinganController from '../controllers/bimbinganController.js';
 import { parseMultipart } from '../middleware/upload.js';
-import { uploadToGDrive } from '../utils/gdrive.js';
+import { uploadToGCS } from '../utils/gcs.js';
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.post(
       const { mahasiswa_id, bimbingan_id } = req.body;
       const filename = `bimbingan/${mahasiswa_id}/session-${bimbingan_id}-${Date.now()}.${req.file.originalname.split(".").pop()}`;
 
-      const fileUrl = await uploadToGDrive(req.file, filename);
+      const fileUrl = await uploadToGCS(req.file, filename);
 
       res.json({
         message: "Lampiran bimbingan uploaded successfully",
