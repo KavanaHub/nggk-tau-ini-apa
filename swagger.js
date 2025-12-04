@@ -346,6 +346,70 @@ const swaggerDefinition = {
     '/api/koordinator/assign-dosen': { post: { tags: ['Koordinator'], summary: 'Assign dosen pembimbing', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Dosen ditugaskan' } } } },
     '/api/koordinator/sidang/schedule': { post: { tags: ['Koordinator'], summary: 'Jadwalkan sidang', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Sidang dijadwalkan' } } } },
     '/api/koordinator/sidang': { get: { tags: ['Koordinator'], summary: 'List sidang', responses: { 200: { description: 'Daftar sidang' } } } },
+    '/api/koordinator/jadwal': {
+      get: { tags: ['Koordinator'], summary: 'List jadwal proyek/internship', responses: { 200: { description: 'Daftar jadwal' } } },
+      post: {
+        tags: ['Koordinator'],
+        summary: 'Buat jadwal proyek/internship',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['nama', 'tipe', 'start_date', 'end_date'],
+                properties: {
+                  nama: { type: 'string', example: 'Proyek 1' },
+                  tipe: { type: 'string', enum: ['proyek', 'internship', 'lainnya'], example: 'proyek' },
+                  start_date: { type: 'string', format: 'date' },
+                  end_date: { type: 'string', format: 'date' },
+                  deskripsi: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+        responses: { 201: { description: 'Jadwal disimpan' }, 400: { description: 'Validasi gagal' } },
+      },
+    },
+    '/api/koordinator/jadwal/{id}': {
+      put: {
+        tags: ['Koordinator'],
+        summary: 'Perbarui jadwal proyek/internship',
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['nama', 'tipe', 'start_date', 'end_date'],
+                properties: {
+                  nama: { type: 'string', example: 'Proyek 1' },
+                  tipe: { type: 'string', enum: ['proyek', 'internship', 'lainnya'], example: 'proyek' },
+                  start_date: { type: 'string', format: 'date' },
+                  end_date: { type: 'string', format: 'date' },
+                  deskripsi: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+        responses: { 200: { description: 'Jadwal diperbarui' }, 400: { description: 'Validasi gagal' }, 404: { description: 'Tidak ditemukan' } },
+      },
+    },
+    '/api/koordinator/jadwal/{id}/complete': {
+      post: {
+        tags: ['Koordinator'],
+        summary: 'Selesaikan jadwal dan bersihkan data terkait',
+        parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+        responses: {
+          200: { description: 'Jadwal diselesaikan dan data dibersihkan' },
+          400: { description: 'Jadwal sudah completed' },
+          404: { description: 'Tidak ditemukan' },
+        },
+      },
+    },
     '/api/kaprodi/profile': { get: { tags: ['Kaprodi'], summary: 'Profil kaprodi', responses: { 200: { description: 'Profil' } } } },
     '/api/kaprodi/stats': { get: { tags: ['Kaprodi'], summary: 'Statistik kaprodi', responses: { 200: { description: 'Statistik' } } } },
     '/api/kaprodi/mahasiswa': { get: { tags: ['Kaprodi'], summary: 'List mahasiswa', responses: { 200: { description: 'Daftar mahasiswa' } } } },

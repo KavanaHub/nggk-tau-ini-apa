@@ -3,6 +3,7 @@ import auth from '../middleware/auth.js';
 import requireRole from '../middleware/role.js';
 import koordinatorController from '../controllers/koordinatorController.js';
 import sidangController from '../controllers/sidangController.js';
+import jadwalController from '../controllers/jadwalController.js';
 
 const router = express.Router();
 
@@ -24,5 +25,11 @@ router.post('/assign-dosen', auth, requireRole('koordinator'), koordinatorContro
 // Sidang
 router.post('/sidang/schedule', auth, requireRole('koordinator'), sidangController.scheduleSidang);
 router.get('/sidang', auth, requireRole('koordinator'), sidangController.getAllSidang);
+
+// Jadwal Proyek/Internship
+router.get('/jadwal', auth, requireRole('koordinator'), jadwalController.list);
+router.post('/jadwal', auth, requireRole('koordinator'), jadwalController.create);
+router.put('/jadwal/:id', auth, requireRole('koordinator'), jadwalController.update);
+router.post('/jadwal/:id/complete', auth, requireRole('koordinator'), jadwalController.complete);
 
 export default router;
