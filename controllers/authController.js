@@ -105,8 +105,13 @@ const authController = {
     const { email, password } = req.body;
 
     try {
+      // Check admin
+      let [rows] = await pool.query('SELECT id, email, password_hash, "admin" as role FROM admin WHERE email = ?', [email]);
+
       // Check mahasiswa
-      let [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE email = ?', [email]);
+      if (rows.length === 0) {
+        [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE email = ?', [email]);
+      }
       
       // Check dosen_pembimbing
       if (rows.length === 0) {
