@@ -186,34 +186,6 @@ const swaggerDefinition = {
         },
       },
     },
-    '/api/auth/register/koordinator': {
-      post: {
-        tags: ['Auth'],
-        summary: 'Register koordinator',
-        security: [],
-        requestBody: {
-          required: true,
-          content: { 'application/json': { schema: { $ref: '#/components/schemas/DosenRegisterRequest' } } },
-        },
-        responses: {
-          201: { description: 'Koordinator registered successfully' },
-        },
-      },
-    },
-    '/api/auth/register/penguji': {
-      post: {
-        tags: ['Auth'],
-        summary: 'Register penguji',
-        security: [],
-        requestBody: {
-          required: true,
-          content: { 'application/json': { schema: { $ref: '#/components/schemas/DosenRegisterRequest' } } },
-        },
-        responses: {
-          201: { description: 'Penguji registered successfully' },
-        },
-      },
-    },
     '/api/auth/login': {
       post: {
         tags: ['Auth'],
