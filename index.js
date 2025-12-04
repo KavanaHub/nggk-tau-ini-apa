@@ -29,6 +29,11 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get('/api/docs.json', (req, res) => {
   res.json(swaggerSpec);
 });
+// Mirror swagger docs without prefix for deployments that strip function name
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get('/docs.json', (req, res) => {
+  res.json(swaggerSpec);
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/mahasiswa', mahasiswaRoutes);
