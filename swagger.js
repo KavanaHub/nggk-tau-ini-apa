@@ -186,25 +186,6 @@ const swaggerDefinition = {
         },
       },
     },
-    '/api/auth/register/dosen-pembimbing': {
-      post: {
-        tags: ['Auth'],
-        summary: 'Register dosen pembimbing',
-        security: [],
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: { $ref: '#/components/schemas/DosenRegisterRequest' },
-            },
-          },
-        },
-        responses: {
-          201: { description: 'Dosen Pembimbing registered successfully' },
-          400: { description: 'Email duplicate', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
-        },
-      },
-    },
     '/api/auth/register/koordinator': {
       post: {
         tags: ['Auth'],
