@@ -24,3 +24,7 @@ Penggunaan express.js untuk aplikasi bimbingan online mahasiswa
 
 Proyek 3
 GCS
+
+Tambahan alur akhir periode:
+- Koordinator memiliki jadwal proyek/internship yang bisa ditandai selesai. Saat jadwal diselesaikan, semua data periode berjalan (bimbingan, laporan sidang, sidang, nilai, status proposal/assignment mahasiswa) dibersihkan agar periode baru mulai dari nol.
+- Koordinator yang menutup periode otomatis dinonaktifkan; perlu diaktifkan/ditetapkan ulang untuk periode berikutnya.
