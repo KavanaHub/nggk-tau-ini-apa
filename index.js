@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import functions from '@google-cloud/functions-framework';
+import swaggerUi from 'swagger-ui-express';
 
 import authRoutes from './routes/authRoutes.js';
 import mahasiswaRoutes from './routes/mahasiswaRoutes.js';
@@ -14,6 +15,7 @@ import sidangRoutes from './routes/sidangRoutes.js';
 import proposalRoutes from './routes/proposalRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
+import swaggerSpec from './swagger.js';
 
 dotenv.config();
 
@@ -21,6 +23,12 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Swagger documentation
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get('/api/docs.json', (req, res) => {
+  res.json(swaggerSpec);
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/mahasiswa', mahasiswaRoutes);
