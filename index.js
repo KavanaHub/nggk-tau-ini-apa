@@ -69,4 +69,5 @@ functions.http('kavana', app);
 
 // EXPORT FOR VERCEL
 export default app;
+
 export const kavana = app;
