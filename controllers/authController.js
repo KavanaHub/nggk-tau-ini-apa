@@ -3,7 +3,7 @@ import { hashPassword, comparePassword } from '../utils/password.js';
 import { generateToken } from '../utils/jwt.js';
 
 const authController = {
-  // Register Mahasiswa
+  // Register Mahasiswa (hanya mahasiswa yang bisa register sendiri)
   registerMahasiswa: async (req, res, next) => {
     const { email, password, npm, nama, no_wa, angkatan } = req.body;
 
@@ -31,75 +31,6 @@ const authController = {
     }
   },
 
-  // Register Dosen Pembimbing
-  registerDosenPembimbing: async (req, res, next) => {
-    const { email, password, nidn, nama, no_wa } = req.body;
-
-    try {
-      const [existing] = await pool.query('SELECT id FROM dosen_pembimbing WHERE email = ?', [email]);
-      if (existing.length > 0) {
-        return res.status(400).json({ message: 'Email already registered' });
-      }
-
-      const password_hash = await hashPassword(password);
-
-      await pool.query(
-        'INSERT INTO dosen_pembimbing (email, password_hash, nidn, nama, no_wa) VALUES (?, ?, ?, ?, ?)',
-        [email, password_hash, nidn || null, nama, no_wa || null]
-      );
-
-      res.status(201).json({ message: 'Dosen Pembimbing registered successfully' });
-    } catch (err) {
-      next(err);
-    }
-  },
-
-  // Register Koordinator
-  registerKoordinator: async (req, res, next) => {
-    const { email, password, nidn, nama, no_wa } = req.body;
-
-    try {
-      const [existing] = await pool.query('SELECT id FROM koordinator WHERE email = ?', [email]);
-      if (existing.length > 0) {
-        return res.status(400).json({ message: 'Email already registered' });
-      }
-
-      const password_hash = await hashPassword(password);
-
-      await pool.query(
-        'INSERT INTO koordinator (email, password_hash, nidn, nama, no_wa) VALUES (?, ?, ?, ?, ?)',
-        [email, password_hash, nidn || null, nama, no_wa || null]
-      );
-
-      res.status(201).json({ message: 'Koordinator registered successfully' });
-    } catch (err) {
-      next(err);
-    }
-  },
-
-  // Register Penguji
-  registerPenguji: async (req, res, next) => {
-    const { email, password, nidn, nama, no_wa } = req.body;
-
-    try {
-      const [existing] = await pool.query('SELECT id FROM penguji WHERE email = ?', [email]);
-      if (existing.length > 0) {
-        return res.status(400).json({ message: 'Email already registered' });
-      }
-
-      const password_hash = await hashPassword(password);
-
-      await pool.query(
-        'INSERT INTO penguji (email, password_hash, nidn, nama, no_wa) VALUES (?, ?, ?, ?, ?)',
-        [email, password_hash, nidn || null, nama, no_wa || null]
-      );
-
-      res.status(201).json({ message: 'Penguji registered successfully' });
-    } catch (err) {
-      next(err);
-    }
-  },
-
   // Login (multi-role)
   login: async (req, res, next) => {
     const { email, password } = req.body;
@@ -112,22 +43,25 @@ const authController = {
       if (rows.length === 0) {
         [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE email = ?', [email]);
       }
-      
-      // Check dosen_pembimbing
+
+      // Check dosen (bisa kaprodi atau dosen biasa berdasarkan jabatan)
       if (rows.length === 0) {
-        [rows] = await pool.query('SELECT id, email, password_hash, "dosen_pembimbing" as role FROM dosen_pembimbing WHERE email = ?', [email]);
+        [rows] = await pool.query(
+          `SELECT id, email, password_hash, jabatan,
+           CASE 
+             WHEN jabatan LIKE '%kaprodi%' THEN 'kaprodi'
+             ELSE 'dosen'
+           END as role
+           FROM dosen WHERE email = ?`,
+          [email]
+        );
       }
-      
+
       // Check koordinator
       if (rows.length === 0) {
         [rows] = await pool.query('SELECT id, email, password_hash, "koordinator" as role FROM koordinator WHERE email = ?', [email]);
       }
-      
-      // Check kaprodi
-      if (rows.length === 0) {
-        [rows] = await pool.query('SELECT id, email, password_hash, "kaprodi" as role FROM kaprodi WHERE email = ?', [email]);
-      }
-      
+
       // Check penguji
       if (rows.length === 0) {
         [rows] = await pool.query('SELECT id, email, password_hash, "penguji" as role FROM penguji WHERE email = ?', [email]);

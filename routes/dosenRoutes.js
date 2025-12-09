@@ -7,25 +7,24 @@ import sidangController from '../controllers/sidangController.js';
 
 const router = express.Router();
 
-// Profile
-router.get('/profile', auth, requireRole('dosen_pembimbing'), dosenController.getProfile);
+// Profile (dosen dan kaprodi bisa akses)
+router.get('/profile', auth, requireRole('dosen', 'kaprodi'), dosenController.getProfile);
 
 // List semua dosen (untuk public)
 router.get('/list', dosenController.listDosen);
 
 // Mahasiswa Bimbingan
-router.get('/mahasiswa', auth, requireRole('dosen_pembimbing'), dosenController.getMahasiswaBimbingan);
+router.get('/mahasiswa', auth, requireRole('dosen', 'kaprodi'), dosenController.getMahasiswaBimbingan);
 
 // Bimbingan
-router.get('/bimbingan', auth, requireRole('dosen_pembimbing'), bimbinganController.getDosenBimbingan);
-router.patch('/bimbingan/:id/status', auth, requireRole('dosen_pembimbing'), bimbinganController.updateBimbinganStatus);
+router.get('/bimbingan', auth, requireRole('dosen', 'kaprodi'), bimbinganController.getDosenBimbingan);
+router.patch('/bimbingan/:id/status', auth, requireRole('dosen', 'kaprodi'), bimbinganController.updateBimbinganStatus);
 
 // Laporan Sidang
-router.get('/laporan', auth, requireRole('dosen_pembimbing'), sidangController.getDosenLaporan);
-router.patch('/laporan/:id/status', auth, requireRole('dosen_pembimbing'), sidangController.updateLaporanStatus);
+router.get('/laporan', auth, requireRole('dosen', 'kaprodi'), sidangController.getDosenLaporan);
+router.patch('/laporan/:id/status', auth, requireRole('dosen', 'kaprodi'), sidangController.updateLaporanStatus);
 
-// Sidang - Dosen Pembimbing sebagai Penguji 1
-router.get('/sidang', auth, requireRole('dosen_pembimbing'), dosenController.getMySidang);
-router.post('/sidang/nilai', auth, requireRole('dosen_pembimbing'), sidangController.inputNilaiPembimbing);
+// Sidang - Dosen sebagai Penguji 1
+router.get('/sidang', auth, requireRole('dosen', 'kaprodi'), dosenController.getMySidang);
 
 export default router;

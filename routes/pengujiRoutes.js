@@ -2,7 +2,6 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import requireRole from '../middleware/role.js';
 import pool from '../config/db.js';
-import sidangController from '../controllers/sidangController.js';
 
 const router = express.Router();
 
@@ -46,8 +45,5 @@ router.get('/sidang', auth, requireRole('penguji'), async (req, res, next) => {
     next(err);
   }
 });
-
-// Input nilai (penguji utama)
-router.post('/nilai', auth, requireRole('penguji'), sidangController.inputNilai);
 
 export default router;

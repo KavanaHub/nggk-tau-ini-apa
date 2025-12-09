@@ -15,12 +15,12 @@ router.get('/stats', auth, requireRole('koordinator'), koordinatorController.get
 
 // List data
 router.get('/mahasiswa', auth, requireRole('koordinator'), koordinatorController.getAllMahasiswa);
-router.get('/dosen-pembimbing', auth, requireRole('koordinator'), koordinatorController.getAllDosenPembimbing);
+router.get('/dosen', auth, requireRole('koordinator'), koordinatorController.getAllDosen);
 router.get('/proposals/pending', auth, requireRole('koordinator'), koordinatorController.getPendingProposals);
 
 // Actions
 router.patch('/proposal/validate', auth, requireRole('koordinator'), koordinatorController.validateProposal);
-router.post('/assign-dosen', auth, requireRole('koordinator'), koordinatorController.assignDosenPembimbing);
+router.post('/assign-dosen', auth, requireRole('koordinator'), koordinatorController.assignDosen);
 
 // Sidang
 router.post('/sidang/schedule', auth, requireRole('koordinator'), sidangController.scheduleSidang);

@@ -16,8 +16,8 @@ router.post('/proposal', auth, requireRole('mahasiswa'), mahasiswaController.sub
 router.get('/proposal/status', auth, requireRole('mahasiswa'), mahasiswaController.getProposalStatus);
 
 // Dosen Pembimbing
-router.get('/dosen-pembimbing', auth, requireRole('mahasiswa'), mahasiswaController.getDosenPembimbing);
-router.get('/dosen-pembimbing/list', auth, requireRole('mahasiswa'), mahasiswaController.getAllDosenPembimbing);
+router.get('/dosen', auth, requireRole('mahasiswa'), mahasiswaController.getDosen);
+router.get('/dosen/list', auth, requireRole('mahasiswa'), mahasiswaController.getAllDosen);
 
 // Bimbingan
 router.post('/bimbingan', auth, requireRole('mahasiswa'), bimbinganController.createBimbingan);

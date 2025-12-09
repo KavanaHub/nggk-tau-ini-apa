@@ -13,12 +13,12 @@ router.get('/stats', auth, requireRole('kaprodi'), kaprodiController.getDashboar
 
 // List data
 router.get('/mahasiswa', auth, requireRole('kaprodi'), kaprodiController.getAllMahasiswa);
-router.get('/dosen-pembimbing', auth, requireRole('kaprodi'), kaprodiController.getAllDosenPembimbing);
+router.get('/dosen', auth, requireRole('kaprodi'), kaprodiController.getAllDosen);
 router.get('/koordinator', auth, requireRole('kaprodi'), kaprodiController.getAllKoordinator);
 router.get('/penguji', auth, requireRole('kaprodi'), kaprodiController.getAllPenguji);
 
 // Actions
-router.post('/assign-dosen', auth, requireRole('kaprodi'), kaprodiController.assignDosenPembimbing);
+router.post('/assign-dosen', auth, requireRole('kaprodi'), kaprodiController.assignDosen);
 router.patch('/proposal/status', auth, requireRole('kaprodi'), kaprodiController.updateProposalStatus);
 
 export default router;

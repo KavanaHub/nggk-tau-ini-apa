@@ -1,13 +1,14 @@
 import pool from '../config/db.js';
+import sharedController from './sharedController.js';
 
 const dosenController = {
-  // GET PROFILE DOSEN PEMBIMBING
+  // GET PROFILE DOSEN
   getProfile: async (req, res, next) => {
     try {
       const dosenId = req.user.id;
       const [rows] = await pool.query(
-        `SELECT id, email, nidn, nama, no_wa, is_active, created_at
-         FROM dosen_pembimbing WHERE id = ?`,
+        `SELECT id, email, nidn, nama, no_wa, jabatan, prodi, is_active, created_at
+         FROM dosen WHERE id = ?`,
         [dosenId]
       );
 
@@ -21,17 +22,8 @@ const dosenController = {
     }
   },
 
-  // LIST SEMUA DOSEN PEMBIMBING
-  listDosen: async (req, res, next) => {
-    try {
-      const [rows] = await pool.query(
-        'SELECT id, nama, nidn, no_wa FROM dosen_pembimbing WHERE is_active = 1'
-      );
-      res.json(rows);
-    } catch (err) {
-      next(err);
-    }
-  },
+  // LIST SEMUA DOSEN - menggunakan shared function
+  listDosen: sharedController.getActiveDosen,
 
   // GET MAHASISWA BIMBINGAN (mahasiswa yang dibimbing)
   getMahasiswaBimbingan: async (req, res, next) => {
@@ -40,7 +32,7 @@ const dosenController = {
       const [rows] = await pool.query(
         `SELECT m.id, m.npm, m.nama, m.email, m.no_wa, m.judul_proyek, m.status_proposal
          FROM mahasiswa m
-         WHERE m.dosen_pembimbing_id = ?
+         WHERE m.dosen_id = ?
          ORDER BY m.nama ASC`,
         [dosenId]
       );
@@ -59,7 +51,7 @@ const dosenController = {
         `SELECT b.*, m.nama as mahasiswa_nama, m.npm
          FROM bimbingan b
          JOIN mahasiswa m ON b.mahasiswa_id = m.id
-         WHERE b.dosen_pembimbing_id = ?
+         WHERE b.dosen_id = ?
          ORDER BY b.created_at DESC`,
         [dosenId]
       );
@@ -78,7 +70,7 @@ const dosenController = {
         `SELECT ls.*, m.nama as mahasiswa_nama, m.npm, m.judul_proyek
          FROM laporan_sidang ls
          JOIN mahasiswa m ON ls.mahasiswa_id = m.id
-         WHERE m.dosen_pembimbing_id = ?
+         WHERE m.dosen_id = ?
          ORDER BY ls.created_at DESC`,
         [dosenId]
       );
@@ -99,7 +91,7 @@ const dosenController = {
          FROM sidang s
          JOIN mahasiswa m ON s.mahasiswa_id = m.id
          JOIN penguji p ON s.penguji_id = p.id
-         WHERE s.dosen_pembimbing_id = ?
+         WHERE s.dosen_id = ?
          ORDER BY s.tanggal DESC, s.waktu ASC`,
         [dosenId]
       );
