@@ -1,8 +1,7 @@
 untuk proyek 1,2,3 setiap mahasiswa membuat kelompok yang terdiri dari 2 orang setiap kelompok nya
 untuk intership 1 dan 2 hanya 1 mahasiswa saja
 
-untuk proyek 1,2,3 mahasiswa saat ingin mengupload proposal memasukan terlebih dahulu judul proyek nya, nama setiap mahasiswa nya, npm masing" mahasiswa dan prodi nya
-prodi terdiri dari d3 dan d4 Teknik informatika
+untuk proyek 1,2,3 mahasiswa saat ingin mengupload proposal memasukan terlebih dahulu judul proyek nya, nama setiap mahasiswa nya, npm masing" mahasiswa dan prodi nya hanya d4 Teknik informatika
 
 intership terdiri dari 1 mahasiswa, sama seperti proyek untuk identitas nya, lalu memilih untuk intership 1 dan 2 terdiri dari 2 pembimbing yaitu pembimbing Utama dan pembimbing 2
 
