@@ -2,6 +2,10 @@ import pool from '../config/db.js';
 import { hashPassword, comparePassword } from '../utils/password.js';
 import { generateToken } from '../utils/jwt.js';
 
+// Hardcoded admin credentials
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@kavanahub.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+
 const authController = {
   // Register Mahasiswa (hanya mahasiswa yang bisa register sendiri)
   registerMahasiswa: async (req, res, next) => {
@@ -36,13 +40,16 @@ const authController = {
     const { email, password } = req.body;
 
     try {
-      // Check admin
-      let [rows] = await pool.query('SELECT id, email, password_hash, "admin" as role FROM admin WHERE email = ?', [email]);
+      // Check hardcoded admin
+      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+        const token = generateToken({ id: 0, email: ADMIN_EMAIL, role: 'admin' });
+        return res.json({ token, role: 'admin', user_id: 0 });
+      }
+
+      let rows = [];
 
       // Check mahasiswa
-      if (rows.length === 0) {
-        [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE email = ?', [email]);
-      }
+      [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE email = ?', [email]);
 
       // Check dosen (bisa kaprodi atau dosen biasa berdasarkan jabatan)
       if (rows.length === 0) {
