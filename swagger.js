@@ -1,6 +1,6 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 
-const serverUrl = process.env.SWAGGER_SERVER_URL || 'http://localhost:8080';
+const serverUrl = process.env.SWAGGER_SERVER_URL || 'http://localhost:3000';
 
 const swaggerDefinition = {
   openapi: '3.0.0',
@@ -62,17 +62,6 @@ const swaggerDefinition = {
           angkatan: { type: 'integer', example: 2024 },
         },
       },
-      DosenRegisterRequest: {
-        type: 'object',
-        required: ['email', 'password', 'nama'],
-        properties: {
-          email: { type: 'string', format: 'email' },
-          password: { type: 'string' },
-          nidn: { type: 'string' },
-          nama: { type: 'string' },
-          no_wa: { type: 'string' },
-        },
-      },
       BimbinganUploadRequest: {
         type: 'object',
         properties: {
@@ -106,16 +95,16 @@ const swaggerDefinition = {
   },
   security: [{ bearerAuth: [] }],
   tags: [
-    { name: 'Auth', description: 'Registrasi dan login multi role' },
+    { name: 'Auth', description: 'Registrasi mahasiswa dan login multi role' },
     { name: 'Mahasiswa', description: 'Aksi mahasiswa' },
-    { name: 'Dosen', description: 'Aksi dosen pembimbing' },
+    { name: 'Dosen', description: 'Aksi dosen (pembimbing/kaprodi)' },
     { name: 'Koordinator', description: 'Aksi koordinator' },
     { name: 'Kaprodi', description: 'Aksi kaprodi' },
     { name: 'Penguji', description: 'Aksi penguji' },
     { name: 'Bimbingan', description: 'Bimbingan dan lampiran' },
     { name: 'Proposal', description: 'Pengajuan proposal' },
     { name: 'Report', description: 'Laporan sidang' },
-    { name: 'Sidang', description: 'Jadwal dan nilai sidang' },
+    { name: 'Sidang', description: 'Jadwal sidang' },
     { name: 'Profile', description: 'Upload foto profil' },
     { name: 'System', description: 'Endpoint pemeriksaan kesehatan' },
   ],
@@ -170,7 +159,7 @@ const swaggerDefinition = {
     '/api/auth/register/mahasiswa': {
       post: {
         tags: ['Auth'],
-        summary: 'Register mahasiswa',
+        summary: 'Register mahasiswa (hanya mahasiswa yang bisa register)',
         security: [],
         requestBody: {
           required: true,
@@ -189,7 +178,7 @@ const swaggerDefinition = {
     '/api/auth/login': {
       post: {
         tags: ['Auth'],
-        summary: 'Login multi-role',
+        summary: 'Login multi-role (mahasiswa, dosen, kaprodi, koordinator, penguji, admin)',
         security: [],
         requestBody: {
           required: true,
@@ -205,7 +194,7 @@ const swaggerDefinition = {
       },
     },
     '/api/mahasiswa/profile': {
-      get: { tags: ['Mahasiswa'], summary: 'Ambil profil mahasiswa' , responses: { 200: { description: 'Profil mahasiswa' } } },
+      get: { tags: ['Mahasiswa'], summary: 'Ambil profil mahasiswa', responses: { 200: { description: 'Profil mahasiswa' } } },
       put: { tags: ['Mahasiswa'], summary: 'Update profil mahasiswa', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Profil diperbarui' } } },
     },
     '/api/mahasiswa/proposal': {
@@ -214,11 +203,11 @@ const swaggerDefinition = {
     '/api/mahasiswa/proposal/status': {
       get: { tags: ['Mahasiswa'], summary: 'Status proposal mahasiswa', responses: { 200: { description: 'Status proposal' } } },
     },
-    '/api/mahasiswa/dosen-pembimbing': {
+    '/api/mahasiswa/dosen': {
       get: { tags: ['Mahasiswa'], summary: 'Dosen pembimbing yang ditugaskan', responses: { 200: { description: 'Data dosen pembimbing' } } },
     },
-    '/api/mahasiswa/dosen-pembimbing/list': {
-      get: { tags: ['Mahasiswa'], summary: 'Daftar semua dosen pembimbing', responses: { 200: { description: 'List dosen' } } },
+    '/api/mahasiswa/dosen/list': {
+      get: { tags: ['Mahasiswa'], summary: 'Daftar semua dosen aktif', responses: { 200: { description: 'List dosen' } } },
     },
     '/api/mahasiswa/bimbingan': {
       post: { tags: ['Mahasiswa'], summary: 'Ajukan sesi bimbingan', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Bimbingan dibuat' } } },
@@ -295,10 +284,10 @@ const swaggerDefinition = {
       },
     },
     '/api/dosen/profile': {
-      get: { tags: ['Dosen'], summary: 'Profil dosen pembimbing', responses: { 200: { description: 'Profil dosen' } } },
+      get: { tags: ['Dosen'], summary: 'Profil dosen (bisa dosen biasa atau kaprodi)', responses: { 200: { description: 'Profil dosen' } } },
     },
     '/api/dosen/list': {
-      get: { tags: ['Dosen'], summary: 'Daftar dosen pembimbing (public)', security: [], responses: { 200: { description: 'List dosen' } } },
+      get: { tags: ['Dosen'], summary: 'Daftar dosen aktif (public)', security: [], responses: { 200: { description: 'List dosen' } } },
     },
     '/api/dosen/mahasiswa': {
       get: { tags: ['Dosen'], summary: 'Mahasiswa bimbingan saya', responses: { 200: { description: 'List mahasiswa' } } },
@@ -309,29 +298,26 @@ const swaggerDefinition = {
     '/api/dosen/bimbingan/{id}/status': {
       patch: {
         tags: ['Dosen'],
-        summary: 'Update status bimbingan',
+        summary: 'Update status bimbingan (approved/rejected)',
         parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
         requestBody: { content: { 'application/json': { schema: { type: 'object' } } } },
         responses: { 200: { description: 'Status diperbarui' } },
       },
     },
     '/api/dosen/laporan': {
-      get: { tags: ['Dosen'], summary: 'Laporan sidang mahasiswa', responses: { 200: { description: 'Daftar laporan' } } },
+      get: { tags: ['Dosen'], summary: 'Laporan sidang mahasiswa bimbingan', responses: { 200: { description: 'Daftar laporan' } } },
     },
     '/api/dosen/laporan/{id}/status': {
       patch: {
         tags: ['Dosen'],
-        summary: 'Update status laporan sidang',
+        summary: 'Update status laporan sidang (approved/rejected)',
         parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
         requestBody: { content: { 'application/json': { schema: { type: 'object' } } } },
         responses: { 200: { description: 'Status diperbarui' } },
       },
     },
     '/api/dosen/sidang': {
-      get: { tags: ['Dosen'], summary: 'Sidang yang melibatkan dosen pembimbing', responses: { 200: { description: 'Daftar sidang' } } },
-    },
-    '/api/dosen/sidang/nilai': {
-      post: { tags: ['Dosen'], summary: 'Input nilai sidang sebagai pembimbing', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Nilai tersimpan' } } },
+      get: { tags: ['Dosen'], summary: 'Sidang yang melibatkan dosen sebagai Penguji 1', responses: { 200: { description: 'Daftar sidang' } } },
     },
     '/api/koordinator/profile': {
       get: { tags: ['Koordinator'], summary: 'Profil koordinator', responses: { 200: { description: 'Profil' } } },
@@ -340,10 +326,10 @@ const swaggerDefinition = {
       get: { tags: ['Koordinator'], summary: 'Statistik dashboard koordinator', responses: { 200: { description: 'Data statistik' } } },
     },
     '/api/koordinator/mahasiswa': { get: { tags: ['Koordinator'], summary: 'List mahasiswa', responses: { 200: { description: 'Daftar mahasiswa' } } } },
-    '/api/koordinator/dosen-pembimbing': { get: { tags: ['Koordinator'], summary: 'List dosen pembimbing', responses: { 200: { description: 'Daftar dosen' } } } },
+    '/api/koordinator/dosen': { get: { tags: ['Koordinator'], summary: 'List dosen', responses: { 200: { description: 'Daftar dosen' } } } },
     '/api/koordinator/proposals/pending': { get: { tags: ['Koordinator'], summary: 'Proposal menunggu validasi', responses: { 200: { description: 'Daftar proposal' } } } },
-    '/api/koordinator/proposal/validate': { patch: { tags: ['Koordinator'], summary: 'Validasi proposal', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Proposal divalidasi' } } } },
-    '/api/koordinator/assign-dosen': { post: { tags: ['Koordinator'], summary: 'Assign dosen pembimbing', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Dosen ditugaskan' } } } },
+    '/api/koordinator/proposal/validate': { patch: { tags: ['Koordinator'], summary: 'Validasi proposal (approved/rejected)', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Proposal divalidasi' } } } },
+    '/api/koordinator/assign-dosen': { post: { tags: ['Koordinator'], summary: 'Assign dosen pembimbing ke mahasiswa', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Dosen ditugaskan' } } } },
     '/api/koordinator/sidang/schedule': { post: { tags: ['Koordinator'], summary: 'Jadwalkan sidang', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Sidang dijadwalkan' } } } },
     '/api/koordinator/sidang': { get: { tags: ['Koordinator'], summary: 'List sidang', responses: { 200: { description: 'Daftar sidang' } } } },
     '/api/koordinator/jadwal': {
@@ -410,27 +396,17 @@ const swaggerDefinition = {
         },
       },
     },
-    '/api/kaprodi/profile': { get: { tags: ['Kaprodi'], summary: 'Profil kaprodi', responses: { 200: { description: 'Profil' } } } },
-    '/api/kaprodi/stats': { get: { tags: ['Kaprodi'], summary: 'Statistik kaprodi', responses: { 200: { description: 'Statistik' } } } },
+    '/api/kaprodi/profile': { get: { tags: ['Kaprodi'], summary: 'Profil kaprodi (dosen dengan jabatan kaprodi)', responses: { 200: { description: 'Profil' } } } },
+    '/api/kaprodi/stats': { get: { tags: ['Kaprodi'], summary: 'Statistik dashboard kaprodi', responses: { 200: { description: 'Statistik' } } } },
     '/api/kaprodi/mahasiswa': { get: { tags: ['Kaprodi'], summary: 'List mahasiswa', responses: { 200: { description: 'Daftar mahasiswa' } } } },
-    '/api/kaprodi/dosen-pembimbing': { get: { tags: ['Kaprodi'], summary: 'List dosen pembimbing', responses: { 200: { description: 'Daftar dosen' } } } },
+    '/api/kaprodi/dosen': { get: { tags: ['Kaprodi'], summary: 'List dosen', responses: { 200: { description: 'Daftar dosen' } } } },
     '/api/kaprodi/koordinator': { get: { tags: ['Kaprodi'], summary: 'List koordinator', responses: { 200: { description: 'Daftar koordinator' } } } },
     '/api/kaprodi/penguji': { get: { tags: ['Kaprodi'], summary: 'List penguji', responses: { 200: { description: 'Daftar penguji' } } } },
-    '/api/kaprodi/assign-dosen': { post: { tags: ['Kaprodi'], summary: 'Assign dosen pembimbing', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Dosen ditugaskan' } } } },
-    '/api/kaprodi/proposal/status': { patch: { tags: ['Kaprodi'], summary: 'Update status proposal', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Status diperbarui' } } } },
+    '/api/kaprodi/assign-dosen': { post: { tags: ['Kaprodi'], summary: 'Assign dosen pembimbing ke mahasiswa', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Dosen ditugaskan' } } } },
+    '/api/kaprodi/proposal/status': { patch: { tags: ['Kaprodi'], summary: 'Update status proposal (approved/rejected)', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Status diperbarui' } } } },
     '/api/penguji/profile': { get: { tags: ['Penguji'], summary: 'Profil penguji', responses: { 200: { description: 'Profil' }, 404: { description: 'Tidak ditemukan' } } } },
-    '/api/penguji/sidang': { get: { tags: ['Penguji'], summary: 'Sidang yang diampu sebagai penguji', responses: { 200: { description: 'Daftar sidang' } } } },
-    '/api/penguji/nilai': { post: { tags: ['Penguji'], summary: 'Input nilai sebagai penguji utama', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Nilai tersimpan' } } } },
-    '/api/sidang': { get: { tags: ['Sidang'], summary: 'List sidang (auth)', responses: { 200: { description: 'Daftar sidang' } } } },
-    '/api/sidang/{sidang_id}/nilai': {
-      get: {
-        tags: ['Sidang'],
-        summary: 'Nilai sidang tertentu',
-        parameters: [{ name: 'sidang_id', in: 'path', required: true, schema: { type: 'integer' } }],
-        responses: { 200: { description: 'Detail nilai' }, 404: { description: 'Tidak ditemukan' } },
-      },
-    },
-    '/api/sidang/nilai': { post: { tags: ['Sidang'], summary: 'Input nilai (penguji)', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Nilai tersimpan' } } } },
+    '/api/penguji/sidang': { get: { tags: ['Penguji'], summary: 'Sidang yang diampu sebagai Penguji 2', responses: { 200: { description: 'Daftar sidang' } } } },
+    '/api/sidang': { get: { tags: ['Sidang'], summary: 'List semua sidang (auth)', responses: { 200: { description: 'Daftar sidang' } } } },
     '/api/sidang/upload': {
       post: {
         tags: ['Sidang'],
