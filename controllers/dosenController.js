@@ -7,7 +7,7 @@ const dosenController = {
     try {
       const dosenId = req.user.id;
       const [rows] = await pool.query(
-        `SELECT id, email, nidn, nama, no_wa, jabatan, prodi, is_active, created_at
+        `SELECT id, email, nidn, nama, no_wa, jabatan, is_active, created_at
          FROM dosen WHERE id = ?`,
         [dosenId]
       );
@@ -25,16 +25,17 @@ const dosenController = {
   // LIST SEMUA DOSEN - menggunakan shared function
   listDosen: sharedController.getActiveDosen,
 
-  // GET MAHASISWA BIMBINGAN (mahasiswa yang dibimbing)
+  // GET MAHASISWA BIMBINGAN (mahasiswa yang dibimbing, termasuk sebagai pembimbing 2)
   getMahasiswaBimbingan: async (req, res, next) => {
     try {
       const dosenId = req.user.id;
       const [rows] = await pool.query(
-        `SELECT m.id, m.npm, m.nama, m.email, m.no_wa, m.judul_proyek, m.status_proposal
+        `SELECT m.id, m.npm, m.nama, m.email, m.no_wa, m.judul_proyek, m.status_proposal, m.track,
+                CASE WHEN m.dosen_id = ? THEN 'utama' ELSE 'kedua' END as peran_pembimbing
          FROM mahasiswa m
-         WHERE m.dosen_id = ?
+         WHERE m.dosen_id = ? OR m.dosen_id_2 = ?
          ORDER BY m.nama ASC`,
-        [dosenId]
+        [dosenId, dosenId, dosenId]
       );
 
       res.json(rows);

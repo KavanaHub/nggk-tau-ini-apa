@@ -28,12 +28,15 @@ const koordinatorController = {
   // GET SEMUA DOSEN - menggunakan shared function
   getAllDosen: sharedController.getAllDosen,
 
-  // GET MAHASISWA YANG PROPOSAL PENDING
+  // GET MAHASISWA YANG PROPOSAL PENDING (dengan usulan dosen)
   getPendingProposals: async (req, res, next) => {
     try {
       const [rows] = await pool.query(
-        `SELECT m.id, m.npm, m.nama, m.email, m.judul_proyek, m.file_proposal, m.created_at
+        `SELECT m.id, m.npm, m.nama, m.email, m.track, m.judul_proyek, 
+                m.file_proposal, m.usulan_dosen_id, m.created_at,
+                d.nama as usulan_dosen_nama, d.nidn as usulan_dosen_nidn
          FROM mahasiswa m
+         LEFT JOIN dosen d ON m.usulan_dosen_id = d.id
          WHERE m.status_proposal = 'pending' AND m.judul_proyek IS NOT NULL
          ORDER BY m.created_at ASC`
       );

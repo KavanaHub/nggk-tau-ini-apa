@@ -27,7 +27,7 @@ const sharedController = {
     getAllDosen: async (req, res, next) => {
         try {
             const [rows] = await pool.query(
-                `SELECT id, nidn, nama, email, no_wa, jabatan, prodi, is_active FROM dosen ORDER BY nama ASC`
+                `SELECT id, nidn, nama, email, no_wa, jabatan, is_active FROM dosen ORDER BY nama ASC`
             );
 
             res.json(rows);
@@ -40,7 +40,7 @@ const sharedController = {
     getActiveDosen: async (req, res, next) => {
         try {
             const [rows] = await pool.query(
-                `SELECT id, nama, nidn, no_wa, jabatan, prodi FROM dosen WHERE is_active = 1 ORDER BY nama ASC`
+                `SELECT id, nama, nidn, no_wa, jabatan FROM dosen WHERE is_active = 1 ORDER BY nama ASC`
             );
 
             res.json(rows);
@@ -75,30 +75,50 @@ const sharedController = {
         }
     },
 
-    // ASSIGN DOSEN KE MAHASISWA
+    // ASSIGN DOSEN KE MAHASISWA (support 2 pembimbing untuk internship)
     assignDosen: async (req, res, next) => {
-        const { mahasiswa_id, dosen_id } = req.body;
+        const { mahasiswa_id, dosen_id, dosen_id_2 } = req.body;
 
         if (!mahasiswa_id || !dosen_id) {
             return res.status(400).json({ message: 'mahasiswa_id dan dosen_id wajib diisi' });
         }
 
         try {
-            // Cek mahasiswa ada
-            const [mhsRows] = await pool.query('SELECT id FROM mahasiswa WHERE id = ?', [mahasiswa_id]);
+            // Cek mahasiswa dan track-nya
+            const [mhsRows] = await pool.query('SELECT id, track FROM mahasiswa WHERE id = ?', [mahasiswa_id]);
             if (mhsRows.length === 0) {
                 return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
             }
 
-            // Cek dosen ada
+            const track = mhsRows[0].track;
+            const isInternship = track && track.startsWith('internship');
+
+            // Untuk internship, wajib 2 pembimbing
+            if (isInternship && !dosen_id_2) {
+                return res.status(400).json({ message: 'Track internship memerlukan 2 pembimbing (dosen_id dan dosen_id_2)' });
+            }
+
+            // Cek dosen utama ada
             const [dosenRows] = await pool.query('SELECT id FROM dosen WHERE id = ?', [dosen_id]);
             if (dosenRows.length === 0) {
-                return res.status(404).json({ message: 'Dosen tidak ditemukan' });
+                return res.status(404).json({ message: 'Dosen pembimbing utama tidak ditemukan' });
+            }
+
+            // Cek dosen 2 jika ada
+            if (dosen_id_2) {
+                const [dosen2Rows] = await pool.query('SELECT id FROM dosen WHERE id = ?', [dosen_id_2]);
+                if (dosen2Rows.length === 0) {
+                    return res.status(404).json({ message: 'Dosen pembimbing 2 tidak ditemukan' });
+                }
+
+                if (dosen_id === dosen_id_2) {
+                    return res.status(400).json({ message: 'Dosen pembimbing utama dan dosen pembimbing 2 tidak boleh sama' });
+                }
             }
 
             await pool.query(
-                'UPDATE mahasiswa SET dosen_id = ? WHERE id = ?',
-                [dosen_id, mahasiswa_id]
+                'UPDATE mahasiswa SET dosen_id = ?, dosen_id_2 = ? WHERE id = ?',
+                [dosen_id, dosen_id_2 || null, mahasiswa_id]
             );
 
             res.json({ message: 'Dosen pembimbing berhasil ditugaskan' });

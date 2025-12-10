@@ -7,7 +7,7 @@ const kaprodiController = {
     try {
       const dosenId = req.user.id;
       const [rows] = await pool.query(
-        `SELECT id, email, nidn, nama, no_wa, jabatan, prodi, is_active, created_at
+        `SELECT id, email, nidn, nama, no_wa, jabatan, is_active, created_at
          FROM dosen WHERE id = ? AND jabatan LIKE '%kaprodi%'`,
         [dosenId]
       );

@@ -224,6 +224,73 @@ const swaggerDefinition = {
     '/api/mahasiswa/sidang': {
       get: { tags: ['Mahasiswa'], summary: 'Jadwal sidang saya', responses: { 200: { description: 'Jadwal sidang' } } },
     },
+    '/api/mahasiswa/track': {
+      patch: {
+        tags: ['Mahasiswa'],
+        summary: 'Set track mahasiswa (proyek1/2/3 atau internship1/2)',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['track'],
+                properties: {
+                  track: { type: 'string', enum: ['proyek1', 'proyek2', 'proyek3', 'internship1', 'internship2'], example: 'proyek1' }
+                }
+              }
+            }
+          }
+        },
+        responses: { 200: { description: 'Track berhasil diset' }, 400: { description: 'Track tidak valid' } }
+      },
+    },
+    '/api/mahasiswa/kelompok': {
+      post: {
+        tags: ['Mahasiswa'],
+        summary: 'Buat kelompok baru (untuk proyek)',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['nama'],
+                properties: {
+                  nama: { type: 'string', example: 'Kelompok A' }
+                }
+              }
+            }
+          }
+        },
+        responses: { 201: { description: 'Kelompok berhasil dibuat' }, 400: { description: 'Validasi gagal' } }
+      },
+      get: { tags: ['Mahasiswa'], summary: 'Lihat kelompok saya dan anggotanya', responses: { 200: { description: 'Data kelompok' } } },
+    },
+    '/api/mahasiswa/kelompok/join': {
+      post: {
+        tags: ['Mahasiswa'],
+        summary: 'Bergabung ke kelompok existing',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['kelompok_id'],
+                properties: {
+                  kelompok_id: { type: 'integer', example: 1 }
+                }
+              }
+            }
+          }
+        },
+        responses: { 200: { description: 'Berhasil bergabung' }, 400: { description: 'Kelompok penuh atau track tidak sesuai' } }
+      },
+    },
+    '/api/mahasiswa/kelompok/available': {
+      get: { tags: ['Mahasiswa'], summary: 'Daftar kelompok yang tersedia untuk join (track sama, belum penuh)', responses: { 200: { description: 'List kelompok tersedia' } } },
+    },
     '/api/bimbingan/{id}': {
       get: {
         tags: ['Bimbingan'],
@@ -333,7 +400,29 @@ const swaggerDefinition = {
     '/api/koordinator/dosen': { get: { tags: ['Koordinator'], summary: 'List dosen', responses: { 200: { description: 'Daftar dosen' } } } },
     '/api/koordinator/proposals/pending': { get: { tags: ['Koordinator'], summary: 'Proposal menunggu validasi', responses: { 200: { description: 'Daftar proposal' } } } },
     '/api/koordinator/proposal/validate': { patch: { tags: ['Koordinator'], summary: 'Validasi proposal (approved/rejected)', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Proposal divalidasi' } } } },
-    '/api/koordinator/assign-dosen': { post: { tags: ['Koordinator'], summary: 'Assign dosen pembimbing ke mahasiswa', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Dosen ditugaskan' } } } },
+    '/api/koordinator/assign-dosen': {
+      post: {
+        tags: ['Koordinator'],
+        summary: 'Assign dosen pembimbing ke mahasiswa (internship wajib 2 pembimbing)',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['mahasiswa_id', 'dosen_id'],
+                properties: {
+                  mahasiswa_id: { type: 'integer', example: 1 },
+                  dosen_id: { type: 'integer', description: 'Pembimbing utama', example: 1 },
+                  dosen_id_2: { type: 'integer', description: 'Pembimbing kedua (wajib untuk internship)', example: 2 }
+                }
+              }
+            }
+          }
+        },
+        responses: { 200: { description: 'Dosen ditugaskan' }, 400: { description: 'Internship memerlukan 2 pembimbing' } }
+      }
+    },
     '/api/koordinator/sidang/schedule': { post: { tags: ['Koordinator'], summary: 'Jadwalkan sidang', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Sidang dijadwalkan' } } } },
     '/api/koordinator/sidang': { get: { tags: ['Koordinator'], summary: 'List sidang', responses: { 200: { description: 'Daftar sidang' } } } },
     '/api/koordinator/jadwal': {

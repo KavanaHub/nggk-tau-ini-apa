@@ -7,7 +7,7 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@kavanahub.com';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 
 const authController = {
-  // Register Mahasiswa (hanya mahasiswa yang bisa register sendiri)
+  // Register Mahasiswa (hanya mahasiswa yang bisa register sendiri - prodi D4 saja)
   registerMahasiswa: async (req, res, next) => {
     const { email, password, npm, nama, no_wa, angkatan } = req.body;
 
