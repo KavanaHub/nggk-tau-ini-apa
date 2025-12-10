@@ -18,6 +18,10 @@ const swaggerDefinition = {
       url: serverUrl,
       description: 'Pengembangan lokal',
     },
+    {
+      url: 'https://kavana-backend-j8ktr.ondigitalocean.app',
+      description: 'Development API Testing',
+    },
   ],
   components: {
     securitySchemes: {
