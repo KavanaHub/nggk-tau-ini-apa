@@ -1,4 +1,5 @@
 import pool from "../config/db.js";
+import sharedController from './sharedController.js';
 
 const mahasiswaController = {
   // GET PROFILE MAHASISWA
@@ -7,7 +8,7 @@ const mahasiswaController = {
       const mahasiswaId = req.user.id;
       const [rows] = await pool.query(
         `SELECT id, email, npm, nama, no_wa, angkatan, judul_proyek, 
-                file_proposal, status_proposal, dosen_pembimbing_id, created_at
+                file_proposal, status_proposal, dosen_id, created_at
          FROM mahasiswa WHERE id = ?`,
         [mahasiswaId]
       );
@@ -84,14 +85,14 @@ const mahasiswaController = {
   },
 
   // GET DOSEN PEMBIMBING INFO
-  getDosenPembimbing: async (req, res, next) => {
+  getDosen: async (req, res, next) => {
     const mahasiswaId = req.user.id;
 
     try {
       const [rows] = await pool.query(
-        `SELECT dp.id, dp.nama, dp.nidn, dp.no_wa, dp.email
+        `SELECT d.id, d.nama, d.nidn, d.no_wa, d.email, d.jabatan
          FROM mahasiswa m
-         JOIN dosen_pembimbing dp ON m.dosen_pembimbing_id = dp.id
+         JOIN dosen d ON m.dosen_id = d.id
          WHERE m.id = ?`,
         [mahasiswaId]
       );
@@ -112,9 +113,9 @@ const mahasiswaController = {
 
     try {
       const [rows] = await pool.query(
-        `SELECT b.*, dp.nama as dosen_nama
+        `SELECT b.*, d.nama as dosen_nama
          FROM bimbingan b
-         JOIN dosen_pembimbing dp ON b.dosen_pembimbing_id = dp.id
+         JOIN dosen d ON b.dosen_id = d.id
          WHERE b.mahasiswa_id = ?
          ORDER BY b.minggu_ke ASC`,
         [mahasiswaId]
@@ -126,18 +127,8 @@ const mahasiswaController = {
     }
   },
 
-  // GET ALL DOSEN PEMBIMBING (untuk pilih pembimbing)
-  getAllDosenPembimbing: async (req, res, next) => {
-    try {
-      const [rows] = await pool.query(
-        `SELECT id, nama, nidn, no_wa FROM dosen_pembimbing WHERE is_active = 1`
-      );
-
-      res.json(rows);
-    } catch (err) {
-      next(err);
-    }
-  },
+  // GET ALL DOSEN (untuk pilih pembimbing) - menggunakan shared function
+  getAllDosen: sharedController.getActiveDosen,
 };
 
 export default mahasiswaController;

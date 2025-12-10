@@ -13,7 +13,7 @@ const bimbinganController = {
     try {
       // Cek mahasiswa punya dosen pembimbing
       const [mhsRows] = await pool.query(
-        'SELECT dosen_pembimbing_id FROM mahasiswa WHERE id = ?',
+        'SELECT dosen_id FROM mahasiswa WHERE id = ?',
         [mahasiswaId]
       );
 
@@ -21,7 +21,7 @@ const bimbinganController = {
         return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
       }
 
-      if (!mhsRows[0].dosen_pembimbing_id) {
+      if (!mhsRows[0].dosen_id) {
         return res.status(400).json({ message: 'Anda belum memiliki dosen pembimbing' });
       }
 
@@ -36,9 +36,9 @@ const bimbinganController = {
       }
 
       const [result] = await pool.query(
-        `INSERT INTO bimbingan (mahasiswa_id, dosen_pembimbing_id, tanggal, minggu_ke, topik, catatan, status)
+        `INSERT INTO bimbingan (mahasiswa_id, dosen_id, tanggal, minggu_ke, topik, catatan, status)
          VALUES (?, ?, ?, ?, ?, ?, 'waiting')`,
-        [mahasiswaId, mhsRows[0].dosen_pembimbing_id, tanggal, minggu_ke, topik, catatan || null]
+        [mahasiswaId, mhsRows[0].dosen_id, tanggal, minggu_ke, topik, catatan || null]
       );
 
       res.status(201).json({ message: 'Bimbingan berhasil dibuat', id: result.insertId });
@@ -54,9 +54,9 @@ const bimbinganController = {
     try {
       const [rows] = await pool.query(
         `SELECT b.id, b.tanggal, b.minggu_ke, b.topik, b.catatan, b.status, 
-                b.approved_at, b.created_at, dp.nama as dosen_nama
+                b.approved_at, b.created_at, d.nama as dosen_nama
          FROM bimbingan b
-         JOIN dosen_pembimbing dp ON b.dosen_pembimbing_id = dp.id
+         JOIN dosen d ON b.dosen_id = d.id
          WHERE b.mahasiswa_id = ?
          ORDER BY b.minggu_ke ASC`,
         [mahasiswaId]
@@ -78,7 +78,7 @@ const bimbinganController = {
                 b.approved_at, b.created_at, m.nama as mahasiswa_nama, m.npm
          FROM bimbingan b
          JOIN mahasiswa m ON b.mahasiswa_id = m.id
-         WHERE b.dosen_pembimbing_id = ?
+         WHERE b.dosen_id = ?
          ORDER BY b.created_at DESC`,
         [dosenId]
       );
@@ -106,7 +106,7 @@ const bimbinganController = {
     try {
       // Cek bimbingan milik dosen ini
       const [rows] = await pool.query(
-        'SELECT id FROM bimbingan WHERE id = ? AND dosen_pembimbing_id = ?',
+        'SELECT id FROM bimbingan WHERE id = ? AND dosen_id = ?',
         [id, dosenId]
       );
 
@@ -133,10 +133,10 @@ const bimbinganController = {
 
     try {
       const [rows] = await pool.query(
-        `SELECT b.*, m.nama as mahasiswa_nama, m.npm, dp.nama as dosen_nama
+        `SELECT b.*, m.nama as mahasiswa_nama, m.npm, d.nama as dosen_nama
          FROM bimbingan b
          JOIN mahasiswa m ON b.mahasiswa_id = m.id
-         JOIN dosen_pembimbing dp ON b.dosen_pembimbing_id = dp.id
+         JOIN dosen d ON b.dosen_id = d.id
          WHERE b.id = ?`,
         [id]
       );

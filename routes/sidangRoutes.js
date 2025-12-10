@@ -10,12 +10,6 @@ const router = express.Router();
 // Get all sidang (public)
 router.get('/', auth, sidangController.getAllSidang);
 
-// Get nilai sidang
-router.get('/:sidang_id/nilai', auth, sidangController.getNilaiSidang);
-
-// Penguji input nilai
-router.post('/nilai', auth, requireRole('penguji'), sidangController.inputNilai);
-
 // Upload berkas sidang
 router.post(
   "/upload",

@@ -26,15 +26,10 @@ app.use(express.json());
 
 // Swagger documentation
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.get('/api/docs.json', (req, res) => {
-  res.json(swaggerSpec);
-});
+app.get('/api/docs.json', (req, res) => res.json(swaggerSpec));
 
-// Mirror swagger docs without prefix for deployments that strip function name
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.get('/docs.json', (req, res) => {
-  res.json(swaggerSpec);
-});
+app.get('/docs.json', (req, res) => res.json(swaggerSpec));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/mahasiswa', mahasiswaRoutes);
@@ -52,22 +47,27 @@ app.get('/', (req, res) => {
   res.json({ message: 'Bimbingan Online API OK' });
 });
 
-// Ping endpoint for testing
+// Ping endpoint
 app.get('/ping', (req, res) => {
-  res.json({ 
+  res.json({
     status: 'ok',
     message: 'pong',
     timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
   });
 });
 
+// Error handler
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ message: 'Internal server error' });
 });
 
-// Register the HTTP function entry point for Cloud Functions Gen 2.
+// EXPORT FOR GCF (Gen2)
 functions.http('kavana', app);
+
+
+// EXPORT FOR VERCEL
+export default app;
 
 export const kavana = app;
