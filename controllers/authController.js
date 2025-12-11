@@ -35,21 +35,29 @@ const authController = {
     }
   },
 
-  // Login (multi-role)
+  // Login (multi-role) - support email dan NPM
   login: async (req, res, next) => {
     const { email, password } = req.body;
+    const identifier = email; // bisa email atau NPM
 
     try {
       // Check hardcoded admin
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      if (identifier === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
         const token = generateToken({ id: 0, email: ADMIN_EMAIL, role: 'admin' });
         return res.json({ token, role: 'admin', user_id: 0 });
       }
 
       let rows = [];
 
-      // Check mahasiswa
-      [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE email = ?', [email]);
+      // Detect if identifier is NPM (all digits) or email
+      const isNPM = /^\d+$/.test(identifier);
+
+      // Check mahasiswa (by email or NPM)
+      if (isNPM) {
+        [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE npm = ?', [identifier]);
+      } else {
+        [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE email = ?', [identifier]);
+      }
 
       // Check dosen (bisa kaprodi atau dosen biasa berdasarkan jabatan)
       if (rows.length === 0) {
