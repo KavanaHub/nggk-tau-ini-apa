@@ -30,8 +30,15 @@ const dosenController = {
     try {
       const dosenId = req.user.id;
       const [rows] = await pool.query(
-        `SELECT m.id, m.npm, m.nama, m.email, m.no_wa, m.judul_proyek, m.status_proposal, m.track,
-                CASE WHEN m.dosen_id = ? THEN 'utama' ELSE 'kedua' END as peran_pembimbing
+        `SELECT m.id, m.npm, m.nama, m.email, m.no_wa, m.judul_proyek as judul, 
+                m.status_proposal, m.track,
+                CASE WHEN m.dosen_id = ? THEN 'utama' ELSE 'kedua' END as peran_pembimbing,
+                (SELECT COUNT(*) FROM bimbingan WHERE mahasiswa_id = m.id) as bimbingan_count,
+                (SELECT COUNT(*) FROM bimbingan WHERE mahasiswa_id = m.id AND status = 'waiting') as bimbingan_pending,
+                CASE 
+                  WHEN (SELECT COUNT(*) FROM bimbingan WHERE mahasiswa_id = m.id AND status = 'approved') >= 8 THEN 'ready'
+                  ELSE 'active'
+                END as status
          FROM mahasiswa m
          WHERE m.dosen_id = ? OR m.dosen_id_2 = ?
          ORDER BY m.nama ASC`,

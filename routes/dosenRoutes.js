@@ -13,8 +13,9 @@ router.get('/profile', auth, requireRole('dosen', 'kaprodi'), dosenController.ge
 // List semua dosen (untuk public)
 router.get('/list', dosenController.listDosen);
 
-// Mahasiswa Bimbingan
+// Mahasiswa Bimbingan (support both paths for compatibility)
 router.get('/mahasiswa', auth, requireRole('dosen', 'kaprodi'), dosenController.getMahasiswaBimbingan);
+router.get('/mahasiswa-bimbingan', auth, requireRole('dosen', 'kaprodi'), dosenController.getMahasiswaBimbingan);
 
 // Bimbingan
 router.get('/bimbingan', auth, requireRole('dosen', 'kaprodi'), bimbinganController.getDosenBimbingan);

@@ -23,11 +23,15 @@ const sharedController = {
         }
     },
 
-    // GET SEMUA DOSEN (full info)
+    // GET SEMUA DOSEN (full info dengan mahasiswa_count)
     getAllDosen: async (req, res, next) => {
         try {
             const [rows] = await pool.query(
-                `SELECT id, nidn, nama, email, no_wa, jabatan, is_active FROM dosen ORDER BY nama ASC`
+                `SELECT d.id, d.nidn as nip, d.nama, d.email, d.no_wa, d.jabatan, d.is_active,
+                        (SELECT COUNT(*) FROM mahasiswa WHERE dosen_id = d.id OR dosen_id_2 = d.id) as mahasiswa_count,
+                        10 as max_quota
+                 FROM dosen d 
+                 ORDER BY d.nama ASC`
             );
 
             res.json(rows);
