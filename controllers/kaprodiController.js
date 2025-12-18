@@ -96,6 +96,7 @@ const kaprodiController = {
 
   // ASSIGN KOORDINATOR KE SEMESTER
   // 1 koordinator = 1 semester, 1 semester = 1 koordinator
+  // Koordinator = dosen dengan jabatan 'koordinator'
   assignKoordinatorSemester: async (req, res, next) => {
     try {
       const { koordinator_id, semester } = req.body;
@@ -110,9 +111,9 @@ const kaprodiController = {
         return res.status(400).json({ message: 'Semester harus 2, 3, 5, 7, atau 8' });
       }
 
-      // Check if koordinator exists
+      // Check if koordinator exists (dosen dengan jabatan koordinator)
       const [koordinatorRows] = await pool.query(
-        'SELECT id, nama FROM koordinator WHERE id = ?',
+        "SELECT id, nama FROM dosen WHERE id = ? AND jabatan LIKE '%koordinator%'",
         [koordinator_id]
       );
       if (koordinatorRows.length === 0) {
@@ -121,7 +122,7 @@ const kaprodiController = {
 
       // Check if semester already assigned to another koordinator
       const [existingRows] = await pool.query(
-        'SELECT id, nama FROM koordinator WHERE assigned_semester = ? AND id != ?',
+        "SELECT id, nama FROM dosen WHERE assigned_semester = ? AND id != ? AND jabatan LIKE '%koordinator%'",
         [semester, koordinator_id]
       );
       if (existingRows.length > 0) {
@@ -132,7 +133,7 @@ const kaprodiController = {
 
       // Update koordinator's assigned semester
       await pool.query(
-        'UPDATE koordinator SET assigned_semester = ? WHERE id = ?',
+        'UPDATE dosen SET assigned_semester = ? WHERE id = ?',
         [semester, koordinator_id]
       );
 
@@ -162,7 +163,7 @@ const kaprodiController = {
       }
 
       await pool.query(
-        'UPDATE koordinator SET assigned_semester = NULL WHERE id = ?',
+        'UPDATE dosen SET assigned_semester = NULL WHERE id = ?',
         [koordinator_id]
       );
 

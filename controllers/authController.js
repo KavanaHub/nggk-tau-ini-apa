@@ -59,12 +59,14 @@ const authController = {
         [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE email = ?', [identifier]);
       }
 
-      // Check dosen (bisa kaprodi atau dosen biasa berdasarkan jabatan)
+      // Check dosen (kaprodi, koordinator, atau dosen biasa berdasarkan jabatan)
+      // Prioritas: 1. kaprodi, 2. koordinator, 3. dosen
       if (rows.length === 0) {
         [rows] = await pool.query(
-          `SELECT id, email, password_hash, jabatan,
+          `SELECT id, email, password_hash, jabatan, assigned_semester,
            CASE 
              WHEN jabatan LIKE '%kaprodi%' THEN 'kaprodi'
+             WHEN jabatan LIKE '%koordinator%' THEN 'koordinator'
              ELSE 'dosen'
            END as role
            FROM dosen WHERE email = ?`,
@@ -72,12 +74,7 @@ const authController = {
         );
       }
 
-      // Check koordinator
-      if (rows.length === 0) {
-        [rows] = await pool.query('SELECT id, email, password_hash, "koordinator" as role FROM koordinator WHERE email = ?', [email]);
-      }
-
-      // Check penguji
+      // Check penguji (tabel terpisah untuk penguji sidang)
       if (rows.length === 0) {
         [rows] = await pool.query('SELECT id, email, password_hash, "penguji" as role FROM penguji WHERE email = ?', [email]);
       }

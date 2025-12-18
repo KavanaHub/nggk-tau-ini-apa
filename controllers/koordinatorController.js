@@ -2,13 +2,13 @@ import pool from "../config/db.js";
 import sharedController from './sharedController.js';
 
 const koordinatorController = {
-  // GET PROFILE KOORDINATOR
+  // GET PROFILE KOORDINATOR (dari tabel dosen dengan jabatan koordinator)
   getProfile: async (req, res, next) => {
     try {
       const koordinatorId = req.user.id;
       const [rows] = await pool.query(
-        `SELECT id, email, nidn, nama, no_wa, is_active, assigned_semester, created_at
-         FROM koordinator WHERE id = ?`,
+        `SELECT id, email, nidn, nama, no_wa, jabatan, is_active, assigned_semester, created_at
+         FROM dosen WHERE id = ?`,
         [koordinatorId]
       );
 
@@ -41,7 +41,7 @@ const koordinatorController = {
     try {
       const koordinatorId = req.user.id;
       const [rows] = await pool.query(
-        'SELECT assigned_semester FROM koordinator WHERE id = ?',
+        'SELECT assigned_semester FROM dosen WHERE id = ?',
         [koordinatorId]
       );
 

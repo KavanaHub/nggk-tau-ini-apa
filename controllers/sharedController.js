@@ -53,11 +53,14 @@ const sharedController = {
         }
     },
 
-    // GET SEMUA KOORDINATOR
+    // GET SEMUA KOORDINATOR (dosen dengan jabatan koordinator)
     getAllKoordinator: async (req, res, next) => {
         try {
             const [rows] = await pool.query(
-                `SELECT id, nidn, nama, email, no_wa, is_active, assigned_semester FROM koordinator ORDER BY nama ASC`
+                `SELECT id, nidn, nama, email, no_wa, jabatan, is_active, assigned_semester 
+                 FROM dosen 
+                 WHERE jabatan LIKE '%koordinator%' AND is_active = 1
+                 ORDER BY nama ASC`
             );
 
             // Add semester label
