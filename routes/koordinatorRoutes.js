@@ -16,7 +16,7 @@ router.get('/stats', auth, requireRole('koordinator'), koordinatorController.get
 // List data
 router.get('/mahasiswa', auth, requireRole('koordinator'), koordinatorController.getAllMahasiswa);
 router.get('/dosen', auth, requireRole('koordinator'), koordinatorController.getAllDosen);
-router.get('/proposals/pending', auth, requireRole('koordinator'), koordinatorController.getPendingProposals);
+router.get('/proposal/pending', auth, requireRole('koordinator'), koordinatorController.getPendingProposals);
 router.get('/proposal/pending', auth, requireRole('koordinator'), koordinatorController.getPendingProposals);
 
 // Actions

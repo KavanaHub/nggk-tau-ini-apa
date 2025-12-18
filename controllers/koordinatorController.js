@@ -58,14 +58,17 @@ const koordinatorController = {
     try {
       const [[{ total_mahasiswa }]] = await pool.query('SELECT COUNT(*) as total_mahasiswa FROM mahasiswa');
       const [[{ proposal_pending }]] = await pool.query("SELECT COUNT(*) as proposal_pending FROM mahasiswa WHERE status_proposal = 'pending'");
-      const [[{ proposal_approved }]] = await pool.query("SELECT COUNT(*) as proposal_approved FROM mahasiswa WHERE status_proposal = 'approved'");
-      const [[{ mahasiswa_tanpa_dosen }]] = await pool.query('SELECT COUNT(*) as mahasiswa_tanpa_dosen FROM mahasiswa WHERE dosen_id IS NULL');
+      const [[{ menunggu_pembimbing }]] = await pool.query("SELECT COUNT(*) as menunggu_pembimbing FROM mahasiswa WHERE status_proposal = 'approved' AND dosen_id IS NULL");
+      const [[{ siap_sidang }]] = await pool.query(`
+        SELECT COUNT(*) as siap_sidang FROM mahasiswa m 
+        WHERE (SELECT COUNT(*) FROM bimbingan WHERE mahasiswa_id = m.id AND status = 'approved') >= 8
+      `);
 
       res.json({
         total_mahasiswa,
         proposal_pending,
-        proposal_approved,
-        mahasiswa_tanpa_dosen
+        menunggu_pembimbing,
+        siap_sidang
       });
     } catch (err) {
       next(err);
