@@ -17,6 +17,7 @@ router.get('/stats', auth, requireRole('koordinator'), koordinatorController.get
 router.get('/mahasiswa', auth, requireRole('koordinator'), koordinatorController.getAllMahasiswa);
 router.get('/dosen', auth, requireRole('koordinator'), koordinatorController.getAllDosen);
 router.get('/proposals/pending', auth, requireRole('koordinator'), koordinatorController.getPendingProposals);
+router.get('/proposal/pending', auth, requireRole('koordinator'), koordinatorController.getPendingProposals);
 
 // Actions
 router.patch('/proposal/validate', auth, requireRole('koordinator'), koordinatorController.validateProposal);
@@ -28,6 +29,7 @@ router.get('/sidang', auth, requireRole('koordinator'), sidangController.getAllS
 
 // Jadwal Proyek/Internship
 router.get('/jadwal', auth, requireRole('koordinator'), jadwalController.list);
+router.get('/jadwal/active', auth, requireRole('koordinator'), jadwalController.getActive);
 router.post('/jadwal', auth, requireRole('koordinator'), jadwalController.create);
 router.put('/jadwal/:id', auth, requireRole('koordinator'), jadwalController.update);
 router.post('/jadwal/:id/complete', auth, requireRole('koordinator'), jadwalController.complete);

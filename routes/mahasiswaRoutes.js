@@ -15,6 +15,9 @@ router.put('/profile', auth, requireRole('mahasiswa'), mahasiswaController.updat
 // Track Selection
 router.patch('/track', auth, requireRole('mahasiswa'), mahasiswaController.setTrack);
 
+// Periode Aktif - cek apakah mahasiswa eligible untuk proyek/internship
+router.get('/periode-aktif', auth, requireRole('mahasiswa'), mahasiswaController.getPeriodeAktif);
+
 // Kelompok
 router.post('/kelompok', auth, requireRole('mahasiswa'), kelompokController.createKelompok);
 router.post('/kelompok/join', auth, requireRole('mahasiswa'), kelompokController.joinKelompok);

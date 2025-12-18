@@ -4,7 +4,7 @@ const jadwalController = {
   list: async (req, res, next) => {
     try {
       const [rows] = await pool.query(
-        `SELECT id, nama, tipe, start_date, end_date, deskripsi, created_by, created_at, updated_at
+        `SELECT id, nama, tipe, semester, start_date, end_date, status, deskripsi, created_by, created_at, updated_at
          FROM jadwal_proyek
          ORDER BY start_date DESC, id DESC`
       );
@@ -14,11 +14,32 @@ const jadwalController = {
     }
   },
 
+  // Get all active periods
+  getActive: async (req, res, next) => {
+    try {
+      const [rows] = await pool.query(
+        `SELECT id, nama, tipe, semester, start_date, end_date, status
+         FROM jadwal_proyek
+         WHERE status = 'active' AND CURDATE() BETWEEN start_date AND end_date
+         ORDER BY semester ASC`
+      );
+      res.json(rows);
+    } catch (err) {
+      next(err);
+    }
+  },
+
   create: async (req, res, next) => {
     try {
-      const { nama, tipe, start_date, end_date, deskripsi } = req.body;
-      if (!nama || !tipe || !start_date || !end_date) {
-        return res.status(400).json({ message: 'nama, tipe, start_date, end_date wajib diisi' });
+      const { nama, tipe, semester, start_date, end_date, deskripsi } = req.body;
+      if (!nama || !tipe || !semester || !start_date || !end_date) {
+        return res.status(400).json({ message: 'nama, tipe, semester, start_date, end_date wajib diisi' });
+      }
+
+      // Validate semester (2,3,5,7,8)
+      const validSemesters = [2, 3, 5, 7, 8];
+      if (!validSemesters.includes(parseInt(semester))) {
+        return res.status(400).json({ message: 'Semester harus 2, 3, 5, 7, atau 8' });
       }
 
       const start = new Date(start_date);
@@ -30,10 +51,19 @@ const jadwalController = {
         return res.status(400).json({ message: 'end_date harus sesudah atau sama dengan start_date' });
       }
 
+      // Check if there's already an active period for this semester
+      const [existing] = await pool.query(
+        `SELECT id FROM jadwal_proyek WHERE semester = ? AND status = 'active'`,
+        [semester]
+      );
+      if (existing.length > 0) {
+        return res.status(400).json({ message: `Sudah ada periode aktif untuk semester ${semester}` });
+      }
+
       const [result] = await pool.query(
-        `INSERT INTO jadwal_proyek (nama, tipe, start_date, end_date, deskripsi, created_by)
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        [nama, tipe, start_date, end_date, deskripsi || null, req.user.id]
+        `INSERT INTO jadwal_proyek (nama, tipe, semester, start_date, end_date, deskripsi, created_by)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [nama, tipe, semester, start_date, end_date, deskripsi || null, req.user.id]
       );
 
       res.status(201).json({ message: 'Jadwal disimpan', id: result.insertId });

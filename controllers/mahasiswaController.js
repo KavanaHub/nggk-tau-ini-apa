@@ -215,6 +215,78 @@ const mahasiswaController = {
 
   // GET ALL DOSEN (untuk pilih pembimbing) - menggunakan shared function
   getAllDosen: sharedController.getActiveDosen,
+
+  // GET PERIODE AKTIF - cek apakah ada periode aktif untuk semester mahasiswa
+  getPeriodeAktif: async (req, res, next) => {
+    const mahasiswaId = req.user.id;
+
+    try {
+      // Get mahasiswa's angkatan
+      const [mhsRows] = await pool.query(
+        'SELECT angkatan FROM mahasiswa WHERE id = ?',
+        [mahasiswaId]
+      );
+
+      if (mhsRows.length === 0) {
+        return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
+      }
+
+      const angkatan = mhsRows[0].angkatan;
+      if (!angkatan) {
+        return res.json({ active: false, periode: null, message: 'Angkatan belum diset' });
+      }
+
+      // Calculate current semester based on angkatan
+      // Kalender akademik: Ganjil = Oktober-Februari, Genap = Maret-September
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1; // 1-12
+
+      // Calculate how many semesters since start
+      // Mahasiswa masuk Oktober tahun angkatan = semester 1
+      const yearsElapsed = currentYear - angkatan;
+      let semester;
+
+      if (currentMonth >= 10 || currentMonth <= 2) {
+        // Semester GANJIL (Oktober - Februari)
+        if (currentMonth >= 10) {
+          // Okt-Des = tahun sama
+          semester = (yearsElapsed * 2) + 1;
+        } else {
+          // Jan-Feb = tahun berikutnya, masih semester ganjil
+          semester = ((yearsElapsed - 1) * 2) + 1;
+        }
+      } else {
+        // Semester GENAP (Maret - September)
+        semester = yearsElapsed * 2;
+      }
+
+      // Check if there's an active period for this semester
+      const [periodeRows] = await pool.query(
+        `SELECT id, nama, tipe, semester, start_date, end_date, status
+         FROM jadwal_proyek
+         WHERE semester = ? AND status = 'active' AND CURDATE() BETWEEN start_date AND end_date`,
+        [semester]
+      );
+
+      if (periodeRows.length === 0) {
+        return res.json({
+          active: false,
+          periode: null,
+          semester: semester,
+          message: `Tidak ada periode aktif untuk semester ${semester}`
+        });
+      }
+
+      res.json({
+        active: true,
+        periode: periodeRows[0],
+        semester: semester
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
 };
 
 export default mahasiswaController;
