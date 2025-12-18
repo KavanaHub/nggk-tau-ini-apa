@@ -57,10 +57,24 @@ const sharedController = {
     getAllKoordinator: async (req, res, next) => {
         try {
             const [rows] = await pool.query(
-                `SELECT id, nidn, nama, email, no_wa, is_active FROM koordinator ORDER BY nama ASC`
+                `SELECT id, nidn, nama, email, no_wa, is_active, assigned_semester FROM koordinator ORDER BY nama ASC`
             );
 
-            res.json(rows);
+            // Add semester label
+            const semesterLabels = {
+                2: 'Proyek 1',
+                3: 'Proyek 2',
+                5: 'Proyek 3',
+                7: 'Internship 1',
+                8: 'Internship 2'
+            };
+
+            const result = rows.map(k => ({
+                ...k,
+                semester_label: k.assigned_semester ? semesterLabels[k.assigned_semester] : null
+            }));
+
+            res.json(result);
         } catch (err) {
             next(err);
         }

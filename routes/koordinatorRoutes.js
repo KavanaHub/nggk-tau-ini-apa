@@ -13,6 +13,9 @@ router.get('/profile', auth, requireRole('koordinator'), koordinatorController.g
 // Stats
 router.get('/stats', auth, requireRole('koordinator'), koordinatorController.getStats);
 
+// Assigned Semester - cek semester yang di-assign ke koordinator ini
+router.get('/my-semester', auth, requireRole('koordinator'), koordinatorController.getAssignedSemester);
+
 // List data
 router.get('/mahasiswa', auth, requireRole('koordinator'), koordinatorController.getAllMahasiswa);
 router.get('/dosen', auth, requireRole('koordinator'), koordinatorController.getAllDosen);

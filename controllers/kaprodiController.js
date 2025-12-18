@@ -93,6 +93,84 @@ const kaprodiController = {
       next(err);
     }
   },
+
+  // ASSIGN KOORDINATOR KE SEMESTER
+  // 1 koordinator = 1 semester, 1 semester = 1 koordinator
+  assignKoordinatorSemester: async (req, res, next) => {
+    try {
+      const { koordinator_id, semester } = req.body;
+
+      if (!koordinator_id || !semester) {
+        return res.status(400).json({ message: 'koordinator_id dan semester wajib diisi' });
+      }
+
+      // Validate semester
+      const validSemesters = [2, 3, 5, 7, 8];
+      if (!validSemesters.includes(parseInt(semester))) {
+        return res.status(400).json({ message: 'Semester harus 2, 3, 5, 7, atau 8' });
+      }
+
+      // Check if koordinator exists
+      const [koordinatorRows] = await pool.query(
+        'SELECT id, nama FROM koordinator WHERE id = ?',
+        [koordinator_id]
+      );
+      if (koordinatorRows.length === 0) {
+        return res.status(404).json({ message: 'Koordinator tidak ditemukan' });
+      }
+
+      // Check if semester already assigned to another koordinator
+      const [existingRows] = await pool.query(
+        'SELECT id, nama FROM koordinator WHERE assigned_semester = ? AND id != ?',
+        [semester, koordinator_id]
+      );
+      if (existingRows.length > 0) {
+        return res.status(400).json({
+          message: `Semester ${semester} sudah di-assign ke ${existingRows[0].nama}`
+        });
+      }
+
+      // Update koordinator's assigned semester
+      await pool.query(
+        'UPDATE koordinator SET assigned_semester = ? WHERE id = ?',
+        [semester, koordinator_id]
+      );
+
+      const semesterLabels = {
+        2: 'Proyek 1 (Semester 2)',
+        3: 'Proyek 2 (Semester 3)',
+        5: 'Proyek 3 (Semester 5)',
+        7: 'Internship 1 (Semester 7)',
+        8: 'Internship 2 (Semester 8)'
+      };
+
+      res.json({
+        message: `${koordinatorRows[0].nama} berhasil di-assign ke ${semesterLabels[semester]}`
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  // UNASSIGN KOORDINATOR DARI SEMESTER
+  unassignKoordinatorSemester: async (req, res, next) => {
+    try {
+      const { koordinator_id } = req.body;
+
+      if (!koordinator_id) {
+        return res.status(400).json({ message: 'koordinator_id wajib diisi' });
+      }
+
+      await pool.query(
+        'UPDATE koordinator SET assigned_semester = NULL WHERE id = ?',
+        [koordinator_id]
+      );
+
+      res.json({ message: 'Assignment berhasil dihapus' });
+    } catch (err) {
+      next(err);
+    }
+  },
 };
 
 export default kaprodiController;

@@ -7,7 +7,7 @@ const koordinatorController = {
     try {
       const koordinatorId = req.user.id;
       const [rows] = await pool.query(
-        `SELECT id, email, nidn, nama, no_wa, is_active, created_at
+        `SELECT id, email, nidn, nama, no_wa, is_active, assigned_semester, created_at
          FROM koordinator WHERE id = ?`,
         [koordinatorId]
       );
@@ -16,7 +16,61 @@ const koordinatorController = {
         return res.status(404).json({ message: "Koordinator tidak ditemukan" });
       }
 
-      res.json(rows[0]);
+      // Add semester label
+      const semesterLabels = {
+        2: 'Proyek 1 (Semester 2)',
+        3: 'Proyek 2 (Semester 3)',
+        5: 'Proyek 3 (Semester 5)',
+        7: 'Internship 1 (Semester 7)',
+        8: 'Internship 2 (Semester 8)'
+      };
+
+      const result = {
+        ...rows[0],
+        semester_label: rows[0].assigned_semester ? semesterLabels[rows[0].assigned_semester] : null
+      };
+
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  // GET ASSIGNED SEMESTER - untuk koordinator cek apa yang di-assign
+  getAssignedSemester: async (req, res, next) => {
+    try {
+      const koordinatorId = req.user.id;
+      const [rows] = await pool.query(
+        'SELECT assigned_semester FROM koordinator WHERE id = ?',
+        [koordinatorId]
+      );
+
+      if (rows.length === 0) {
+        return res.status(404).json({ message: "Koordinator tidak ditemukan" });
+      }
+
+      const semester = rows[0].assigned_semester;
+      if (!semester) {
+        return res.json({
+          assigned: false,
+          semester: null,
+          message: 'Belum ada semester yang di-assign. Hubungi Kaprodi.'
+        });
+      }
+
+      const semesterLabels = {
+        2: 'Proyek 1 (Semester 2)',
+        3: 'Proyek 2 (Semester 3)',
+        5: 'Proyek 3 (Semester 5)',
+        7: 'Internship 1 (Semester 7)',
+        8: 'Internship 2 (Semester 8)'
+      };
+
+      res.json({
+        assigned: true,
+        semester: semester,
+        semester_label: semesterLabels[semester]
+      });
     } catch (err) {
       next(err);
     }

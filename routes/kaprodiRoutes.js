@@ -21,4 +21,8 @@ router.get('/penguji', auth, requireRole('kaprodi'), kaprodiController.getAllPen
 router.post('/assign-dosen', auth, kaprodiOnly(), kaprodiController.assignDosen);
 router.patch('/proposal/status', auth, kaprodiOnly(), kaprodiController.updateProposalStatus);
 
+// Koordinator assignment - assign koordinator ke semester
+router.post('/koordinator/assign-semester', auth, kaprodiOnly(), kaprodiController.assignKoordinatorSemester);
+router.post('/koordinator/unassign-semester', auth, kaprodiOnly(), kaprodiController.unassignKoordinatorSemester);
+
 export default router;
