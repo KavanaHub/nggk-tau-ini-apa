@@ -53,17 +53,18 @@ const sharedController = {
         }
     },
 
-    // GET SEMUA KOORDINATOR (dosen dengan jabatan koordinator)
+    // GET SEMUA DOSEN UNTUK ASSIGN KOORDINATOR
+    // Menampilkan semua dosen aktif, dengan flag apakah sudah jadi koordinator
     getAllKoordinator: async (req, res, next) => {
         try {
             const [rows] = await pool.query(
                 `SELECT id, nidn, nama, email, no_wa, jabatan, is_active, assigned_semester 
                  FROM dosen 
-                 WHERE jabatan LIKE '%koordinator%' AND is_active = 1
+                 WHERE is_active = 1 AND jabatan NOT LIKE '%kaprodi%'
                  ORDER BY nama ASC`
             );
 
-            // Add semester label
+            // Add semester label and is_koordinator flag
             const semesterLabels = {
                 2: 'Proyek 1',
                 3: 'Proyek 2',
@@ -74,6 +75,7 @@ const sharedController = {
 
             const result = rows.map(k => ({
                 ...k,
+                is_koordinator: k.jabatan?.includes('koordinator') || false,
                 semester_label: k.assigned_semester ? semesterLabels[k.assigned_semester] : null
             }));
 

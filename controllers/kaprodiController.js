@@ -96,7 +96,7 @@ const kaprodiController = {
 
   // ASSIGN KOORDINATOR KE SEMESTER
   // 1 koordinator = 1 semester, 1 semester = 1 koordinator
-  // Koordinator = dosen dengan jabatan 'koordinator'
+  // Saat di-assign, jabatan dosen berubah menjadi include 'koordinator'
   assignKoordinatorSemester: async (req, res, next) => {
     try {
       const { koordinator_id, semester } = req.body;
@@ -111,18 +111,18 @@ const kaprodiController = {
         return res.status(400).json({ message: 'Semester harus 2, 3, 5, 7, atau 8' });
       }
 
-      // Check if koordinator exists (dosen dengan jabatan koordinator)
-      const [koordinatorRows] = await pool.query(
-        "SELECT id, nama FROM dosen WHERE id = ? AND jabatan LIKE '%koordinator%'",
+      // Check if dosen exists
+      const [dosenRows] = await pool.query(
+        "SELECT id, nama, jabatan FROM dosen WHERE id = ? AND is_active = 1",
         [koordinator_id]
       );
-      if (koordinatorRows.length === 0) {
-        return res.status(404).json({ message: 'Koordinator tidak ditemukan' });
+      if (dosenRows.length === 0) {
+        return res.status(404).json({ message: 'Dosen tidak ditemukan' });
       }
 
       // Check if semester already assigned to another koordinator
       const [existingRows] = await pool.query(
-        "SELECT id, nama FROM dosen WHERE assigned_semester = ? AND id != ? AND jabatan LIKE '%koordinator%'",
+        "SELECT id, nama FROM dosen WHERE assigned_semester = ? AND id != ?",
         [semester, koordinator_id]
       );
       if (existingRows.length > 0) {
@@ -131,10 +131,16 @@ const kaprodiController = {
         });
       }
 
-      // Update koordinator's assigned semester
+      // Update jabatan to include 'koordinator' if not already
+      let newJabatan = dosenRows[0].jabatan || 'dosen';
+      if (!newJabatan.includes('koordinator')) {
+        newJabatan = newJabatan + ',koordinator';
+      }
+
+      // Update dosen's jabatan and assigned_semester
       await pool.query(
-        'UPDATE dosen SET assigned_semester = ? WHERE id = ?',
-        [semester, koordinator_id]
+        'UPDATE dosen SET jabatan = ?, assigned_semester = ? WHERE id = ?',
+        [newJabatan, semester, koordinator_id]
       );
 
       const semesterLabels = {
@@ -146,7 +152,7 @@ const kaprodiController = {
       };
 
       res.json({
-        message: `${koordinatorRows[0].nama} berhasil di-assign ke ${semesterLabels[semester]}`
+        message: `${dosenRows[0].nama} berhasil di-assign ke ${semesterLabels[semester]}`
       });
     } catch (err) {
       next(err);
@@ -154,6 +160,7 @@ const kaprodiController = {
   },
 
   // UNASSIGN KOORDINATOR DARI SEMESTER
+  // Hapus 'koordinator' dari jabatan dan clear assigned_semester
   unassignKoordinatorSemester: async (req, res, next) => {
     try {
       const { koordinator_id } = req.body;
@@ -162,10 +169,23 @@ const kaprodiController = {
         return res.status(400).json({ message: 'koordinator_id wajib diisi' });
       }
 
-      await pool.query(
-        'UPDATE dosen SET assigned_semester = NULL WHERE id = ?',
+      // Get current jabatan
+      const [rows] = await pool.query(
+        'SELECT jabatan FROM dosen WHERE id = ?',
         [koordinator_id]
       );
+
+      if (rows.length > 0) {
+        // Remove 'koordinator' from jabatan
+        let jabatan = rows[0].jabatan || 'dosen';
+        jabatan = jabatan.replace(',koordinator', '').replace('koordinator,', '').replace('koordinator', 'dosen');
+        if (!jabatan || jabatan === '') jabatan = 'dosen';
+
+        await pool.query(
+          'UPDATE dosen SET jabatan = ?, assigned_semester = NULL WHERE id = ?',
+          [jabatan, koordinator_id]
+        );
+      }
 
       res.json({ message: 'Assignment berhasil dihapus' });
     } catch (err) {
