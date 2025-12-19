@@ -63,7 +63,7 @@ const jadwalController = {
       const [result] = await pool.query(
         `INSERT INTO jadwal_proyek (nama, tipe, semester, start_date, end_date, deskripsi, created_by)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [nama, tipe, semester, start_date, end_date, deskripsi || null, req.user.id]
+        [nama, tipe, semester, start_date, end_date, deskripsi || null, req.user?.id || null]
       );
 
       res.status(201).json({ message: 'Jadwal disimpan', id: result.insertId });
