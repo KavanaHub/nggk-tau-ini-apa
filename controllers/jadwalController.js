@@ -61,8 +61,8 @@ const jadwalController = {
       }
 
       const [result] = await pool.query(
-        `INSERT INTO jadwal_proyek (nama, tipe, semester, start_date, end_date, deskripsi, created_by)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO jadwal_proyek (nama, tipe, semester, start_date, end_date, status, deskripsi, created_by)
+         VALUES (?, ?, ?, ?, ?, 'active', ?, ?)`,
         [nama, tipe, semester, start_date, end_date, deskripsi || null, req.user?.id || null]
       );
 
