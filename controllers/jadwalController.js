@@ -114,7 +114,7 @@ const jadwalController = {
       await conn.beginTransaction();
 
       const [rows] = await conn.query(
-        'SELECT status FROM jadwal_proyek WHERE id = ? FOR UPDATE',
+        'SELECT status, semester FROM jadwal_proyek WHERE id = ? FOR UPDATE',
         [id]
       );
       if (rows.length === 0) {
@@ -126,29 +126,26 @@ const jadwalController = {
         return res.status(400).json({ message: 'Jadwal sudah completed' });
       }
 
+      // Update status jadwal
       await conn.query(
         'UPDATE jadwal_proyek SET status = "completed", updated_at = NOW() WHERE id = ?',
         [id]
       );
 
-      // Bersihkan data terkait proyek/internship
-      await conn.query(
-        'DELETE ns FROM nilai_sidang ns JOIN sidang s ON ns.sidang_id = s.id'
-      );
-      await conn.query('DELETE FROM sidang');
-      await conn.query('DELETE FROM laporan_sidang');
-      await conn.query('DELETE FROM bimbingan');
-      await conn.query(
-        "UPDATE mahasiswa SET judul_proyek = NULL, file_proposal = NULL, status_proposal = 'pending', dosen_pembimbing_id = NULL"
-      );
-
-      // Koordinator yang menutup jadwal: hapus assigned_semester
-      await conn.query('UPDATE dosen SET assigned_semester = NULL WHERE id = ?', [req.user.id]);
+      // Hapus assignment koordinator untuk semester ini
+      const semester = rows[0].semester;
+      if (semester) {
+        await conn.query(
+          'UPDATE dosen SET assigned_semester = NULL WHERE assigned_semester = ?',
+          [semester]
+        );
+      }
 
       await conn.commit();
-      res.json({ message: 'Jadwal diselesaikan dan data dibersihkan' });
+      res.json({ message: 'Periode berhasil diakhiri' });
     } catch (err) {
       await conn.rollback();
+      console.error('Complete jadwal error:', err);
       next(err);
     } finally {
       conn.release();
