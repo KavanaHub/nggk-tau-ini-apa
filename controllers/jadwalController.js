@@ -142,8 +142,8 @@ const jadwalController = {
         "UPDATE mahasiswa SET judul_proyek = NULL, file_proposal = NULL, status_proposal = 'pending', dosen_pembimbing_id = NULL"
       );
 
-      // Koordinator yang menutup jadwal dinonaktifkan
-      await conn.query('UPDATE koordinator SET is_active = 0 WHERE id = ?', [req.user.id]);
+      // Koordinator yang menutup jadwal: hapus assigned_semester
+      await conn.query('UPDATE dosen SET assigned_semester = NULL WHERE id = ?', [req.user.id]);
 
       await conn.commit();
       res.json({ message: 'Jadwal diselesaikan dan data dibersihkan' });
