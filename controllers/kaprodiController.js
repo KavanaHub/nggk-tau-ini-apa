@@ -43,16 +43,14 @@ const kaprodiController = {
   // GET STATISTIK DASHBOARD
   getDashboardStats: async (req, res, next) => {
     try {
-      const [[{ total_mahasiswa }]] = await pool.query('SELECT COUNT(*) as total_mahasiswa FROM mahasiswa');
-      const [[{ total_dosen }]] = await pool.query('SELECT COUNT(*) as total_dosen FROM dosen WHERE is_active = 1');
-      const [[{ mahasiswa_aktif }]] = await pool.query("SELECT COUNT(*) as mahasiswa_aktif FROM mahasiswa WHERE status_proposal = 'approved' AND dosen_id IS NOT NULL");
+      const [[{ total }]] = await pool.query('SELECT COUNT(*) as total FROM mahasiswa');
+      const [[{ proyek }]] = await pool.query("SELECT COUNT(*) as proyek FROM mahasiswa WHERE track LIKE '%proyek%'");
+      const [[{ internship }]] = await pool.query("SELECT COUNT(*) as internship FROM mahasiswa WHERE track LIKE '%internship%'");
+      const [[{ lulus }]] = await pool.query("SELECT COUNT(*) as lulus FROM sidang WHERE status = 'lulus'");
+
       const [[{ siap_sidang }]] = await pool.query(`
         SELECT COUNT(*) as siap_sidang FROM mahasiswa m 
         WHERE (SELECT COUNT(*) FROM bimbingan WHERE mahasiswa_id = m.id AND status = 'approved') >= 8
-      `);
-      const [[{ lulus_semester_ini }]] = await pool.query(`
-        SELECT COUNT(*) as lulus_semester_ini FROM sidang 
-        WHERE status = 'lulus' AND YEAR(tanggal) = YEAR(CURDATE()) AND MONTH(tanggal) >= IF(MONTH(CURDATE()) > 6, 7, 1)
       `);
 
       // By status
@@ -63,7 +61,6 @@ const kaprodiController = {
         WHERE status_proposal = 'approved' AND dosen_id IS NOT NULL
         AND (SELECT COUNT(*) FROM bimbingan WHERE mahasiswa_id = m.id AND status = 'approved') < 8
       `);
-      const [[{ lulus }]] = await pool.query("SELECT COUNT(*) as c FROM sidang WHERE status = 'lulus'");
 
       // By angkatan
       const [angkatanRows] = await pool.query(`
@@ -75,11 +72,10 @@ const kaprodiController = {
       angkatanRows.forEach(row => { by_angkatan[row.angkatan] = row.count; });
 
       res.json({
-        total_mahasiswa,
-        total_dosen,
-        mahasiswa_aktif,
-        siap_sidang,
-        lulus_semester_ini: lulus_semester_ini || 0,
+        total,
+        proyek,
+        internship,
+        lulus,
         by_status: {
           "Menunggu Track": menunggu_track,
           "Proposal Pending": proposal_pending,
