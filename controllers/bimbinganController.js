@@ -74,13 +74,15 @@ const bimbinganController = {
 
     try {
       const [rows] = await pool.query(
-        `SELECT b.id, b.tanggal, b.minggu_ke, b.topik, b.catatan, b.status,
+        `SELECT b.id, b.mahasiswa_id, b.tanggal, b.minggu_ke, b.topik, b.catatan, b.status,
                 b.approved_at, b.created_at, m.nama as mahasiswa_nama, m.npm
          FROM bimbingan b
          JOIN mahasiswa m ON b.mahasiswa_id = m.id
-         WHERE b.dosen_id = ?
-         ORDER BY b.created_at DESC`,
-        [dosenId]
+         WHERE m.dosen_id = ? OR m.dosen_id_2 = ?
+         ORDER BY 
+           CASE b.status WHEN 'waiting' THEN 1 WHEN 'pending' THEN 2 ELSE 3 END,
+           b.created_at DESC`,
+        [dosenId, dosenId]
       );
 
       res.json(rows);
