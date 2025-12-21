@@ -121,11 +121,11 @@ const dosenController = {
         [dosenId, dosenId]
       );
 
-      // Count bimbingan pending
+      // Count bimbingan pending (status: pending or waiting)
       const [[{ bimbingan_pending }]] = await pool.query(
         `SELECT COUNT(*) as bimbingan_pending FROM bimbingan b
          JOIN mahasiswa m ON b.mahasiswa_id = m.id
-         WHERE b.dosen_id = ? AND b.status = 'pending'`,
+         WHERE b.dosen_id = ? AND (b.status = 'pending' OR b.status = 'waiting')`,
         [dosenId]
       );
 
