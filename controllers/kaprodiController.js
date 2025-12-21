@@ -96,70 +96,78 @@ const kaprodiController = {
       const activities = [];
 
       // 1. Recent proposals (submitted in last 30 days)
-      const [proposals] = await pool.query(`
-        SELECT m.nama, m.created_at as time, 'proposal' as type,
-               CONCAT(m.nama, ' mengajukan proposal') as description
-        FROM mahasiswa m
-        WHERE m.status_proposal = 'pending' 
-        AND m.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-        ORDER BY m.created_at DESC LIMIT 5
-      `);
-      proposals.forEach(p => activities.push({
-        type: 'proposal',
-        desc: p.description,
-        time: p.time
-      }));
+      try {
+        const [proposals] = await pool.query(`
+          SELECT m.nama, m.created_at as time, 'proposal' as type,
+                 CONCAT(m.nama, ' mengajukan proposal') as description
+          FROM mahasiswa m
+          WHERE m.status_proposal = 'pending' 
+          AND m.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+          ORDER BY m.created_at DESC LIMIT 5
+        `);
+        proposals.forEach(p => activities.push({
+          type: 'proposal',
+          desc: p.description,
+          time: p.time
+        }));
+      } catch (e) { console.log('Proposals query error:', e.message); }
 
-      // 2. Recent bimbingan completions (8th bimbingan approved)
-      const [bimbingan] = await pool.query(`
-        SELECT m.nama, b.approved_at as time, 'bimbingan' as type,
-               b.minggu_ke,
-               CONCAT(m.nama, ' menyelesaikan bimbingan ke-', b.minggu_ke) as description
-        FROM bimbingan b
-        JOIN mahasiswa m ON b.mahasiswa_id = m.id
-        WHERE b.status = 'approved' 
-        AND b.approved_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-        ORDER BY b.approved_at DESC LIMIT 5
-      `);
-      bimbingan.forEach(b => activities.push({
-        type: 'bimbingan',
-        desc: b.description,
-        time: b.time
-      }));
+      // 2. Recent bimbingan approved
+      try {
+        const [bimbingan] = await pool.query(`
+          SELECT m.nama, b.updated_at as time, 'bimbingan' as type,
+                 b.minggu_ke,
+                 CONCAT(m.nama, ' menyelesaikan bimbingan ke-', COALESCE(b.minggu_ke, '-')) as description
+          FROM bimbingan b
+          JOIN mahasiswa m ON b.mahasiswa_id = m.id
+          WHERE b.status = 'approved' 
+          AND b.updated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+          ORDER BY b.updated_at DESC LIMIT 5
+        `);
+        bimbingan.forEach(b => activities.push({
+          type: 'bimbingan',
+          desc: b.description,
+          time: b.time
+        }));
+      } catch (e) { console.log('Bimbingan query error:', e.message); }
 
-      // 3. Recent sidang results
-      const [sidang] = await pool.query(`
-        SELECT m.nama, s.tanggal as time, s.status,
-               CASE WHEN s.status = 'lulus' 
-                    THEN CONCAT(m.nama, ' lulus sidang')
-                    ELSE CONCAT(m.nama, ' mengikuti sidang')
-               END as description
-        FROM sidang s
-        JOIN mahasiswa m ON s.mahasiswa_id = m.id
-        WHERE s.tanggal >= DATE_SUB(NOW(), INTERVAL 60 DAY)
-        ORDER BY s.tanggal DESC LIMIT 5
-      `);
-      sidang.forEach(s => activities.push({
-        type: 'sidang',
-        desc: s.description,
-        time: s.time
-      }));
+      // 3. Recent sidang results (skip if table doesn't exist)
+      try {
+        const [sidang] = await pool.query(`
+          SELECT m.nama, s.tanggal as time, s.status,
+                 CASE WHEN s.status = 'lulus' 
+                      THEN CONCAT(m.nama, ' lulus sidang')
+                      ELSE CONCAT(m.nama, ' mengikuti sidang')
+                 END as description
+          FROM sidang s
+          JOIN mahasiswa m ON s.mahasiswa_id = m.id
+          WHERE s.tanggal >= DATE_SUB(NOW(), INTERVAL 60 DAY)
+          ORDER BY s.tanggal DESC LIMIT 5
+        `);
+        sidang.forEach(s => activities.push({
+          type: 'sidang',
+          desc: s.description,
+          time: s.time
+        }));
+      } catch (e) { console.log('Sidang query error (table may not exist):', e.message); }
 
       // 4. Recent dosen assignments
-      const [pembimbing] = await pool.query(`
-        SELECT m.nama as mhs_nama, d.nama as dosen_nama, m.updated_at as time,
-               CONCAT(m.nama, ' ditugaskan ke ', d.nama) as description
-        FROM mahasiswa m
-        JOIN dosen d ON m.dosen_id = d.id
-        WHERE m.dosen_id IS NOT NULL 
-        AND m.updated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-        ORDER BY m.updated_at DESC LIMIT 5
-      `);
-      pembimbing.forEach(p => activities.push({
-        type: 'pembimbing',
-        desc: p.description,
-        time: p.time
-      }));
+      try {
+        const [pembimbing] = await pool.query(`
+          SELECT m.nama as mhs_nama, d.nama as dosen_nama, m.updated_at as time,
+                 CONCAT(m.nama, ' ditugaskan ke ', d.nama) as description
+          FROM mahasiswa m
+          JOIN dosen d ON m.dosen_id = d.id
+          WHERE m.dosen_id IS NOT NULL 
+          AND m.updated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+          ORDER BY m.updated_at DESC LIMIT 5
+        `);
+        pembimbing.forEach(p => activities.push({
+          type: 'pembimbing',
+          desc: p.description,
+          time: p.time
+        }));
+      } catch (e) { console.log('Pembimbing query error:', e.message); }
 
       // Sort all by time (newest first) and take top 10
       activities.sort((a, b) => new Date(b.time) - new Date(a.time));
