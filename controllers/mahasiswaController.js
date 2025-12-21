@@ -2,15 +2,22 @@ import pool from "../config/db.js";
 import sharedController from './sharedController.js';
 
 const mahasiswaController = {
-  // GET PROFILE MAHASISWA
+  // GET PROFILE MAHASISWA (dengan info dosen pembimbing)
   getProfile: async (req, res, next) => {
     try {
       const mahasiswaId = req.user.id;
       const [rows] = await pool.query(
-        `SELECT id, email, npm, nama, no_wa, angkatan, track, kelompok_id,
-                judul_proyek, file_proposal, status_proposal, 
-                dosen_id, dosen_id_2, usulan_dosen_id, created_at
-         FROM mahasiswa WHERE id = ?`,
+        `SELECT m.id, m.email, m.npm, m.nama, m.no_wa, m.angkatan, m.track, m.kelompok_id,
+                m.judul_proyek, m.file_proposal, m.status_proposal, 
+                m.dosen_id, m.dosen_id_2, m.usulan_dosen_id, m.created_at,
+                d1.nama as dosen_nama,
+                d2.nama as dosen_nama_2,
+                ud.nama as usulan_dosen_nama
+         FROM mahasiswa m
+         LEFT JOIN dosen d1 ON m.dosen_id = d1.id
+         LEFT JOIN dosen d2 ON m.dosen_id_2 = d2.id
+         LEFT JOIN dosen ud ON m.usulan_dosen_id = ud.id
+         WHERE m.id = ?`,
         [mahasiswaId]
       );
 
