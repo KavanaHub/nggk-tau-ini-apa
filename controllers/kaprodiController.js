@@ -46,7 +46,13 @@ const kaprodiController = {
       const [[{ total }]] = await pool.query('SELECT COUNT(*) as total FROM mahasiswa');
       const [[{ proyek }]] = await pool.query("SELECT COUNT(*) as proyek FROM mahasiswa WHERE track LIKE '%proyek%'");
       const [[{ internship }]] = await pool.query("SELECT COUNT(*) as internship FROM mahasiswa WHERE track LIKE '%internship%'");
-      const [[{ lulus }]] = await pool.query("SELECT COUNT(*) as lulus FROM sidang WHERE status = 'lulus'");
+
+      // Lulus count - handle if sidang table doesn't exist
+      let lulus = 0;
+      try {
+        const [[result]] = await pool.query("SELECT COUNT(*) as lulus FROM sidang WHERE status = 'lulus'");
+        lulus = result.lulus || 0;
+      } catch (e) { console.log('Sidang table may not exist:', e.message); }
 
       const [[{ siap_sidang }]] = await pool.query(`
         SELECT COUNT(*) as siap_sidang FROM mahasiswa m 
@@ -115,14 +121,14 @@ const kaprodiController = {
       // 2. Recent bimbingan approved
       try {
         const [bimbingan] = await pool.query(`
-          SELECT m.nama, b.updated_at as time, 'bimbingan' as type,
+          SELECT m.nama, COALESCE(b.approved_at, b.created_at) as time, 'bimbingan' as type,
                  b.minggu_ke,
                  CONCAT(m.nama, ' menyelesaikan bimbingan ke-', COALESCE(b.minggu_ke, '-')) as description
           FROM bimbingan b
           JOIN mahasiswa m ON b.mahasiswa_id = m.id
           WHERE b.status = 'approved' 
-          AND b.updated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-          ORDER BY b.updated_at DESC LIMIT 5
+          AND (b.approved_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) OR b.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY))
+          ORDER BY COALESCE(b.approved_at, b.created_at) DESC LIMIT 5
         `);
         bimbingan.forEach(b => activities.push({
           type: 'bimbingan',
