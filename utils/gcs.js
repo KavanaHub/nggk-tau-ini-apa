@@ -4,7 +4,7 @@ const storage = new Storage({
   projectId: "renzip-478811",
 });
 
-const bucketName = "kavana-files"; // ganti dengan bucket kamu
+const bucketName = process.env.GCS_BUCKET_NAME || "kavana-files";
 const bucket = storage.bucket(bucketName);
 
 export const uploadToGCS = (file, customPath) => {
@@ -29,6 +29,12 @@ export const uploadToGCS = (file, customPath) => {
     });
 
     stream.on("finish", async () => {
+      // Make file publicly accessible
+      try {
+        await fileUpload.makePublic();
+      } catch (err) {
+        console.log("Warning: Could not make file public:", err.message);
+      }
       const publicUrl = `https://storage.googleapis.com/${bucketName}/${gcsFileName}`;
       resolve(publicUrl);
     });

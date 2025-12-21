@@ -72,18 +72,19 @@ const sidangController = {
     }
   },
 
-  // DOSEN: GET LAPORAN MAHASISWA BIMBINGAN
+  // DOSEN: GET LAPORAN MAHASISWA BIMBINGAN (termasuk sebagai pembimbing 2)
   getDosenLaporan: async (req, res, next) => {
     const dosenId = req.user.id;
 
     try {
       const [rows] = await pool.query(
-        `SELECT ls.*, m.nama as mahasiswa_nama, m.npm
+        `SELECT ls.*, m.nama as mahasiswa_nama, m.npm,
+                CASE WHEN m.dosen_id = ? THEN 'utama' ELSE 'kedua' END as peran_pembimbing
          FROM laporan_sidang ls
          JOIN mahasiswa m ON ls.mahasiswa_id = m.id
-         WHERE m.dosen_id = ?
+         WHERE m.dosen_id = ? OR m.dosen_id_2 = ?
          ORDER BY ls.created_at DESC`,
-        [dosenId]
+        [dosenId, dosenId, dosenId]
       );
 
       res.json(rows);
@@ -107,12 +108,12 @@ const sidangController = {
     }
 
     try {
-      // Cek laporan milik mahasiswa bimbingan dosen ini
+      // Cek laporan milik mahasiswa bimbingan dosen ini (termasuk sebagai pembimbing 2)
       const [rows] = await pool.query(
         `SELECT ls.id FROM laporan_sidang ls
          JOIN mahasiswa m ON ls.mahasiswa_id = m.id
-         WHERE ls.id = ? AND m.dosen_id = ?`,
-        [id, dosenId]
+         WHERE ls.id = ? AND (m.dosen_id = ? OR m.dosen_id_2 = ?)`,
+        [id, dosenId, dosenId]
       );
 
       if (rows.length === 0) {

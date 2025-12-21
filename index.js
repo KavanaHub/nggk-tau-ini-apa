@@ -25,9 +25,6 @@ app.use(cors());
 app.use(express.json());
 
 // Swagger documentation
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.get('/api/docs.json', (req, res) => res.json(swaggerSpec));
-
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get('/docs.json', (req, res) => res.json(swaggerSpec));
 

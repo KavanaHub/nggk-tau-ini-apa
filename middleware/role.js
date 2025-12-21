@@ -1,4 +1,5 @@
 // Middleware untuk cek role biasa - admin bisa akses semua
+// Koordinator juga bisa akses route dosen (karena koordinator juga dosen pembimbing)
 export default function requireRole(...roles) {
   return (req, res, next) => {
     if (!req.user) {
@@ -7,6 +8,11 @@ export default function requireRole(...roles) {
 
     // Admin dapat mengakses semua route yang membutuhkan role.
     if (req.user.role === 'admin') {
+      return next();
+    }
+
+    // Koordinator dapat mengakses route dosen (koordinator juga dosen pembimbing)
+    if (req.user.role === 'koordinator' && roles.includes('dosen')) {
       return next();
     }
 

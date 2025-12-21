@@ -18,6 +18,10 @@ const swaggerDefinition = {
       url: serverUrl,
       description: 'Pengembangan lokal',
     },
+    {
+      url: 'https://kavana-backend-j8ktr.ondigitalocean.app',
+      description: 'Development API Testing',
+    },
   ],
   components: {
     securitySchemes: {
@@ -193,6 +197,56 @@ const swaggerDefinition = {
         },
       },
     },
+    '/api/auth/profile': {
+      get: {
+        tags: ['Auth'],
+        summary: 'Ambil profil user yang sedang login',
+        responses: { 200: { description: 'Profil user' } }
+      },
+      patch: {
+        tags: ['Auth'],
+        summary: 'Update profil user yang sedang login',
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  nama: { type: 'string', example: 'Nama Baru' },
+                  no_wa: { type: 'string', example: '081234567890' }
+                }
+              }
+            }
+          }
+        },
+        responses: { 200: { description: 'Profil diperbarui' } }
+      }
+    },
+    '/api/auth/change-password': {
+      post: {
+        tags: ['Auth'],
+        summary: 'Ganti password user yang sedang login',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['old_password', 'new_password'],
+                properties: {
+                  old_password: { type: 'string', example: 'password123' },
+                  new_password: { type: 'string', example: 'newpassword456' }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: 'Password berhasil diubah' },
+          400: { description: 'Password lama salah' }
+        }
+      }
+    },
     '/api/mahasiswa/profile': {
       get: { tags: ['Mahasiswa'], summary: 'Ambil profil mahasiswa', responses: { 200: { description: 'Profil mahasiswa' } } },
       put: { tags: ['Mahasiswa'], summary: 'Update profil mahasiswa', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Profil diperbarui' } } },
@@ -219,6 +273,105 @@ const swaggerDefinition = {
     },
     '/api/mahasiswa/sidang': {
       get: { tags: ['Mahasiswa'], summary: 'Jadwal sidang saya', responses: { 200: { description: 'Jadwal sidang' } } },
+    },
+    '/api/mahasiswa/track': {
+      patch: {
+        tags: ['Mahasiswa'],
+        summary: 'Set track mahasiswa (proyek1/2/3 atau internship1/2)',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['track'],
+                properties: {
+                  track: { type: 'string', enum: ['proyek1', 'proyek2', 'proyek3', 'internship1', 'internship2'], example: 'proyek1' }
+                }
+              }
+            }
+          }
+        },
+        responses: { 200: { description: 'Track berhasil diset' }, 400: { description: 'Track tidak valid' } }
+      },
+    },
+    '/api/mahasiswa/periode-aktif': {
+      get: {
+        tags: ['Mahasiswa'],
+        summary: 'Cek periode aktif untuk mahasiswa',
+        description: 'Mengecek apakah mahasiswa eligible untuk mengikuti proyek/internship berdasarkan periode yang sedang aktif',
+        responses: {
+          200: {
+            description: 'Status periode',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    active: { type: 'boolean', example: true },
+                    periode: {
+                      type: 'object',
+                      properties: {
+                        id: { type: 'integer' },
+                        nama: { type: 'string' },
+                        tipe: { type: 'string' },
+                        start_date: { type: 'string', format: 'date' },
+                        end_date: { type: 'string', format: 'date' }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+    },
+    '/api/mahasiswa/kelompok': {
+      post: {
+        tags: ['Mahasiswa'],
+        summary: 'Buat kelompok baru (untuk proyek)',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['nama'],
+                properties: {
+                  nama: { type: 'string', example: 'Kelompok A' }
+                }
+              }
+            }
+          }
+        },
+        responses: { 201: { description: 'Kelompok berhasil dibuat' }, 400: { description: 'Validasi gagal' } }
+      },
+      get: { tags: ['Mahasiswa'], summary: 'Lihat kelompok saya dan anggotanya', responses: { 200: { description: 'Data kelompok' } } },
+    },
+    '/api/mahasiswa/kelompok/join': {
+      post: {
+        tags: ['Mahasiswa'],
+        summary: 'Bergabung ke kelompok existing',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['kelompok_id'],
+                properties: {
+                  kelompok_id: { type: 'integer', example: 1 }
+                }
+              }
+            }
+          }
+        },
+        responses: { 200: { description: 'Berhasil bergabung' }, 400: { description: 'Kelompok penuh atau track tidak sesuai' } }
+      },
+    },
+    '/api/mahasiswa/kelompok/available': {
+      get: { tags: ['Mahasiswa'], summary: 'Daftar kelompok yang tersedia untuk join (track sama, belum penuh)', responses: { 200: { description: 'List kelompok tersedia' } } },
     },
     '/api/bimbingan/{id}': {
       get: {
@@ -325,11 +478,57 @@ const swaggerDefinition = {
     '/api/koordinator/stats': {
       get: { tags: ['Koordinator'], summary: 'Statistik dashboard koordinator', responses: { 200: { description: 'Data statistik' } } },
     },
+    '/api/koordinator/my-semester': {
+      get: {
+        tags: ['Koordinator'],
+        summary: 'Cek semester yang di-assign ke koordinator ini',
+        description: 'Mengembalikan informasi semester yang menjadi tanggung jawab koordinator saat ini',
+        responses: {
+          200: {
+            description: 'Data semester',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    assigned_semester: { type: 'integer', example: 5 },
+                    semester_label: { type: 'string', example: 'Proyek 3 (Semester 5)' }
+                  }
+                }
+              }
+            }
+          },
+          404: { description: 'Koordinator belum di-assign ke semester manapun' }
+        }
+      },
+    },
     '/api/koordinator/mahasiswa': { get: { tags: ['Koordinator'], summary: 'List mahasiswa', responses: { 200: { description: 'Daftar mahasiswa' } } } },
     '/api/koordinator/dosen': { get: { tags: ['Koordinator'], summary: 'List dosen', responses: { 200: { description: 'Daftar dosen' } } } },
     '/api/koordinator/proposals/pending': { get: { tags: ['Koordinator'], summary: 'Proposal menunggu validasi', responses: { 200: { description: 'Daftar proposal' } } } },
     '/api/koordinator/proposal/validate': { patch: { tags: ['Koordinator'], summary: 'Validasi proposal (approved/rejected)', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Proposal divalidasi' } } } },
-    '/api/koordinator/assign-dosen': { post: { tags: ['Koordinator'], summary: 'Assign dosen pembimbing ke mahasiswa', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Dosen ditugaskan' } } } },
+    '/api/koordinator/assign-dosen': {
+      post: {
+        tags: ['Koordinator'],
+        summary: 'Assign dosen pembimbing ke mahasiswa (internship wajib 2 pembimbing)',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['mahasiswa_id', 'dosen_id'],
+                properties: {
+                  mahasiswa_id: { type: 'integer', example: 1 },
+                  dosen_id: { type: 'integer', description: 'Pembimbing utama', example: 1 },
+                  dosen_id_2: { type: 'integer', description: 'Pembimbing kedua (wajib untuk internship)', example: 2 }
+                }
+              }
+            }
+          }
+        },
+        responses: { 200: { description: 'Dosen ditugaskan' }, 400: { description: 'Internship memerlukan 2 pembimbing' } }
+      }
+    },
     '/api/koordinator/sidang/schedule': { post: { tags: ['Koordinator'], summary: 'Jadwalkan sidang', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Sidang dijadwalkan' } } } },
     '/api/koordinator/sidang': { get: { tags: ['Koordinator'], summary: 'List sidang', responses: { 200: { description: 'Daftar sidang' } } } },
     '/api/koordinator/jadwal': {
@@ -356,6 +555,34 @@ const swaggerDefinition = {
           },
         },
         responses: { 201: { description: 'Jadwal disimpan' }, 400: { description: 'Validasi gagal' } },
+      },
+    },
+    '/api/koordinator/jadwal/active': {
+      get: {
+        tags: ['Koordinator'],
+        summary: 'Ambil jadwal aktif saat ini',
+        description: 'Mengembalikan jadwal proyek/internship yang sedang berjalan (tanggal sekarang berada dalam range)',
+        responses: {
+          200: {
+            description: 'Jadwal aktif',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'integer' },
+                    nama: { type: 'string' },
+                    tipe: { type: 'string' },
+                    start_date: { type: 'string', format: 'date' },
+                    end_date: { type: 'string', format: 'date' },
+                    status: { type: 'string' }
+                  }
+                }
+              }
+            }
+          },
+          404: { description: 'Tidak ada jadwal aktif' }
+        }
       },
     },
     '/api/koordinator/jadwal/{id}': {
@@ -404,6 +631,58 @@ const swaggerDefinition = {
     '/api/kaprodi/penguji': { get: { tags: ['Kaprodi'], summary: 'List penguji', responses: { 200: { description: 'Daftar penguji' } } } },
     '/api/kaprodi/assign-dosen': { post: { tags: ['Kaprodi'], summary: 'Assign dosen pembimbing ke mahasiswa', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Dosen ditugaskan' } } } },
     '/api/kaprodi/proposal/status': { patch: { tags: ['Kaprodi'], summary: 'Update status proposal (approved/rejected)', requestBody: { content: { 'application/json': { schema: { type: 'object' } } } }, responses: { 200: { description: 'Status diperbarui' } } } },
+    '/api/kaprodi/koordinator/assign-semester': {
+      post: {
+        tags: ['Kaprodi'],
+        summary: 'Assign koordinator ke semester tertentu',
+        description: 'Menugaskan dosen sebagai koordinator untuk semester tertentu (2, 3, 5, 7, atau 8). Satu koordinator hanya bisa menangani satu semester.',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['koordinator_id', 'semester'],
+                properties: {
+                  koordinator_id: { type: 'integer', description: 'ID dosen yang akan dijadikan koordinator', example: 1 },
+                  semester: { type: 'integer', enum: [2, 3, 5, 7, 8], description: 'Semester yang akan ditangani', example: 5 }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: 'Koordinator berhasil di-assign ke semester' },
+          400: { description: 'Semester sudah di-assign ke koordinator lain' },
+          404: { description: 'Dosen tidak ditemukan' }
+        }
+      },
+    },
+    '/api/kaprodi/koordinator/unassign-semester': {
+      post: {
+        tags: ['Kaprodi'],
+        summary: 'Hapus assignment koordinator dari semester',
+        description: 'Menghapus penugasan koordinator dari semester dan mengembalikan jabatan ke dosen biasa',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['koordinator_id'],
+                properties: {
+                  koordinator_id: { type: 'integer', description: 'ID koordinator yang akan dihapus assignment-nya', example: 1 }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: 'Assignment berhasil dihapus' },
+          400: { description: 'Validasi gagal' }
+        }
+      },
+    },
     '/api/penguji/profile': { get: { tags: ['Penguji'], summary: 'Profil penguji', responses: { 200: { description: 'Profil' }, 404: { description: 'Tidak ditemukan' } } } },
     '/api/penguji/sidang': { get: { tags: ['Penguji'], summary: 'Sidang yang diampu sebagai Penguji 2', responses: { 200: { description: 'Daftar sidang' } } } },
     '/api/sidang': { get: { tags: ['Sidang'], summary: 'List semua sidang (auth)', responses: { 200: { description: 'Daftar sidang' } } } },
