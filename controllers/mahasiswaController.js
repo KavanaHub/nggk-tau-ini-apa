@@ -43,10 +43,10 @@ const mahasiswaController = {
     }
   },
 
-  // SET TRACK (proyek1/2/3 atau internship1/2)
+  // SET TRACK (proyek1/2/3 atau internship1/2) with optional partner matching
   setTrack: async (req, res, next) => {
     const mahasiswaId = req.user.id;
-    const { track } = req.body;
+    const { track, partner_npm } = req.body;
 
     const validTracks = ['proyek1', 'proyek2', 'proyek3', 'internship1', 'internship2'];
 
@@ -56,29 +56,101 @@ const mahasiswaController = {
       });
     }
 
+    const conn = await pool.getConnection();
     try {
-      // Cek apakah sudah punya track
-      const [mhsRows] = await pool.query(
-        'SELECT track, kelompok_id FROM mahasiswa WHERE id = ?',
+      await conn.beginTransaction();
+
+      // Get current mahasiswa info
+      const [mhsRows] = await conn.query(
+        'SELECT id, npm, track, kelompok_id FROM mahasiswa WHERE id = ?',
         [mahasiswaId]
       );
 
       if (mhsRows.length === 0) {
+        await conn.rollback();
         return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
       }
 
-      if (mhsRows[0].track && mhsRows[0].kelompok_id) {
+      const currentMhs = mhsRows[0];
+
+      if (currentMhs.track && currentMhs.kelompok_id) {
+        await conn.rollback();
         return res.status(400).json({ message: 'Tidak dapat mengubah track setelah bergabung kelompok' });
       }
 
-      await pool.query(
-        'UPDATE mahasiswa SET track = ? WHERE id = ?',
-        [track, mahasiswaId]
+      // Update track and pending_partner_npm
+      await conn.query(
+        'UPDATE mahasiswa SET track = ?, pending_partner_npm = ? WHERE id = ?',
+        [track, partner_npm || null, mahasiswaId]
       );
 
-      res.json({ message: `Track berhasil diset ke ${track}` });
+      let matchResult = { matched: false, kelompok_id: null };
+
+      // For proyek tracks, check for mutual partner matching
+      if (track.startsWith('proyek') && partner_npm) {
+        // Find partner by NPM
+        const [partnerRows] = await conn.query(
+          'SELECT id, npm, track, kelompok_id, pending_partner_npm FROM mahasiswa WHERE npm = ?',
+          [partner_npm]
+        );
+
+        if (partnerRows.length > 0) {
+          const partner = partnerRows[0];
+
+          // Check if:
+          // 1. Partner has same track
+          // 2. Partner has set current user as their pending partner
+          // 3. Neither has a kelompok yet
+          if (
+            partner.track === track &&
+            partner.pending_partner_npm === currentMhs.npm &&
+            !partner.kelompok_id &&
+            !currentMhs.kelompok_id
+          ) {
+            // MUTUAL MATCH! Create kelompok and add both
+            const kelompokNama = `Kelompok ${track.toUpperCase()} - ${currentMhs.npm} & ${partner.npm}`;
+
+            const [kelompokResult] = await conn.query(
+              'INSERT INTO kelompok (nama, track) VALUES (?, ?)',
+              [kelompokNama, track]
+            );
+
+            const kelompokId = kelompokResult.insertId;
+
+            // Add both mahasiswa to kelompok and clear pending_partner_npm
+            await conn.query(
+              'UPDATE mahasiswa SET kelompok_id = ?, pending_partner_npm = NULL WHERE id IN (?, ?)',
+              [kelompokId, mahasiswaId, partner.id]
+            );
+
+            matchResult = { matched: true, kelompok_id: kelompokId, partner_nama: partner.npm };
+            console.log(`[Match] Kelompok created: ${kelompokNama} for ${currentMhs.npm} & ${partner.npm}`);
+          }
+        }
+      }
+
+      await conn.commit();
+
+      if (matchResult.matched) {
+        res.json({
+          message: `Track berhasil diset ke ${track}. Kelompok otomatis terbentuk dengan partner!`,
+          track: track,
+          matched: true,
+          kelompok_id: matchResult.kelompok_id
+        });
+      } else {
+        res.json({
+          message: `Track berhasil diset ke ${track}`,
+          track: track,
+          matched: false,
+          pending_partner: partner_npm || null
+        });
+      }
     } catch (err) {
+      await conn.rollback();
       next(err);
+    } finally {
+      conn.release();
     }
   },
 
