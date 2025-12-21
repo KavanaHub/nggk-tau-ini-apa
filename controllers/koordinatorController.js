@@ -82,17 +82,23 @@ const koordinatorController = {
   // GET SEMUA DOSEN - menggunakan shared function
   getAllDosen: sharedController.getAllDosen,
 
-  // GET MAHASISWA YANG PROPOSAL PENDING (dengan usulan dosen)
+  // GET ALL PROPOSALS (untuk halaman validasi - menampilkan pending, approved, rejected)
   getPendingProposals: async (req, res, next) => {
     try {
       const [rows] = await pool.query(
         `SELECT m.id, m.npm, m.nama, m.email, m.track, m.judul_proyek, 
-                m.file_proposal, m.usulan_dosen_id, m.created_at,
+                m.file_proposal, m.usulan_dosen_id, m.status_proposal, m.created_at,
                 d.nama as usulan_dosen_nama, d.nidn as usulan_dosen_nidn
          FROM mahasiswa m
          LEFT JOIN dosen d ON m.usulan_dosen_id = d.id
-         WHERE m.status_proposal = 'pending' AND m.judul_proyek IS NOT NULL
-         ORDER BY m.created_at ASC`
+         WHERE m.judul_proyek IS NOT NULL AND m.status_proposal IS NOT NULL
+         ORDER BY 
+           CASE m.status_proposal 
+             WHEN 'pending' THEN 1 
+             WHEN 'approved' THEN 2 
+             WHEN 'rejected' THEN 3 
+           END,
+           m.created_at DESC`
       );
 
       res.json(rows);
