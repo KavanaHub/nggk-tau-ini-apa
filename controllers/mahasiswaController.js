@@ -62,7 +62,7 @@ const mahasiswaController = {
 
       // Get current mahasiswa info
       const [mhsRows] = await conn.query(
-        'SELECT id, npm, track, kelompok_id FROM mahasiswa WHERE id = ?',
+        'SELECT id, npm, nama, track, kelompok_id FROM mahasiswa WHERE id = ?',
         [mahasiswaId]
       );
 
@@ -88,9 +88,9 @@ const mahasiswaController = {
 
       // For proyek tracks, check for mutual partner matching
       if (track.startsWith('proyek') && partner_npm) {
-        // Find partner by NPM
+        // Find partner by NPM (include nama for kelompok naming)
         const [partnerRows] = await conn.query(
-          'SELECT id, npm, track, kelompok_id, pending_partner_npm FROM mahasiswa WHERE npm = ?',
+          'SELECT id, npm, nama, track, kelompok_id, pending_partner_npm FROM mahasiswa WHERE npm = ?',
           [partner_npm]
         );
 
@@ -108,7 +108,8 @@ const mahasiswaController = {
             !currentMhs.kelompok_id
           ) {
             // MUTUAL MATCH! Create kelompok and add both
-            const kelompokNama = `Kelompok ${track.toUpperCase()} - ${currentMhs.npm} & ${partner.npm}`;
+            // Use actual names for better readability
+            const kelompokNama = `Kelompok ${track.toUpperCase()} - ${currentMhs.nama} & ${partner.nama}`;
 
             const [kelompokResult] = await conn.query(
               'INSERT INTO kelompok (nama, track) VALUES (?, ?)',
@@ -123,8 +124,8 @@ const mahasiswaController = {
               [kelompokId, mahasiswaId, partner.id]
             );
 
-            matchResult = { matched: true, kelompok_id: kelompokId, partner_nama: partner.npm };
-            console.log(`[Match] Kelompok created: ${kelompokNama} for ${currentMhs.npm} & ${partner.npm}`);
+            matchResult = { matched: true, kelompok_id: kelompokId, partner_nama: partner.nama };
+            console.log(`[Match] Kelompok created: ${kelompokNama} for ${currentMhs.nama} & ${partner.nama}`);
           }
         }
       }
