@@ -156,6 +156,7 @@ const mahasiswaController = {
   },
 
   // SUBMIT PROPOSAL (judul + file + usulan dosen)
+  // When one member submits, ALL kelompok members get the same proposal data
   submitProposal: async (req, res, next) => {
     const { judul_proyek, file_url, usulan_dosen_id } = req.body;
     const mahasiswaId = req.user.id;
@@ -165,14 +166,22 @@ const mahasiswaController = {
     }
 
     try {
-      // Cek track sudah dipilih
+      // Get mahasiswa info including kelompok
       const [mhsRows] = await pool.query(
-        'SELECT track FROM mahasiswa WHERE id = ?',
+        'SELECT track, kelompok_id, status_proposal FROM mahasiswa WHERE id = ?',
         [mahasiswaId]
       );
 
       if (!mhsRows[0]?.track) {
         return res.status(400).json({ message: 'Pilih track terlebih dahulu' });
+      }
+
+      // Check if already submitted (not rejected)
+      if (mhsRows[0].status_proposal && mhsRows[0].status_proposal !== 'rejected') {
+        return res.status(400).json({
+          message: 'Proposal sudah disubmit. Tunggu review dari koordinator.',
+          status: mhsRows[0].status_proposal
+        });
       }
 
       // Validasi usulan dosen jika ada
@@ -187,12 +196,26 @@ const mahasiswaController = {
         }
       }
 
-      await pool.query(
-        `UPDATE mahasiswa SET judul_proyek = ?, file_proposal = ?, status_proposal = 'pending',
-         usulan_dosen_id = ?
-         WHERE id = ?`,
-        [judul_proyek, file_url, usulan_dosen_id || null, mahasiswaId]
-      );
+      const kelompokId = mhsRows[0].kelompok_id;
+
+      // If user is in a kelompok, update ALL members with same proposal data
+      if (kelompokId) {
+        await pool.query(
+          `UPDATE mahasiswa SET judul_proyek = ?, file_proposal = ?, status_proposal = 'pending',
+           usulan_dosen_id = ?
+           WHERE kelompok_id = ?`,
+          [judul_proyek, file_url, usulan_dosen_id || null, kelompokId]
+        );
+        console.log(`[Proposal] Updated all members of kelompok ${kelompokId} with proposal`);
+      } else {
+        // Individual (internship) or no kelompok
+        await pool.query(
+          `UPDATE mahasiswa SET judul_proyek = ?, file_proposal = ?, status_proposal = 'pending',
+           usulan_dosen_id = ?
+           WHERE id = ?`,
+          [judul_proyek, file_url, usulan_dosen_id || null, mahasiswaId]
+        );
+      }
 
       res.status(201).json({ message: "Proposal submitted successfully" });
     } catch (err) {
