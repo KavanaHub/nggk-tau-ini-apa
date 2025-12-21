@@ -109,6 +109,52 @@ const dosenController = {
       next(err);
     }
   },
+
+  // GET STATS (untuk dashboard)
+  getStats: async (req, res, next) => {
+    try {
+      const dosenId = req.user.id;
+
+      // Count mahasiswa bimbingan
+      const [[{ total_mahasiswa }]] = await pool.query(
+        `SELECT COUNT(*) as total_mahasiswa FROM mahasiswa WHERE dosen_id = ? OR dosen_id_2 = ?`,
+        [dosenId, dosenId]
+      );
+
+      // Count bimbingan pending
+      const [[{ bimbingan_pending }]] = await pool.query(
+        `SELECT COUNT(*) as bimbingan_pending FROM bimbingan b
+         JOIN mahasiswa m ON b.mahasiswa_id = m.id
+         WHERE b.dosen_id = ? AND b.status = 'pending'`,
+        [dosenId]
+      );
+
+      // Count siap sidang (mahasiswa dengan >= 8 bimbingan approved)
+      const [[{ siap_sidang }]] = await pool.query(
+        `SELECT COUNT(DISTINCT m.id) as siap_sidang FROM mahasiswa m
+         WHERE (m.dosen_id = ? OR m.dosen_id_2 = ?)
+         AND (SELECT COUNT(*) FROM bimbingan WHERE mahasiswa_id = m.id AND status = 'approved') >= 8`,
+        [dosenId, dosenId]
+      );
+
+      // Count laporan pending
+      const [[{ laporan_pending }]] = await pool.query(
+        `SELECT COUNT(*) as laporan_pending FROM laporan_sidang ls
+         JOIN mahasiswa m ON ls.mahasiswa_id = m.id
+         WHERE m.dosen_id = ? AND ls.status = 'pending'`,
+        [dosenId]
+      );
+
+      res.json({
+        total_mahasiswa,
+        bimbingan_pending,
+        siap_sidang,
+        laporan_pending
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
 };
 
 export default dosenController;

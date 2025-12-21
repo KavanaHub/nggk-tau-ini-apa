@@ -10,6 +10,9 @@ const router = express.Router();
 // Profile (dosen dan kaprodi bisa akses)
 router.get('/profile', auth, requireRole('dosen', 'kaprodi'), dosenController.getProfile);
 
+// Stats (untuk dashboard)
+router.get('/stats', auth, requireRole('dosen', 'kaprodi'), dosenController.getStats);
+
 // List semua dosen (untuk public)
 router.get('/list', dosenController.listDosen);
 
