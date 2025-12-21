@@ -5,14 +5,15 @@ import pool from '../config/db.js';
  * antar kaprodiController, koordinatorController, dan lainnya
  */
 const sharedController = {
-    // GET SEMUA MAHASISWA (dengan info dosen dan usulan dosen)
+    // GET SEMUA MAHASISWA (dengan info dosen, usulan dosen, dan bimbingan count)
     getAllMahasiswa: async (req, res, next) => {
         try {
             const [rows] = await pool.query(
                 `SELECT m.id, m.npm, m.nama, m.email, m.no_wa, m.angkatan, m.track,
                 m.judul_proyek, m.status_proposal, m.dosen_id, m.usulan_dosen_id,
                 d.nama as dosen_nama,
-                ud.nama as usulan_dosen_nama
+                ud.nama as usulan_dosen_nama,
+                (SELECT COUNT(*) FROM bimbingan b WHERE b.mahasiswa_id = m.id AND b.status = 'approved') as bimbingan_count
          FROM mahasiswa m
          LEFT JOIN dosen d ON m.dosen_id = d.id
          LEFT JOIN dosen ud ON m.usulan_dosen_id = ud.id
