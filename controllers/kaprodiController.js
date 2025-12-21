@@ -90,6 +90,86 @@ const kaprodiController = {
     }
   },
 
+  // GET AKTIVITAS TERBARU (realtime)
+  getRecentActivities: async (req, res, next) => {
+    try {
+      const activities = [];
+
+      // 1. Recent proposals (submitted in last 30 days)
+      const [proposals] = await pool.query(`
+        SELECT m.nama, m.created_at as time, 'proposal' as type,
+               CONCAT(m.nama, ' mengajukan proposal') as description
+        FROM mahasiswa m
+        WHERE m.status_proposal = 'pending' 
+        AND m.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        ORDER BY m.created_at DESC LIMIT 5
+      `);
+      proposals.forEach(p => activities.push({
+        type: 'proposal',
+        desc: p.description,
+        time: p.time
+      }));
+
+      // 2. Recent bimbingan completions (8th bimbingan approved)
+      const [bimbingan] = await pool.query(`
+        SELECT m.nama, b.approved_at as time, 'bimbingan' as type,
+               b.minggu_ke,
+               CONCAT(m.nama, ' menyelesaikan bimbingan ke-', b.minggu_ke) as description
+        FROM bimbingan b
+        JOIN mahasiswa m ON b.mahasiswa_id = m.id
+        WHERE b.status = 'approved' 
+        AND b.approved_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        ORDER BY b.approved_at DESC LIMIT 5
+      `);
+      bimbingan.forEach(b => activities.push({
+        type: 'bimbingan',
+        desc: b.description,
+        time: b.time
+      }));
+
+      // 3. Recent sidang results
+      const [sidang] = await pool.query(`
+        SELECT m.nama, s.tanggal as time, s.status,
+               CASE WHEN s.status = 'lulus' 
+                    THEN CONCAT(m.nama, ' lulus sidang')
+                    ELSE CONCAT(m.nama, ' mengikuti sidang')
+               END as description
+        FROM sidang s
+        JOIN mahasiswa m ON s.mahasiswa_id = m.id
+        WHERE s.tanggal >= DATE_SUB(NOW(), INTERVAL 60 DAY)
+        ORDER BY s.tanggal DESC LIMIT 5
+      `);
+      sidang.forEach(s => activities.push({
+        type: 'sidang',
+        desc: s.description,
+        time: s.time
+      }));
+
+      // 4. Recent dosen assignments
+      const [pembimbing] = await pool.query(`
+        SELECT m.nama as mhs_nama, d.nama as dosen_nama, m.updated_at as time,
+               CONCAT(m.nama, ' ditugaskan ke ', d.nama) as description
+        FROM mahasiswa m
+        JOIN dosen d ON m.dosen_id = d.id
+        WHERE m.dosen_id IS NOT NULL 
+        AND m.updated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        ORDER BY m.updated_at DESC LIMIT 5
+      `);
+      pembimbing.forEach(p => activities.push({
+        type: 'pembimbing',
+        desc: p.description,
+        time: p.time
+      }));
+
+      // Sort all by time (newest first) and take top 10
+      activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+      res.json(activities.slice(0, 10));
+    } catch (err) {
+      next(err);
+    }
+  },
+
   // ASSIGN KOORDINATOR KE SEMESTER
   // 1 koordinator = 1 semester, 1 semester = 1 koordinator
   // Saat di-assign, jabatan dosen berubah menjadi include 'koordinator'

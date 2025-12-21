@@ -10,6 +10,7 @@ router.get('/profile', auth, requireRole('kaprodi'), kaprodiController.getProfil
 
 // Dashboard Stats - admin bisa akses
 router.get('/stats', auth, requireRole('kaprodi'), kaprodiController.getDashboardStats);
+router.get('/activities', auth, requireRole('kaprodi'), kaprodiController.getRecentActivities);
 
 // List data - admin bisa akses
 router.get('/mahasiswa', auth, requireRole('kaprodi'), kaprodiController.getAllMahasiswa);
