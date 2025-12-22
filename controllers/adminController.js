@@ -13,33 +13,58 @@ const adminController = {
     // GET SYSTEM STATS
     getStats: async (req, res, next) => {
         try {
-            const [[{ total_mahasiswa }]] = await pool.query('SELECT COUNT(*) as total_mahasiswa FROM mahasiswa');
-            const [[{ total_dosen }]] = await pool.query('SELECT COUNT(*) as total_dosen FROM dosen');
-            const [[{ total_koordinator }]] = await pool.query("SELECT COUNT(*) as total_koordinator FROM dosen WHERE jabatan LIKE '%koordinator%'");
+            let total_mahasiswa = 0, total_dosen = 0, total_koordinator = 0, sidang_bulan_ini = 0;
+            let proposal_pending = 0, bimbingan_aktif = 0, laporan_pending = 0, sidang_scheduled = 0, users_inactive = 0;
+
+            try {
+                const [[result]] = await pool.query('SELECT COUNT(*) as total_mahasiswa FROM mahasiswa');
+                total_mahasiswa = result.total_mahasiswa || 0;
+            } catch (e) { console.log('Error counting mahasiswa:', e.message); }
+
+            try {
+                const [[result]] = await pool.query('SELECT COUNT(*) as total_dosen FROM dosen');
+                total_dosen = result.total_dosen || 0;
+            } catch (e) { console.log('Error counting dosen:', e.message); }
+
+            try {
+                const [[result]] = await pool.query("SELECT COUNT(*) as total_koordinator FROM dosen WHERE jabatan LIKE '%koordinator%'");
+                total_koordinator = result.total_koordinator || 0;
+            } catch (e) { console.log('Error counting koordinator:', e.message); }
 
             // Sidang bulan ini
-            const [[{ sidang_bulan_ini }]] = await pool.query(`
-        SELECT COUNT(*) as sidang_bulan_ini FROM sidang 
-        WHERE MONTH(tanggal) = MONTH(CURRENT_DATE()) AND YEAR(tanggal) = YEAR(CURRENT_DATE())
-      `);
+            try {
+                const [[result]] = await pool.query(`
+                    SELECT COUNT(*) as sidang_bulan_ini FROM sidang 
+                    WHERE MONTH(tanggal) = MONTH(CURRENT_DATE()) AND YEAR(tanggal) = YEAR(CURRENT_DATE())
+                `);
+                sidang_bulan_ini = result.sidang_bulan_ini || 0;
+            } catch (e) { console.log('Error counting sidang bulan ini:', e.message); }
 
             // System overview
-            const [[{ proposal_pending }]] = await pool.query("SELECT COUNT(*) as proposal_pending FROM mahasiswa WHERE status_proposal = 'pending'");
-            const [[{ bimbingan_aktif }]] = await pool.query("SELECT COUNT(*) as bimbingan_aktif FROM bimbingan WHERE status = 'pending'");
+            try {
+                const [[result]] = await pool.query("SELECT COUNT(*) as proposal_pending FROM mahasiswa WHERE status_proposal = 'pending'");
+                proposal_pending = result.proposal_pending || 0;
+            } catch (e) { }
 
-            let laporan_pending = 0;
+            try {
+                const [[result]] = await pool.query("SELECT COUNT(*) as bimbingan_aktif FROM bimbingan WHERE status = 'pending'");
+                bimbingan_aktif = result.bimbingan_aktif || 0;
+            } catch (e) { }
+
             try {
                 const [[result]] = await pool.query("SELECT COUNT(*) as laporan_pending FROM laporan_sidang WHERE status = 'pending'");
-                laporan_pending = result.laporan_pending;
+                laporan_pending = result.laporan_pending || 0;
             } catch (e) { }
 
-            let sidang_scheduled = 0;
             try {
                 const [[result]] = await pool.query("SELECT COUNT(*) as sidang_scheduled FROM sidang WHERE status = 'scheduled'");
-                sidang_scheduled = result.sidang_scheduled;
+                sidang_scheduled = result.sidang_scheduled || 0;
             } catch (e) { }
 
-            const [[{ users_inactive }]] = await pool.query("SELECT COUNT(*) as users_inactive FROM mahasiswa WHERE is_active = false");
+            try {
+                const [[result]] = await pool.query("SELECT COUNT(*) as users_inactive FROM mahasiswa WHERE is_active = false");
+                users_inactive = result.users_inactive || 0;
+            } catch (e) { }
 
             res.json({
                 total_mahasiswa,
