@@ -78,8 +78,11 @@ const sidangController = {
 
     try {
       const [rows] = await pool.query(
-        `SELECT ls.*, m.nama as mahasiswa_nama, m.npm,
-                CASE WHEN m.dosen_id = ? THEN 'utama' ELSE 'kedua' END as peran_pembimbing
+        `SELECT ls.id, ls.mahasiswa_id, ls.file_url as file_laporan, ls.status, 
+                ls.note as catatan_dosen, ls.created_at as tanggal_submit,
+                m.nama as mahasiswa_nama, m.npm as mahasiswa_npm, m.track, m.judul_proyek as judul,
+                CASE WHEN m.dosen_id = ? THEN 'utama' ELSE 'kedua' END as peran_pembimbing,
+                (SELECT COUNT(*) FROM bimbingan WHERE mahasiswa_id = m.id AND status = 'approved') as bimbingan_count
          FROM laporan_sidang ls
          JOIN mahasiswa m ON ls.mahasiswa_id = m.id
          WHERE m.dosen_id = ? OR m.dosen_id_2 = ?
@@ -103,8 +106,8 @@ const sidangController = {
       return res.status(400).json({ message: 'status wajib diisi' });
     }
 
-    if (!['approved', 'rejected'].includes(status)) {
-      return res.status(400).json({ message: 'Status harus approved atau rejected' });
+    if (!['approved', 'rejected', 'revision'].includes(status)) {
+      return res.status(400).json({ message: 'Status harus approved, rejected, atau revision' });
     }
 
     try {
