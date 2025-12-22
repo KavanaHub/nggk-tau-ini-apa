@@ -46,7 +46,7 @@ const sidangController = {
 
       const [result] = await pool.query(
         `INSERT INTO laporan_sidang (mahasiswa_id, file_url, status)
-         VALUES (?, ?, 'submitted')`,
+         VALUES (?, ?, 'pending')`,
         [mahasiswaId, file_url]
       );
 
