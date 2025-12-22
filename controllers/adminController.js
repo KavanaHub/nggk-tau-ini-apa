@@ -122,16 +122,26 @@ const adminController = {
     // GET ALL USERS (combined view)
     getAllUsers: async (req, res, next) => {
         try {
-            const [mahasiswa] = await pool.query(
-                `SELECT id, nama, email, npm, 'mahasiswa' as role, is_active, created_at FROM mahasiswa`
-            );
-            const [dosen] = await pool.query(
-                `SELECT id, nama, email, nidn, jabatan, 
-         CASE WHEN jabatan LIKE '%kaprodi%' THEN 'kaprodi'
-              WHEN jabatan LIKE '%koordinator%' THEN 'koordinator'
-              ELSE 'dosen' END as role,
-         is_active, created_at FROM dosen`
-            );
+            let mahasiswa = [];
+            let dosen = [];
+
+            try {
+                const [rows] = await pool.query(
+                    `SELECT id, nama, email, npm, 'mahasiswa' as role, created_at FROM mahasiswa`
+                );
+                mahasiswa = rows;
+            } catch (e) { console.log('Error fetching mahasiswa:', e.message); }
+
+            try {
+                const [rows] = await pool.query(
+                    `SELECT id, nama, email, nidn, jabatan, 
+                     CASE WHEN jabatan LIKE '%kaprodi%' THEN 'kaprodi'
+                          WHEN jabatan LIKE '%koordinator%' THEN 'koordinator'
+                          ELSE 'dosen' END as role,
+                     created_at FROM dosen`
+                );
+                dosen = rows;
+            } catch (e) { console.log('Error fetching dosen:', e.message); }
 
             res.json({ mahasiswa, dosen });
         } catch (err) {
