@@ -172,8 +172,8 @@ const sidangController = {
         return res.status(400).json({ message: 'Mahasiswa belum memiliki laporan yang disetujui' });
       }
 
-      // Cek penguji ada
-      const [pengujiRows] = await pool.query('SELECT id FROM penguji WHERE id = ?', [penguji_id]);
+      // Cek penguji ada (penguji adalah dosen)
+      const [pengujiRows] = await pool.query('SELECT id FROM dosen WHERE id = ?', [penguji_id]);
 
       if (pengujiRows.length === 0) {
         return res.status(404).json({ message: 'Penguji tidak ditemukan' });
@@ -201,7 +201,7 @@ const sidangController = {
          FROM sidang s
          JOIN mahasiswa m ON s.mahasiswa_id = m.id
          JOIN dosen d ON s.dosen_id = d.id
-         JOIN penguji p ON s.penguji_id = p.id
+         JOIN dosen p ON s.penguji_id = p.id
          ORDER BY s.tanggal DESC, s.waktu ASC`
       );
 
@@ -220,7 +220,7 @@ const sidangController = {
         `SELECT s.*, d.nama as dosen_nama, p.nama as penguji_nama
          FROM sidang s
          JOIN dosen d ON s.dosen_id = d.id
-         JOIN penguji p ON s.penguji_id = p.id
+         JOIN dosen p ON s.penguji_id = p.id
          WHERE s.mahasiswa_id = ?`,
         [mahasiswaId]
       );
