@@ -43,21 +43,29 @@ const kaprodiController = {
   // GET STATISTIK DASHBOARD
   getDashboardStats: async (req, res, next) => {
     try {
-      const [[{ total }]] = await pool.query('SELECT COUNT(*) as total FROM mahasiswa');
-      const [[{ proyek }]] = await pool.query("SELECT COUNT(*) as proyek FROM mahasiswa WHERE track LIKE '%proyek%'");
-      const [[{ internship }]] = await pool.query("SELECT COUNT(*) as internship FROM mahasiswa WHERE track LIKE '%internship%'");
+      const [[{ total_mahasiswa }]] = await pool.query('SELECT COUNT(*) as total_mahasiswa FROM mahasiswa');
+      const [[{ total_dosen }]] = await pool.query('SELECT COUNT(*) as total_dosen FROM dosen');
+      const [[{ mahasiswa_aktif }]] = await pool.query("SELECT COUNT(*) as mahasiswa_aktif FROM mahasiswa WHERE is_active = true");
 
       // Lulus count - handle if sidang table doesn't exist
-      let lulus = 0;
+      let lulus_semester_ini = 0;
       try {
-        const [[result]] = await pool.query("SELECT COUNT(*) as lulus FROM sidang WHERE status = 'lulus'");
-        lulus = result.lulus || 0;
+        const [[result]] = await pool.query(`
+          SELECT COUNT(*) as lulus FROM sidang 
+          WHERE status = 'lulus' 
+          AND YEAR(tanggal) = YEAR(CURRENT_DATE())
+        `);
+        lulus_semester_ini = result.lulus || 0;
       } catch (e) { console.log('Sidang table may not exist:', e.message); }
 
       const [[{ siap_sidang }]] = await pool.query(`
         SELECT COUNT(*) as siap_sidang FROM mahasiswa m 
         WHERE (SELECT COUNT(*) FROM bimbingan WHERE mahasiswa_id = m.id AND status = 'approved') >= 8
       `);
+
+      // Additional stats
+      const [[{ proyek }]] = await pool.query("SELECT COUNT(*) as proyek FROM mahasiswa WHERE track LIKE '%proyek%'");
+      const [[{ internship }]] = await pool.query("SELECT COUNT(*) as internship FROM mahasiswa WHERE track LIKE '%internship%'");
 
       // By status
       const [[{ menunggu_track }]] = await pool.query("SELECT COUNT(*) as c FROM mahasiswa WHERE track IS NULL");
@@ -78,16 +86,21 @@ const kaprodiController = {
       angkatanRows.forEach(row => { by_angkatan[row.angkatan] = row.count; });
 
       res.json({
-        total,
+        // Main stats for dashboard cards
+        total_mahasiswa,
+        total_dosen,
+        mahasiswa_aktif,
+        siap_sidang,
+        lulus_semester_ini,
+        // Additional stats
         proyek,
         internship,
-        lulus,
         by_status: {
           "Menunggu Track": menunggu_track,
           "Proposal Pending": proposal_pending,
           "Sedang Bimbingan": sedang_bimbingan,
           "Siap Sidang": siap_sidang,
-          "Lulus": lulus
+          "Lulus": lulus_semester_ini
         },
         by_angkatan
       });
