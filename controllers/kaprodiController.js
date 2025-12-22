@@ -45,7 +45,13 @@ const kaprodiController = {
     try {
       const [[{ total_mahasiswa }]] = await pool.query('SELECT COUNT(*) as total_mahasiswa FROM mahasiswa');
       const [[{ total_dosen }]] = await pool.query('SELECT COUNT(*) as total_dosen FROM dosen');
-      const [[{ mahasiswa_aktif }]] = await pool.query("SELECT COUNT(*) as mahasiswa_aktif FROM mahasiswa WHERE is_active = true");
+
+      // Mahasiswa aktif - handle if is_active column doesn't exist
+      let mahasiswa_aktif = total_mahasiswa; // default to all
+      try {
+        const [[result]] = await pool.query("SELECT COUNT(*) as mahasiswa_aktif FROM mahasiswa WHERE is_active = true");
+        mahasiswa_aktif = result.mahasiswa_aktif || total_mahasiswa;
+      } catch (e) { console.log('is_active column may not exist:', e.message); }
 
       // Lulus count - handle if sidang table doesn't exist
       let lulus_semester_ini = 0;
@@ -58,10 +64,14 @@ const kaprodiController = {
         lulus_semester_ini = result.lulus || 0;
       } catch (e) { console.log('Sidang table may not exist:', e.message); }
 
-      const [[{ siap_sidang }]] = await pool.query(`
-        SELECT COUNT(*) as siap_sidang FROM mahasiswa m 
-        WHERE (SELECT COUNT(*) FROM bimbingan WHERE mahasiswa_id = m.id AND status = 'approved') >= 8
-      `);
+      let siap_sidang = 0;
+      try {
+        const [[result]] = await pool.query(`
+          SELECT COUNT(*) as siap_sidang FROM mahasiswa m 
+          WHERE (SELECT COUNT(*) FROM bimbingan WHERE mahasiswa_id = m.id AND status = 'approved') >= 8
+        `);
+        siap_sidang = result.siap_sidang || 0;
+      } catch (e) { console.log('Bimbingan count query failed:', e.message); }
 
       // Additional stats
       const [[{ proyek }]] = await pool.query("SELECT COUNT(*) as proyek FROM mahasiswa WHERE track LIKE '%proyek%'");
