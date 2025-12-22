@@ -134,6 +134,22 @@ const koordinatorController = {
       next(err);
     }
   },
+
+  // GET PENGUJI LIST - dosen yang bisa jadi penguji sidang
+  getPengujiList: async (req, res, next) => {
+    try {
+      // Get all dosen as potential penguji
+      const [rows] = await pool.query(
+        `SELECT id, nama, nidn, jabatan 
+         FROM dosen 
+         WHERE is_active = true
+         ORDER BY nama ASC`
+      );
+      res.json(rows);
+    } catch (err) {
+      next(err);
+    }
+  },
 };
 
 export default koordinatorController;

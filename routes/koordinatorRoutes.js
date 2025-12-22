@@ -29,6 +29,9 @@ router.post('/assign-dosen', auth, requireRole('koordinator'), koordinatorContro
 router.post('/sidang/schedule', auth, requireRole('koordinator'), sidangController.scheduleSidang);
 router.get('/sidang', auth, requireRole('koordinator'), sidangController.getAllSidang);
 
+// Penguji list for scheduling
+router.get('/penguji', auth, requireRole('koordinator'), koordinatorController.getPengujiList);
+
 // Jadwal Proyek/Internship
 router.get('/jadwal', auth, requireRole('koordinator'), jadwalController.list);
 router.get('/jadwal/active', auth, requireRole('koordinator'), jadwalController.getActive);
