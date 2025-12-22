@@ -183,16 +183,43 @@ const sidangController = {
         return res.status(404).json({ message: 'Penguji tidak ditemukan' });
       }
 
-      const [result] = await pool.query(
-        `INSERT INTO sidang (mahasiswa_id, tanggal, waktu, ruangan, dosen_id, penguji_id)
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        [mahasiswa_id, tanggal, waktu, ruangan, dosenId, penguji_id]
-      );
-
-      res.status(201).json({ message: 'Sidang berhasil dijadwalkan', id: result.insertId });
+      // Insert sidang - jika ada FK constraint error, coba insert ke penguji table dulu
+      try {
+        const [result] = await pool.query(
+          `INSERT INTO sidang (mahasiswa_id, tanggal, waktu, ruangan, dosen_id, penguji_id)
+           VALUES (?, ?, ?, ?, ?, ?)`,
+          [mahasiswa_id, tanggal, waktu, ruangan, dosenId, penguji_id]
+        );
+        res.status(201).json({ message: 'Sidang berhasil dijadwalkan', id: result.insertId });
+      } catch (insertErr) {
+        // Jika error karena FK constraint, coba insert penguji dulu
+        if (insertErr.code === 'ER_NO_REFERENCED_ROW_2' || insertErr.code === 'ER_NO_REFERENCED_ROW') {
+          console.log('FK constraint error, trying to insert penguji first...');
+          try {
+            // Get dosen data untuk insert ke penguji
+            const [dosenData] = await pool.query('SELECT nama FROM dosen WHERE id = ?', [penguji_id]);
+            if (dosenData.length > 0) {
+              await pool.query(
+                'INSERT IGNORE INTO penguji (id, nama) VALUES (?, ?)',
+                [penguji_id, dosenData[0].nama]
+              );
+              // Retry insert sidang
+              const [result] = await pool.query(
+                `INSERT INTO sidang (mahasiswa_id, tanggal, waktu, ruangan, dosen_id, penguji_id)
+                 VALUES (?, ?, ?, ?, ?, ?)`,
+                [mahasiswa_id, tanggal, waktu, ruangan, dosenId, penguji_id]
+              );
+              return res.status(201).json({ message: 'Sidang berhasil dijadwalkan', id: result.insertId });
+            }
+          } catch (e) {
+            console.error('Insert penguji failed:', e.message);
+          }
+        }
+        throw insertErr;
+      }
     } catch (err) {
       console.error('Schedule sidang error:', err);
-      next(err);
+      res.status(500).json({ message: 'Internal server error', detail: err.message });
     }
   },
 
