@@ -175,7 +175,7 @@ const mahasiswaController = {
     try {
       // Get mahasiswa info including kelompok
       const [mhsRows] = await pool.query(
-        'SELECT track, kelompok_id, status_proposal FROM mahasiswa WHERE id = ?',
+        'SELECT track, kelompok_id, status_proposal, judul_proyek FROM mahasiswa WHERE id = ?',
         [mahasiswaId]
       );
 
@@ -183,8 +183,9 @@ const mahasiswaController = {
         return res.status(400).json({ message: 'Pilih track terlebih dahulu' });
       }
 
-      // Check if already submitted (not rejected)
-      if (mhsRows[0].status_proposal && mhsRows[0].status_proposal !== 'rejected') {
+      // Check if already submitted (has judul_proyek and not rejected)
+      // Note: status_proposal default is 'pending' even before submission, so we check judul_proyek
+      if (mhsRows[0].judul_proyek && mhsRows[0].status_proposal !== 'rejected') {
         return res.status(400).json({
           message: 'Proposal sudah disubmit. Tunggu review dari koordinator.',
           status: mhsRows[0].status_proposal
