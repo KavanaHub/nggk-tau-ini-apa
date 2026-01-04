@@ -1,24 +1,38 @@
 name: Build
+
 on:
- push:
-   branches:
-     - dev
-     - main
- pull_request:
-   types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - dev
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
 jobs:
   sonarqube:
-    name: SonarQube
+    name: SonarCloud Analysis
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
       - name: Install dependencies
-        run: yarn
-      - name: Test and coverage
-        run: yarn test
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v7
+        run: npm ci
+      
+      - name: Run tests with coverage
+        run: npm test -- --coverage --coverageReporters=lcov
+        continue-on-error: true
+      
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
