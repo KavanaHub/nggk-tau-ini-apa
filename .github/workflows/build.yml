@@ -9,7 +9,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  sonarqube:
+  sonarcloud:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
     
@@ -33,6 +33,7 @@ jobs:
         continue-on-error: true
       
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-action@v5
+        uses: sonarsource/sonarcloud-github-action@v3
         env:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
