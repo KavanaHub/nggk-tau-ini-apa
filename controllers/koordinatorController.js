@@ -43,12 +43,19 @@ const koordinatorController = {
     try {
       const koordinatorId = req.user.id;
       const [rows] = await pool.query(
-        'SELECT assigned_semester FROM dosen WHERE id = ?',
+        `SELECT dr.assigned_semester 
+         FROM dosen_role dr 
+         JOIN role r ON dr.role_id = r.id 
+         WHERE dr.dosen_id = ? AND r.nama_role = 'koordinator'`,
         [koordinatorId]
       );
 
       if (rows.length === 0) {
-        return res.status(404).json({ message: "Koordinator tidak ditemukan" });
+        return res.json({
+          assigned: false,
+          semester: null,
+          message: 'Anda bukan koordinator atau belum ada semester yang di-assign. Hubungi Kaprodi.'
+        });
       }
 
       const semester = rows[0].assigned_semester;
