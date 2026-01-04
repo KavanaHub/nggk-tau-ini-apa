@@ -43,45 +43,43 @@ const jadwalController = {
       }
 
       // ============================================
-      // VALIDASI: Koordinator harus di-assign oleh kaprodi
+      // VALIDASI: Koordinator harus memiliki role koordinator
       // ============================================
-      const [dosenRows] = await pool.query(
-        'SELECT assigned_semester, jabatan FROM dosen WHERE id = ?',
+      const [roleRows] = await pool.query(
+        `SELECT EXISTS (
+          SELECT 1 FROM dosen_role dr 
+          JOIN role r ON dr.role_id = r.id 
+          WHERE dr.dosen_id = ? AND r.nama_role = 'koordinator'
+        ) as is_koordinator`,
         [req.user.id]
       );
 
-      if (dosenRows.length === 0) {
-        return res.status(403).json({ message: 'Data koordinator tidak ditemukan' });
+      if (!roleRows[0].is_koordinator) {
+        return res.status(403).json({ message: 'Anda bukan koordinator. Silakan hubungi Kaprodi.' });
       }
 
-      const assignedSemester = dosenRows[0].assigned_semester;
-
-      // Cek apakah sudah di-assign oleh kaprodi
-      if (!assignedSemester) {
-        return res.status(403).json({
-          message: 'Anda belum di-assign sebagai koordinator oleh Kaprodi. Silakan hubungi Kaprodi untuk mendapat assignment.'
+      // Check if this semester already has an active jadwal by someone else
+      const [existingJadwal] = await pool.query(
+        `SELECT jp.id, d.nama as koordinator_nama 
+         FROM jadwal_proyek jp 
+         JOIN dosen d ON jp.created_by = d.id
+         WHERE jp.semester = ? AND jp.status = 'active'`,
+        [semester]
+      );
+      if (existingJadwal.length > 0) {
+        return res.status(400).json({
+          message: `Semester ${semester} sudah ada jadwal aktif oleh ${existingJadwal[0].koordinator_nama}`
         });
       }
 
-      // ============================================
-      // VALIDASI: Hanya bisa buat jadwal sesuai semester yang di-assign
-      // ============================================
-      if (parseInt(semester) !== assignedSemester) {
-        return res.status(403).json({
-          message: `Anda hanya bisa membuat jadwal untuk semester ${assignedSemester} (yang di-assign oleh Kaprodi)`
-        });
-      }
-
-      // ============================================
-      // VALIDASI: Koordinator hanya bisa punya 1 jadwal aktif
-      // ============================================
+      // Check if this koordinator already has an active jadwal
       const [activeJadwal] = await pool.query(
-        `SELECT id, nama FROM jadwal_proyek WHERE created_by = ? AND status = 'active'`,
+        `SELECT id, nama, semester FROM jadwal_proyek WHERE created_by = ? AND status = 'active'`,
         [req.user.id]
       );
       if (activeJadwal.length > 0) {
         return res.status(400).json({
-          message: `Anda sudah memiliki jadwal aktif: "${activeJadwal[0].nama}". Akhiri jadwal tersebut terlebih dahulu untuk membuat jadwal baru.`
+          message: `Anda sudah memiliki jadwal aktif: "${activeJadwal[0].nama}" (Semester ${activeJadwal[0].semester}). Akhiri jadwal tersebut terlebih dahulu.`
         });
       }
 

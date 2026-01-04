@@ -115,7 +115,9 @@ const authController = {
         );
       } else if (role === 'dosen' || role === 'kaprodi') {
         [rows] = await pool.query(
-          'SELECT id, nama, email, nip, jabatan, foto_profil FROM dosen WHERE id = ?',
+          `SELECT d.id, d.nama, d.email, d.nidn as nip, d.no_wa,
+           (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id) as roles
+           FROM dosen d WHERE d.id = ?`,
           [id]
         );
       } else if (role === 'koordinator') {

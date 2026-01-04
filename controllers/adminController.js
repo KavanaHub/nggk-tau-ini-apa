@@ -27,7 +27,12 @@ const adminController = {
             } catch (e) { console.log('Error counting dosen:', e.message); }
 
             try {
-                const [[result]] = await pool.query("SELECT COUNT(*) as total_koordinator FROM dosen WHERE jabatan LIKE '%koordinator%'");
+                const [[result]] = await pool.query(`
+                    SELECT COUNT(DISTINCT dr.dosen_id) as total_koordinator 
+                    FROM dosen_role dr 
+                    JOIN role r ON dr.role_id = r.id 
+                    WHERE r.nama_role = 'koordinator'
+                `);
                 total_koordinator = result.total_koordinator || 0;
             } catch (e) { console.log('Error counting koordinator:', e.message); }
 

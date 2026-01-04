@@ -7,8 +7,9 @@ const dosenController = {
     try {
       const dosenId = req.user.id;
       const [rows] = await pool.query(
-        `SELECT id, email, nidn, nama, no_wa, jabatan, is_active, created_at
-         FROM dosen WHERE id = ?`,
+        `SELECT d.id, d.email, d.nidn, d.nama, d.no_wa, d.is_active, d.created_at,
+         (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id) as roles
+         FROM dosen d WHERE d.id = ?`,
         [dosenId]
       );
 
