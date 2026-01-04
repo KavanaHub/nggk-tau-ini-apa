@@ -9,7 +9,7 @@ const koordinatorController = {
       const [rows] = await pool.query(
         `SELECT d.id, d.email, d.nidn, d.nama, d.no_wa, d.is_active, d.created_at,
                 (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id) as roles,
-                (SELECT jp.semester FROM jadwal_proyek jp WHERE jp.created_by = d.id AND jp.status = 'active' LIMIT 1) as assigned_semester
+                (SELECT dr.assigned_semester FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'koordinator') as assigned_semester
          FROM dosen d WHERE d.id = ?`,
         [koordinatorId]
       );

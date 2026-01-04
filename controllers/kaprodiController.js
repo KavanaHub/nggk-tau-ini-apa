@@ -279,9 +279,8 @@ const kaprodiController = {
     }
   },
 
-  // ASSIGN KOORDINATOR KE JADWAL/SEMESTER
-  // Dosen mendapat role 'koordinator' via dosen_role
-  // Assignment ke semester tertentu dilakukan via jadwal_proyek.created_by
+  // ASSIGN KOORDINATOR KE SEMESTER
+  // Dosen mendapat role 'koordinator' via dosen_role dengan assigned_semester
   assignKoordinatorSemester: async (req, res, next) => {
     try {
       const { koordinator_id, semester } = req.body;
@@ -305,24 +304,26 @@ const kaprodiController = {
         return res.status(404).json({ message: 'Dosen tidak ditemukan' });
       }
 
-      // Check if semester already has active jadwal with another koordinator
+      // Check if semester already assigned to another koordinator in dosen_role
       const [existingRows] = await pool.query(
-        `SELECT d.id, d.nama FROM jadwal_proyek jp
-         JOIN dosen d ON jp.created_by = d.id
-         WHERE jp.semester = ? AND jp.status = 'active' AND jp.created_by != ?`,
+        `SELECT d.id, d.nama FROM dosen d
+         JOIN dosen_role dr ON d.id = dr.dosen_id
+         JOIN role r ON dr.role_id = r.id
+         WHERE r.nama_role = 'koordinator' AND dr.assigned_semester = ? AND d.id != ?`,
         [semester, koordinator_id]
       );
       if (existingRows.length > 0) {
         return res.status(400).json({
-          message: `Semester ${semester} sudah ada koordinator aktif: ${existingRows[0].nama}`
+          message: `Semester ${semester} sudah di-assign ke ${existingRows[0].nama}`
         });
       }
 
-      // Add 'koordinator' role to dosen (if not already)
+      // Add 'koordinator' role with assigned_semester to dosen
       await pool.query(
-        `INSERT IGNORE INTO dosen_role (dosen_id, role_id)
-         SELECT ?, id FROM role WHERE nama_role = 'koordinator'`,
-        [koordinator_id]
+        `INSERT INTO dosen_role (dosen_id, role_id, assigned_semester)
+         SELECT ?, id, ? FROM role WHERE nama_role = 'koordinator'
+         ON DUPLICATE KEY UPDATE assigned_semester = ?`,
+        [koordinator_id, semester, semester]
       );
 
       const semesterLabels = {
@@ -334,7 +335,7 @@ const kaprodiController = {
       };
 
       res.json({
-        message: `${dosenRows[0].nama} berhasil ditambahkan sebagai koordinator. Silahkan buat jadwal untuk ${semesterLabels[semester]}`
+        message: `${dosenRows[0].nama} berhasil di-assign sebagai koordinator ${semesterLabels[semester]}`
       });
     } catch (err) {
       next(err);
