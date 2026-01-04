@@ -30,7 +30,8 @@ const sharedController = {
     getAllDosen: async (req, res, next) => {
         try {
             const [rows] = await pool.query(
-                `SELECT d.id, d.nidn as nip, d.nama, d.email, d.no_wa, d.jabatan, d.is_active,
+                `SELECT d.id, d.nidn as nip, d.nama, d.email, d.no_wa, d.is_active,
+                        (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id) as roles,
                         (SELECT COUNT(*) FROM mahasiswa WHERE dosen_id = d.id OR dosen_id_2 = d.id) as mahasiswa_count,
                         10 as max_quota
                  FROM dosen d 
@@ -47,7 +48,9 @@ const sharedController = {
     getActiveDosen: async (req, res, next) => {
         try {
             const [rows] = await pool.query(
-                `SELECT id, nama, nidn, no_wa, jabatan FROM dosen WHERE is_active = 1 ORDER BY nama ASC`
+                `SELECT d.id, d.nama, d.nidn, d.no_wa,
+                        (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id) as roles
+                 FROM dosen d WHERE d.is_active = 1 ORDER BY d.nama ASC`
             );
 
             res.json(rows);
@@ -57,14 +60,18 @@ const sharedController = {
     },
 
     // GET SEMUA DOSEN UNTUK ASSIGN KOORDINATOR
-    // Menampilkan semua dosen aktif, dengan flag apakah sudah jadi koordinator
+    // Menampilkan semua dosen aktif, dengan info jadwal yang mereka koordinatori
     getAllKoordinator: async (req, res, next) => {
         try {
             const [rows] = await pool.query(
-                `SELECT id, nidn, nama, email, no_wa, jabatan, is_active, assigned_semester 
-                 FROM dosen 
-                 WHERE is_active = 1 AND jabatan NOT LIKE '%kaprodi%'
-                 ORDER BY nama ASC`
+                `SELECT d.id, d.nidn, d.nama, d.email, d.no_wa, d.is_active,
+                        (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id) as roles,
+                        (SELECT jp.semester FROM jadwal_proyek jp WHERE jp.created_by = d.id AND jp.status = 'active' LIMIT 1) as assigned_semester,
+                        EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'koordinator') as is_koordinator
+                 FROM dosen d
+                 WHERE d.is_active = 1 
+                   AND NOT EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'kaprodi')
+                 ORDER BY d.nama ASC`
             );
 
             // Add semester label and is_koordinator flag
@@ -78,7 +85,7 @@ const sharedController = {
 
             const result = rows.map(k => ({
                 ...k,
-                is_koordinator: k.jabatan?.includes('koordinator') || false,
+                is_koordinator: Boolean(k.is_koordinator),
                 semester_label: k.assigned_semester ? semesterLabels[k.assigned_semester] : null
             }));
 

@@ -134,11 +134,13 @@ const adminController = {
 
             try {
                 const [rows] = await pool.query(
-                    `SELECT id, nama, email, nidn, jabatan, 
-                     CASE WHEN jabatan LIKE '%kaprodi%' THEN 'kaprodi'
-                          WHEN jabatan LIKE '%koordinator%' THEN 'koordinator'
-                          ELSE 'dosen' END as role,
-                     created_at FROM dosen`
+                    `SELECT d.id, d.nama, d.email, d.nidn,
+                     (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id) as roles,
+                     CASE 
+                       WHEN EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'kaprodi') THEN 'kaprodi'
+                       WHEN EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'koordinator') THEN 'koordinator'
+                       ELSE 'dosen' END as role,
+                     d.created_at FROM dosen d`
                 );
                 dosen = rows;
             } catch (e) { console.log('Error fetching dosen:', e.message); }
@@ -153,8 +155,9 @@ const adminController = {
     getAllDosen: async (req, res, next) => {
         try {
             const [rows] = await pool.query(
-                `SELECT id, nama, email, nidn, jabatan, is_active, assigned_semester, created_at 
-         FROM dosen ORDER BY nama ASC`
+                `SELECT d.id, d.nama, d.email, d.nidn, d.is_active, d.created_at,
+                        (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id) as roles
+         FROM dosen d ORDER BY d.nama ASC`
             );
             res.json(rows);
         } catch (err) {
@@ -164,7 +167,7 @@ const adminController = {
 
     // CREATE DOSEN
     createDosen: async (req, res, next) => {
-        const { email, password, nidn, nama, jabatan, no_wa } = req.body;
+        const { email, password, nidn, nama, no_wa, roles } = req.body;
 
         try {
             const [existing] = await pool.query('SELECT id FROM dosen WHERE email = ?', [email]);
@@ -176,12 +179,34 @@ const adminController = {
             const password_hash = await hashPassword(password || 'password123');
 
             const [result] = await pool.query(
-                `INSERT INTO dosen (email, password_hash, nidn, nama, jabatan, no_wa) 
-         VALUES (?, ?, ?, ?, ?, ?)`,
-                [email, password_hash, nidn, nama, jabatan || 'Dosen', no_wa || null]
+                `INSERT INTO dosen (email, password_hash, nidn, nama, no_wa) 
+         VALUES (?, ?, ?, ?, ?)`,
+                [email, password_hash, nidn, nama, no_wa || null]
             );
 
-            res.status(201).json({ message: 'Dosen berhasil ditambahkan', id: result.insertId });
+            const dosenId = result.insertId;
+
+            // Add default 'dosen' role
+            await pool.query(
+                `INSERT INTO dosen_role (dosen_id, role_id)
+                 SELECT ?, id FROM role WHERE nama_role = 'dosen'`,
+                [dosenId]
+            );
+
+            // Add additional roles if specified
+            if (roles && Array.isArray(roles)) {
+                for (const roleName of roles) {
+                    if (roleName !== 'dosen') {
+                        await pool.query(
+                            `INSERT IGNORE INTO dosen_role (dosen_id, role_id)
+                             SELECT ?, id FROM role WHERE nama_role = ?`,
+                            [dosenId, roleName]
+                        );
+                    }
+                }
+            }
+
+            res.status(201).json({ message: 'Dosen berhasil ditambahkan', id: dosenId });
         } catch (err) {
             next(err);
         }

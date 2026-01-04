@@ -180,38 +180,13 @@ const jadwalController = {
       // ==================================================
       const createdById = rows[0].created_by;
       if (createdById) {
-        // 1. Hapus assigned_semester
+        // Remove 'koordinator' role from dosen_role (includes assigned_semester)
         await conn.query(
-          'UPDATE dosen SET assigned_semester = NULL WHERE id = ?',
+          `DELETE dr FROM dosen_role dr
+           JOIN role r ON dr.role_id = r.id
+           WHERE dr.dosen_id = ? AND r.nama_role = 'koordinator'`,
           [createdById]
         );
-
-        // 2. Hapus 'koordinator' dari jabatan
-        // Ambil jabatan saat ini
-        const [dosenRows] = await conn.query(
-          'SELECT jabatan FROM dosen WHERE id = ?',
-          [createdById]
-        );
-
-        if (dosenRows.length > 0 && dosenRows[0].jabatan) {
-          const currentJabatan = dosenRows[0].jabatan;
-          // Remove 'koordinator' from jabatan string
-          let newJabatan = currentJabatan
-            .split(',')
-            .map(j => j.trim())
-            .filter(j => j.toLowerCase() !== 'koordinator')
-            .join(', ');
-
-          // Jika tidak ada jabatan tersisa, set default 'dosen'
-          if (!newJabatan) {
-            newJabatan = 'dosen';
-          }
-
-          await conn.query(
-            'UPDATE dosen SET jabatan = ? WHERE id = ?',
-            [newJabatan, createdById]
-          );
-        }
       }
 
       await conn.commit();

@@ -59,17 +59,22 @@ const authController = {
         [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE email = ?', [identifier]);
       }
 
-      // Check dosen (kaprodi, koordinator, atau dosen biasa berdasarkan jabatan)
+      // Check dosen (kaprodi, koordinator, atau dosen biasa berdasarkan dosen_role)
       // Prioritas: 1. kaprodi, 2. koordinator, 3. dosen
       if (rows.length === 0) {
         [rows] = await pool.query(
-          `SELECT id, email, password_hash, jabatan, assigned_semester,
+          `SELECT d.id, d.email, d.password_hash,
+           (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr 
+            JOIN role r ON dr.role_id = r.id 
+            WHERE dr.dosen_id = d.id) as roles,
+           (SELECT jp.semester FROM jadwal_proyek jp 
+            WHERE jp.created_by = d.id AND jp.status = 'active' LIMIT 1) as assigned_semester,
            CASE 
-             WHEN jabatan LIKE '%kaprodi%' THEN 'kaprodi'
-             WHEN jabatan LIKE '%koordinator%' THEN 'koordinator'
+             WHEN EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'kaprodi') THEN 'kaprodi'
+             WHEN EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'koordinator') THEN 'koordinator'
              ELSE 'dosen'
            END as role
-           FROM dosen WHERE email = ?`,
+           FROM dosen d WHERE d.email = ?`,
           [email]
         );
       }

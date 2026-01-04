@@ -2,13 +2,15 @@ import pool from "../config/db.js";
 import sharedController from './sharedController.js';
 
 const koordinatorController = {
-  // GET PROFILE KOORDINATOR (dari tabel dosen dengan jabatan koordinator)
+  // GET PROFILE KOORDINATOR (dosen with koordinator role)
   getProfile: async (req, res, next) => {
     try {
       const koordinatorId = req.user.id;
       const [rows] = await pool.query(
-        `SELECT id, email, nidn, nama, no_wa, jabatan, is_active, assigned_semester, created_at
-         FROM dosen WHERE id = ?`,
+        `SELECT d.id, d.email, d.nidn, d.nama, d.no_wa, d.is_active, d.created_at,
+                (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id) as roles,
+                (SELECT jp.semester FROM jadwal_proyek jp WHERE jp.created_by = d.id AND jp.status = 'active' LIMIT 1) as assigned_semester
+         FROM dosen d WHERE d.id = ?`,
         [koordinatorId]
       );
 
@@ -140,10 +142,11 @@ const koordinatorController = {
     try {
       // Get all dosen as potential penguji
       const [rows] = await pool.query(
-        `SELECT id, nama, nidn, jabatan 
-         FROM dosen 
-         WHERE is_active = true
-         ORDER BY nama ASC`
+        `SELECT d.id, d.nama, d.nidn,
+                (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id) as roles
+         FROM dosen d
+         WHERE d.is_active = true
+         ORDER BY d.nama ASC`
       );
       res.json(rows);
     } catch (err) {
