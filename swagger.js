@@ -19,6 +19,10 @@ const swaggerDefinition = {
       description: 'Production Server',
     },
     {
+      url: 'https://asia-southeast2-renzip-478811.cloudfunctions.net/kavana',
+      description: 'Production Server',
+    },
+    {
       url: serverUrl,
       description: 'Development Server',
     },
