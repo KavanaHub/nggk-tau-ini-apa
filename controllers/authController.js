@@ -67,9 +67,6 @@ const authController = {
            (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr 
             JOIN role r ON dr.role_id = r.id 
             WHERE dr.dosen_id = d.id) as roles,
-           (SELECT dr.assigned_semester FROM dosen_role dr 
-            JOIN role r ON dr.role_id = r.id 
-            WHERE dr.dosen_id = d.id AND r.nama_role = 'koordinator') as assigned_semester,
            CASE 
              WHEN EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'kaprodi') THEN 'kaprodi'
              WHEN EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'koordinator') THEN 'koordinator'
