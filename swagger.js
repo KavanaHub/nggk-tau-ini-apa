@@ -16,7 +16,7 @@ const swaggerDefinition = {
   servers: [
     {
       url: 'https://kavana-backend-j8ktr.ondigitalocean.app',
-      description: 'Production Server',
+      description: 'Staging Server',
     },
     {
       url: 'https://asia-southeast2-renzip-478811.cloudfunctions.net/kavana',
