@@ -138,7 +138,6 @@ docs/generated/
 # DATABASE & STORAGE
 # ============================================
 *.db
-*.sql
 *.sqlite
 *.sqlite3
 uploads/

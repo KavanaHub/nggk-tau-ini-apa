@@ -41,6 +41,11 @@ const authController = {
     const identifier = email; // bisa email atau NPM
 
     try {
+      // Validate input
+      if (!identifier || !password) {
+        return res.status(400).json({ message: 'Email dan password harus diisi' });
+      }
+
       // Check hardcoded admin
       if (identifier === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
         const token = generateToken({ id: 0, email: ADMIN_EMAIL, role: 'admin' });
@@ -53,48 +58,57 @@ const authController = {
       const isNPM = /^\d+$/.test(identifier);
 
       // Check mahasiswa (by email or NPM)
-      if (isNPM) {
-        [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE npm = ?', [identifier]);
-      } else {
-        [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE email = ?', [identifier]);
+      try {
+        if (isNPM) {
+          [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE npm = ?', [identifier]);
+        } else {
+          [rows] = await pool.query('SELECT id, email, password_hash, "mahasiswa" as role FROM mahasiswa WHERE email = ?', [identifier]);
+        }
+      } catch (err) {
+        console.log('Error checking mahasiswa:', err.message);
       }
 
-      // Check dosen (kaprodi, koordinator, atau dosen biasa berdasarkan dosen_role)
-      // Prioritas: 1. kaprodi, 2. koordinator, 3. dosen
+      // Check dosen with role from dosen_role table
       if (rows.length === 0) {
-        [rows] = await pool.query(
-          `SELECT d.id, d.email, d.password_hash,
-           (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr 
-            JOIN role r ON dr.role_id = r.id 
-            WHERE dr.dosen_id = d.id) as roles,
-           CASE 
-             WHEN EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'kaprodi') THEN 'kaprodi'
-             WHEN EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'koordinator') THEN 'koordinator'
-             ELSE 'dosen'
-           END as role
-           FROM dosen d WHERE d.email = ?`,
-          [email]
-        );
+        try {
+          [rows] = await pool.query(
+            `SELECT d.id, d.email, d.password_hash,
+             CASE 
+               WHEN EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'kaprodi') THEN 'kaprodi'
+               WHEN EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'koordinator') THEN 'koordinator'
+               ELSE 'dosen'
+             END as role
+             FROM dosen d WHERE d.email = ?`,
+            [email]
+          );
+        } catch (err) {
+          console.log('Error checking dosen:', err.message);
+          // Fallback to simple query if dosen_role table doesn't exist
+          try {
+            [rows] = await pool.query(
+              'SELECT id, email, password_hash, "dosen" as role FROM dosen WHERE email = ?',
+              [email]
+            );
+          } catch (e) {
+            console.log('Error checking dosen (fallback):', e.message);
+          }
+        }
       }
 
-      // Check penguji (tabel terpisah untuk penguji sidang)
       if (rows.length === 0) {
-        [rows] = await pool.query('SELECT id, email, password_hash, "penguji" as role FROM penguji WHERE email = ?', [email]);
-      }
-
-      if (rows.length === 0) {
-        return res.status(400).json({ message: 'Invalid credentials' });
+        return res.status(400).json({ message: 'Email atau password salah' });
       }
 
       const user = rows[0];
       const match = await comparePassword(password, user.password_hash);
       if (!match) {
-        return res.status(400).json({ message: 'Invalid credentials' });
+        return res.status(400).json({ message: 'Email atau password salah' });
       }
 
       const token = generateToken({ id: user.id, email: user.email, role: user.role });
       res.json({ token, role: user.role, user_id: user.id });
     } catch (err) {
+      console.error('Login error:', err);
       next(err);
     }
   },
