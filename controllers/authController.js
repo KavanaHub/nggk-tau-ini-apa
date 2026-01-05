@@ -111,7 +111,7 @@ const authController = {
 
       if (role === 'mahasiswa') {
         [rows] = await pool.query(
-          'SELECT id, nama, email, npm, angkatan, no_wa as whatsapp, foto_profil FROM mahasiswa WHERE id = ?',
+          'SELECT id, nama, email, npm, angkatan, no_wa as whatsapp FROM mahasiswa WHERE id = ?',
           [id]
         );
       } else if (role === 'dosen' || role === 'kaprodi') {
