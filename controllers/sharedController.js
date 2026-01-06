@@ -5,22 +5,68 @@ import pool from '../config/db.js';
  * antar kaprodiController, koordinatorController, dan lainnya
  */
 const sharedController = {
-    // GET SEMUA MAHASISWA (dengan info dosen, usulan dosen, dan bimbingan count)
+    // GET SEMUA MAHASISWA (dengan info dosen, usulan dosen, kelompok dan bimbingan count)
+    // Proyek ditampilkan per kelompok dengan semua anggota
     getAllMahasiswa: async (req, res, next) => {
         try {
             const [rows] = await pool.query(
                 `SELECT m.id, m.npm, m.nama, m.email, m.no_wa, m.angkatan, m.track,
                 m.judul_proyek, m.status_proposal, m.dosen_id, m.usulan_dosen_id,
+                m.kelompok_id, k.nama as kelompok_nama,
                 d.nama as dosen_nama,
                 ud.nama as usulan_dosen_nama,
                 (SELECT COUNT(*) FROM bimbingan b WHERE b.mahasiswa_id = m.id AND b.status = 'approved') as bimbingan_count
          FROM mahasiswa m
          LEFT JOIN dosen d ON m.dosen_id = d.id
          LEFT JOIN dosen ud ON m.usulan_dosen_id = ud.id
+         LEFT JOIN kelompok k ON m.kelompok_id = k.id
          ORDER BY m.angkatan DESC, m.nama ASC`
             );
 
-            res.json(rows);
+            // Group by kelompok for proyek, keep individual for internship
+            const kelompokMap = new Map();
+            const result = [];
+
+            for (const row of rows) {
+                const isProyek = row.track && row.track.includes('proyek');
+
+                if (isProyek && row.kelompok_id) {
+                    // Group by kelompok
+                    if (!kelompokMap.has(row.kelompok_id)) {
+                        kelompokMap.set(row.kelompok_id, {
+                            ...row,
+                            anggota: []
+                        });
+                    }
+                    kelompokMap.get(row.kelompok_id).anggota.push({
+                        id: row.id,
+                        nama: row.nama,
+                        npm: row.npm,
+                        email: row.email
+                    });
+                } else {
+                    // Individual (internship or no kelompok)
+                    result.push({
+                        ...row,
+                        anggota: [{ id: row.id, nama: row.nama, npm: row.npm, email: row.email }]
+                    });
+                }
+            }
+
+            // Add kelompok entries to result
+            for (const [, kelompok] of kelompokMap) {
+                result.push(kelompok);
+            }
+
+            // Sort result by angkatan and name
+            result.sort((a, b) => {
+                if (b.angkatan !== a.angkatan) return b.angkatan - a.angkatan;
+                const nameA = a.kelompok_nama || a.nama;
+                const nameB = b.kelompok_nama || b.nama;
+                return nameA.localeCompare(nameB);
+            });
+
+            res.json(result);
         } catch (err) {
             next(err);
         }

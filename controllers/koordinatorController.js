@@ -92,14 +92,18 @@ const koordinatorController = {
   getAllDosen: sharedController.getAllDosen,
 
   // GET ALL PROPOSALS (untuk halaman validasi - menampilkan pending, approved, rejected)
+  // Proyek ditampilkan per kelompok dengan semua anggota
   getPendingProposals: async (req, res, next) => {
     try {
+      // Get proposals with kelompok info
       const [rows] = await pool.query(
         `SELECT m.id, m.npm, m.nama, m.email, m.track, m.judul_proyek, 
                 m.file_proposal, m.usulan_dosen_id, m.status_proposal, m.created_at,
+                m.kelompok_id, k.nama as kelompok_nama,
                 d.nama as usulan_dosen_nama, d.nidn as usulan_dosen_nidn
          FROM mahasiswa m
          LEFT JOIN dosen d ON m.usulan_dosen_id = d.id
+         LEFT JOIN kelompok k ON m.kelompok_id = k.id
          WHERE m.judul_proyek IS NOT NULL AND m.status_proposal IS NOT NULL
          ORDER BY 
            CASE m.status_proposal 
@@ -110,7 +114,51 @@ const koordinatorController = {
            m.created_at DESC`
       );
 
-      res.json(rows);
+      // Group by kelompok for proyek, keep individual for internship
+      const kelompokMap = new Map();
+      const result = [];
+
+      for (const row of rows) {
+        const isProyek = row.track && row.track.includes('proyek');
+
+        if (isProyek && row.kelompok_id) {
+          // Group by kelompok
+          if (!kelompokMap.has(row.kelompok_id)) {
+            kelompokMap.set(row.kelompok_id, {
+              ...row,
+              anggota: []
+            });
+          }
+          kelompokMap.get(row.kelompok_id).anggota.push({
+            id: row.id,
+            nama: row.nama,
+            npm: row.npm,
+            email: row.email
+          });
+        } else {
+          // Individual (internship or no kelompok)
+          result.push({
+            ...row,
+            anggota: [{ id: row.id, nama: row.nama, npm: row.npm, email: row.email }]
+          });
+        }
+      }
+
+      // Add kelompok entries to result
+      for (const [, kelompok] of kelompokMap) {
+        result.push(kelompok);
+      }
+
+      // Sort result by status and date
+      result.sort((a, b) => {
+        const statusOrder = { pending: 1, approved: 2, rejected: 3 };
+        const aOrder = statusOrder[a.status_proposal] || 4;
+        const bOrder = statusOrder[b.status_proposal] || 4;
+        if (aOrder !== bOrder) return aOrder - bOrder;
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+
+      res.json(result);
     } catch (err) {
       next(err);
     }
