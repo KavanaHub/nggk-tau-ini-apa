@@ -76,6 +76,7 @@ DROP TABLE IF EXISTS `dosen_role`;
 CREATE TABLE IF NOT EXISTS `dosen_role` (
   `dosen_id` bigint NOT NULL,
   `role_id` bigint NOT NULL,
+  `assigned_semester` INT DEFAULT NULL,
   PRIMARY KEY (`dosen_id`,`role_id`),
   KEY `role_id` (`role_id`),
   CONSTRAINT `dosen_role_ibfk_1` FOREIGN KEY (`dosen_id`) REFERENCES `dosen` (`id`) ON DELETE CASCADE,
