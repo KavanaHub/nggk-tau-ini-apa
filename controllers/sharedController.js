@@ -164,13 +164,15 @@ const sharedController = {
 
         try {
             // Cek mahasiswa dan track-nya
-            const [mhsRows] = await pool.query('SELECT id, track FROM mahasiswa WHERE id = ?', [mahasiswa_id]);
+            const [mhsRows] = await pool.query('SELECT id, track, kelompok_id FROM mahasiswa WHERE id = ?', [mahasiswa_id]);
             if (mhsRows.length === 0) {
                 return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
             }
 
             const track = mhsRows[0].track;
+            const kelompokId = mhsRows[0].kelompok_id;
             const isInternship = track && track.startsWith('internship');
+            const isProyek = track && track.includes('proyek');
 
             // Untuk internship, wajib 2 pembimbing
             if (isInternship && !dosen_id_2) {
@@ -195,12 +197,21 @@ const sharedController = {
                 }
             }
 
-            await pool.query(
-                'UPDATE mahasiswa SET dosen_id = ?, dosen_id_2 = ? WHERE id = ?',
-                [dosen_id, dosen_id_2 || null, mahasiswa_id]
-            );
-
-            res.json({ message: 'Dosen pembimbing berhasil ditugaskan' });
+            // Untuk proyek dengan kelompok, update SEMUA anggota kelompok
+            if (isProyek && kelompokId) {
+                await pool.query(
+                    'UPDATE mahasiswa SET dosen_id = ?, dosen_id_2 = ? WHERE kelompok_id = ?',
+                    [dosen_id, dosen_id_2 || null, kelompokId]
+                );
+                res.json({ message: 'Dosen pembimbing berhasil ditugaskan untuk semua anggota kelompok' });
+            } else {
+                // Individual atau tidak ada kelompok
+                await pool.query(
+                    'UPDATE mahasiswa SET dosen_id = ?, dosen_id_2 = ? WHERE id = ?',
+                    [dosen_id, dosen_id_2 || null, mahasiswa_id]
+                );
+                res.json({ message: 'Dosen pembimbing berhasil ditugaskan' });
+            }
         } catch (err) {
             next(err);
         }
