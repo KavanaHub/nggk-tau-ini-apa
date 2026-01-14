@@ -38,3 +38,18 @@ export function forbidden(res, message = ERROR_MESSAGES.FORBIDDEN) {
 export function success(res, data = null, message = 'Success') {
     return res.json(data || { message });
 }
+
+// Common validation: required fields
+export function validateRequired(res, fields, values) {
+    const missing = fields.filter((field, i) => !values[i]);
+    if (missing.length > 0) {
+        return badRequest(res, `${missing.join(', ')} wajib diisi`);
+    }
+    return null; // validation passed
+}
+
+// Common validation: valid semesters
+export const VALID_SEMESTERS = [2, 3, 5, 7, 8];
+export function isValidSemester(semester) {
+    return VALID_SEMESTERS.includes(semester);
+}

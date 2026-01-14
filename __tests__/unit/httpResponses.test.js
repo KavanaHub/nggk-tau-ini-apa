@@ -5,7 +5,10 @@ import {
     badRequest,
     unauthorized,
     forbidden,
-    success
+    success,
+    validateRequired,
+    VALID_SEMESTERS,
+    isValidSemester
 } from '../../utils/httpResponses.js';
 
 describe('HTTP Response Helpers', () => {
@@ -78,6 +81,43 @@ describe('HTTP Response Helpers', () => {
             const res = mockRes();
             success(res, null, 'Operation successful');
             expect(res.json).toHaveBeenCalledWith({ message: 'Operation successful' });
+        });
+    });
+
+    describe('validateRequired', () => {
+        it('should return null when all fields present', () => {
+            const res = mockRes();
+            const result = validateRequired(res, ['name', 'email'], ['John', 'john@test.com']);
+            expect(result).toBeNull();
+        });
+
+        it('should return 400 when fields missing', () => {
+            const res = mockRes();
+            validateRequired(res, ['name', 'email'], ['John', '']);
+            expect(res.status).toHaveBeenCalledWith(400);
+        });
+    });
+
+    describe('VALID_SEMESTERS', () => {
+        it('should contain all valid semesters', () => {
+            expect(VALID_SEMESTERS).toEqual([2, 3, 5, 7, 8]);
+        });
+    });
+
+    describe('isValidSemester', () => {
+        it('should return true for valid semesters', () => {
+            expect(isValidSemester(2)).toBe(true);
+            expect(isValidSemester(3)).toBe(true);
+            expect(isValidSemester(5)).toBe(true);
+            expect(isValidSemester(7)).toBe(true);
+            expect(isValidSemester(8)).toBe(true);
+        });
+
+        it('should return false for invalid semesters', () => {
+            expect(isValidSemester(1)).toBe(false);
+            expect(isValidSemester(4)).toBe(false);
+            expect(isValidSemester(6)).toBe(false);
+            expect(isValidSemester(99)).toBe(false);
         });
     });
 });
