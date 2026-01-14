@@ -37,10 +37,37 @@ export const TRACK_SEMESTER_MAP = {
 
 // Helper to check if track is proyek
 export function isProyekTrack(track) {
-    return track && track.includes('proyek');
+    return Boolean(track && track.includes('proyek'));
 }
 
 // Helper to check if track is internship
 export function isInternshipTrack(track) {
-    return track && track.includes('internship');
+    return Boolean(track && track.includes('internship'));
+}
+
+/**
+ * Calculate current semester based on angkatan (enrollment year)
+ * Academic calendar: Ganjil = Oktober-Februari, Genap = Maret-September
+ * @param {number} angkatan - Enrollment year (e.g., 2023)
+ * @param {Date} date - Reference date (defaults to now)
+ * @returns {number} Current semester number
+ */
+export function calculateSemester(angkatan, date = new Date()) {
+    if (!angkatan) return null;
+
+    const currentYear = date.getFullYear();
+    const currentMonth = date.getMonth() + 1; // 1-12
+    const yearsElapsed = currentYear - angkatan;
+
+    if (currentMonth >= 10 || currentMonth <= 2) {
+        // Semester GANJIL (Oktober - Februari)
+        if (currentMonth >= 10) {
+            return (yearsElapsed * 2) + 1;
+        } else {
+            return ((yearsElapsed - 1) * 2) + 1;
+        }
+    } else {
+        // Semester GENAP (Maret - September)
+        return yearsElapsed * 2;
+    }
 }

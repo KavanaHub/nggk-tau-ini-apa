@@ -5,7 +5,8 @@ import {
     getSemesterLabel,
     TRACK_SEMESTER_MAP,
     isProyekTrack,
-    isInternshipTrack
+    isInternshipTrack,
+    calculateSemester
 } from '../../utils/constants.js';
 
 describe('Constants', () => {
@@ -89,6 +90,31 @@ describe('Constants', () => {
             expect(isInternshipTrack('proyek2')).toBe(false);
             expect(isInternshipTrack(null)).toBe(false);
             expect(isInternshipTrack(undefined)).toBe(false);
+        });
+    });
+
+    describe('calculateSemester', () => {
+        it('should return null for invalid angkatan', () => {
+            expect(calculateSemester(null)).toBeNull();
+            expect(calculateSemester(undefined)).toBeNull();
+            expect(calculateSemester(0)).toBeNull();
+        });
+
+        it('should calculate semester correctly for ganjil (Oct-Dec)', () => {
+            const nov2024 = new Date(2024, 10, 15);
+            expect(calculateSemester(2024, nov2024)).toBe(1);
+            expect(calculateSemester(2023, nov2024)).toBe(3);
+        });
+
+        it('should calculate semester correctly for ganjil (Jan-Feb)', () => {
+            const jan2025 = new Date(2025, 0, 15);
+            expect(calculateSemester(2024, jan2025)).toBe(1);
+        });
+
+        it('should calculate semester correctly for genap (Mar-Sep)', () => {
+            const mar2025 = new Date(2025, 2, 15);
+            expect(calculateSemester(2024, mar2025)).toBe(2);
+            expect(calculateSemester(2023, mar2025)).toBe(4);
         });
     });
 });
