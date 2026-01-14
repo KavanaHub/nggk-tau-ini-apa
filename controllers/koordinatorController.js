@@ -1,5 +1,6 @@
 import pool from "../config/db.js";
 import sharedController from './sharedController.js';
+import { SEMESTER_LABELS, SEMESTER_LABELS_SHORT } from '../utils/constants.js';
 
 const koordinatorController = {
   // GET PROFILE KOORDINATOR (dosen with koordinator role)
@@ -18,18 +19,9 @@ const koordinatorController = {
         return res.status(404).json({ message: "Koordinator tidak ditemukan" });
       }
 
-      // Add semester label
-      const semesterLabels = {
-        2: 'Proyek 1 (Semester 2)',
-        3: 'Proyek 2 (Semester 3)',
-        5: 'Proyek 3 (Semester 5)',
-        7: 'Internship 1 (Semester 7)',
-        8: 'Internship 2 (Semester 8)'
-      };
-
       const result = {
         ...rows[0],
-        semester_label: rows[0].assigned_semester ? semesterLabels[rows[0].assigned_semester] : null
+        semester_label: rows[0].assigned_semester ? SEMESTER_LABELS[rows[0].assigned_semester] : null
       };
 
       res.json(result);
@@ -67,18 +59,10 @@ const koordinatorController = {
         });
       }
 
-      const semesterLabels = {
-        2: 'Proyek 1 (Semester 2)',
-        3: 'Proyek 2 (Semester 3)',
-        5: 'Proyek 3 (Semester 5)',
-        7: 'Internship 1 (Semester 7)',
-        8: 'Internship 2 (Semester 8)'
-      };
-
       res.json({
         assigned: true,
         semester: semester,
-        semester_label: semesterLabels[semester]
+        semester_label: SEMESTER_LABELS[semester] || `Semester ${semester}`
       });
     } catch (err) {
       next(err);

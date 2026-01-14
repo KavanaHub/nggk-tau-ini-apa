@@ -1,4 +1,5 @@
 import pool from '../config/db.js';
+import { SEMESTER_LABELS_SHORT } from '../utils/constants.js';
 
 /**
  * Shared controller functions untuk menghindari duplikasi kode
@@ -120,19 +121,10 @@ const sharedController = {
                  ORDER BY d.nama ASC`
             );
 
-            // Add semester label and is_koordinator flag
-            const semesterLabels = {
-                2: 'Proyek 1',
-                3: 'Proyek 2',
-                5: 'Proyek 3',
-                7: 'Internship 1',
-                8: 'Internship 2'
-            };
-
             const result = rows.map(k => ({
                 ...k,
                 is_koordinator: Boolean(k.is_koordinator),
-                semester_label: k.assigned_semester ? semesterLabels[k.assigned_semester] : null
+                semester_label: k.assigned_semester ? SEMESTER_LABELS_SHORT[k.assigned_semester] : null
             }));
 
             res.json(result);
