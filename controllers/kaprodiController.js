@@ -3,6 +3,7 @@ import sharedController from './sharedController.js';
 
 const kaprodiController = {
   // GET PROFILE KAPRODI (dosen with kaprodi role)
+  // Also returns is_koordinator and assigned_semester for dynamic menu display
   getProfile: async (req, res, next) => {
     try {
       const dosenId = req.user.id;
@@ -10,7 +11,11 @@ const kaprodiController = {
         `SELECT d.id, d.email, d.nidn, d.nama, d.no_wa, d.is_active, d.created_at,
          (SELECT GROUP_CONCAT(r.nama_role) FROM dosen_role dr 
           JOIN role r ON dr.role_id = r.id 
-          WHERE dr.dosen_id = d.id) as roles
+          WHERE dr.dosen_id = d.id) as roles,
+         EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id 
+                 WHERE dr.dosen_id = d.id AND r.nama_role = 'koordinator') as is_koordinator,
+         (SELECT dr.assigned_semester FROM dosen_role dr JOIN role r ON dr.role_id = r.id 
+          WHERE dr.dosen_id = d.id AND r.nama_role = 'koordinator') as assigned_semester
          FROM dosen d
          JOIN dosen_role dr ON d.id = dr.dosen_id
          JOIN role r ON dr.role_id = r.id
@@ -22,7 +27,13 @@ const kaprodiController = {
         return res.status(404).json({ message: "Kaprodi tidak ditemukan" });
       }
 
-      res.json(rows[0]);
+      // Convert is_koordinator to boolean
+      const result = {
+        ...rows[0],
+        is_koordinator: Boolean(rows[0].is_koordinator)
+      };
+
+      res.json(result);
     } catch (err) {
       next(err);
     }
