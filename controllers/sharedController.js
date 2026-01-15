@@ -210,6 +210,7 @@ const sharedController = {
     },
 
     // UPDATE STATUS PROPOSAL (APPROVE / REJECT)
+    // Jika mahasiswa dalam kelompok, update semua anggota kelompok
     updateProposalStatus: async (req, res, next) => {
         const { mahasiswa_id, status } = req.body;
 
@@ -222,16 +223,30 @@ const sharedController = {
         }
 
         try {
-            // Cek mahasiswa ada
-            const [mhsRows] = await pool.query('SELECT id FROM mahasiswa WHERE id = ?', [mahasiswa_id]);
+            // Cek mahasiswa ada dan ambil kelompok_id
+            const [mhsRows] = await pool.query(
+                'SELECT id, kelompok_id FROM mahasiswa WHERE id = ?',
+                [mahasiswa_id]
+            );
             if (mhsRows.length === 0) {
                 return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
             }
 
-            await pool.query(
-                'UPDATE mahasiswa SET status_proposal = ? WHERE id = ?',
-                [status, mahasiswa_id]
-            );
+            const kelompokId = mhsRows[0].kelompok_id;
+
+            if (kelompokId) {
+                // Update semua anggota kelompok
+                await pool.query(
+                    'UPDATE mahasiswa SET status_proposal = ? WHERE kelompok_id = ?',
+                    [status, kelompokId]
+                );
+            } else {
+                // Update hanya mahasiswa ini (tidak ada kelompok)
+                await pool.query(
+                    'UPDATE mahasiswa SET status_proposal = ? WHERE id = ?',
+                    [status, mahasiswa_id]
+                );
+            }
 
             res.json({ message: `Proposal ${status}` });
         } catch (err) {
