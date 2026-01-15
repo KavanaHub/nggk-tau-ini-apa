@@ -108,6 +108,7 @@ const sharedController = {
 
     // GET SEMUA DOSEN UNTUK ASSIGN KOORDINATOR
     // Menampilkan semua dosen aktif dengan assigned_semester dari dosen_role
+    // Catatan: Kaprodi juga bisa menjadi koordinator, jadi tidak ada filter exclude
     getAllKoordinator: async (req, res, next) => {
         try {
             const [rows] = await pool.query(
@@ -116,8 +117,7 @@ const sharedController = {
                         (SELECT dr.assigned_semester FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'koordinator') as assigned_semester,
                         EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'koordinator') as is_koordinator
                  FROM dosen d
-                 WHERE d.is_active = 1 
-                   AND NOT EXISTS (SELECT 1 FROM dosen_role dr JOIN role r ON dr.role_id = r.id WHERE dr.dosen_id = d.id AND r.nama_role = 'kaprodi')
+                 WHERE d.is_active = 1
                  ORDER BY d.nama ASC`
             );
 
