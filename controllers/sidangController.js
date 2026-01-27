@@ -94,58 +94,60 @@ const sidangController = {
     const dosenId = req.user.id;
 
     try {
-      // Logic: Tampilkan satu baris per kelompok (atau per mahasiswa jika tidak berkelompok)
-      // Kita ambil data representatif (misal ketua/member pertama)
-      const [rows] = await pool.query(
-        `SELECT ls.id, ls.mahasiswa_id, ls.file_url as file_laporan, ls.status, 
-                ls.note as catatan_dosen, ls.created_at as tanggal_submit,
-                m.nama as mahasiswa_nama, m.npm as mahasiswa_npm, m.track, m.judul_proyek as judul,
-                m.kelompok_id, k.nama as kelompok_nama,
-                CASE WHEN m.dosen_id = ? THEN 'utama' ELSE 'kedua' END as peran_pembimbing
-         FROM laporan_sidang ls
-         JOIN mahasiswa m ON ls.mahasiswa_id = m.id
-         LEFT JOIN kelompok k ON m.kelompok_id = k.id
-         WHERE m.dosen_id = ? OR m.dosen_id_2 = ?
-         GROUP BY COALESCE(m.kelompok_id, m.id), ls.id
-         ORDER BY ls.created_at DESC`,
-        [dosenId, dosenId, dosenId]
-      );
-
-      // Note: GROUP BY di atas might be strict mode issue if ls.id is unique per row.
-      // Better approach: Select distinct kelompok
-      // Revised Query for strict SQL mode safety:
-      // Ambil semua, nanti frontend filter? No, backend better.
-      // Hack: Group by Kelompok ID if exists.
-
-      const queryFixed = `
+      // 1. Get ALL reports for this lecturer (without GROUP BY to avoid SQL errors)
+      const query = `
         SELECT 
-            MAX(ls.id) as id, 
-            MAX(ls.file_url) as file_laporan,
-            MAX(ls.status) as status,
-            MAX(ls.note) as catatan_dosen,
-            MAX(ls.created_at) as tanggal_submit,
+            ls.id, 
+            ls.mahasiswa_id, 
+            ls.file_url as file_laporan, 
+            ls.status, 
+            ls.note as catatan_dosen, 
+            ls.created_at as tanggal_submit,
             
-            -- Info Mahasiswa (Salah satu dr kelompok)
-            MAX(m.nama) as mahasiswa_nama,
-            MAX(m.npm) as mahasiswa_npm,
-            MAX(m.track) as track,
-            MAX(m.judul_proyek) as judul,
+            -- Info Mahasiswa
+            m.nama as mahasiswa_nama,
+            m.npm as mahasiswa_npm,
+            m.track, 
+            m.judul_proyek as judul,
             
             -- Info Kelompok
             m.kelompok_id,
-            MAX(k.nama) as kelompok_nama
+            k.nama as kelompok_nama,
+            
+            CASE WHEN m.dosen_id = ? THEN 'utama' ELSE 'kedua' END as peran_pembimbing
         FROM laporan_sidang ls
         JOIN mahasiswa m ON ls.mahasiswa_id = m.id
         LEFT JOIN kelompok k ON m.kelompok_id = k.id
         WHERE m.dosen_id = ? OR m.dosen_id_2 = ?
-        GROUP BY IFNULL(m.kelompok_id, m.id)
-        ORDER BY tanggal_submit DESC
+        ORDER BY ls.created_at DESC
       `;
 
-      const [groupedRows] = await pool.query(queryFixed, [dosenId, dosenId]);
+      const [rows] = await pool.query(query, [dosenId, dosenId, dosenId]);
 
-      res.json(groupedRows);
+      // 2. Group by Kelompok in JS (Safe & Robust)
+      const uniqueReports = [];
+      const processedGroups = new Set();
+      const processedStudents = new Set();
+
+      for (const row of rows) {
+        if (row.kelompok_id) {
+          // Group Logic: Only add if this group hasn't been added yet
+          if (!processedGroups.has(row.kelompok_id)) {
+            uniqueReports.push(row);
+            processedGroups.add(row.kelompok_id);
+          }
+        } else {
+          // Individual Logic
+          if (!processedStudents.has(row.mahasiswa_id)) {
+            uniqueReports.push(row);
+            processedStudents.add(row.mahasiswa_id);
+          }
+        }
+      }
+
+      res.json(uniqueReports);
     } catch (err) {
+      console.error('Error fetching dosen laporan:', err);
       next(err);
     }
   },
