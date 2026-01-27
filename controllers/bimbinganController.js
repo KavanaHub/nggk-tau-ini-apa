@@ -11,7 +11,7 @@ const bimbinganController = {
     }
 
     try {
-      // Cek mahasiswa punya dosen pembimbing
+      // 1. Cek mahasiswa punya dosen pembimbing
       const [mhsRows] = await pool.query(
         'SELECT dosen_id FROM mahasiswa WHERE id = ?',
         [mahasiswaId]
@@ -25,7 +25,7 @@ const bimbinganController = {
         return res.status(400).json({ message: 'Anda belum memiliki dosen pembimbing' });
       }
 
-      // Cek jumlah bimbingan (max 8)
+      // 2. Cek jumlah bimbingan (max 8)
       const [[{ total }]] = await pool.query(
         'SELECT COUNT(*) AS total FROM bimbingan WHERE mahasiswa_id = ?',
         [mahasiswaId]
@@ -35,6 +35,24 @@ const bimbinganController = {
         return res.status(400).json({ message: 'Bimbingan sudah mencapai batas maksimal (8 kali)' });
       }
 
+      // 3. Cek Validasi Mingguan (1 Minggu Max 1 Bimbingan)
+      //    Logic: Cek apakah ada bimbingan (non-rejected) di YEARWEEK yang sama
+      const [existingWeek] = await pool.query(
+        `SELECT id, tanggal FROM bimbingan 
+         WHERE mahasiswa_id = ? 
+         AND status != 'rejected'
+         AND YEARWEEK(tanggal, 1) = YEARWEEK(?, 1)`,
+        [mahasiswaId, tanggal]
+      );
+
+      if (existingWeek.length > 0) {
+        return res.status(400).json({
+          message: 'Anda sudah melakukan bimbingan di minggu ini. Mohon ajukan di minggu berikutnya.',
+          existingDate: existingWeek[0].tanggal
+        });
+      }
+
+      // 4. Insert data
       const [result] = await pool.query(
         `INSERT INTO bimbingan (mahasiswa_id, dosen_id, tanggal, minggu_ke, topik, catatan, status)
          VALUES (?, ?, ?, ?, ?, ?, 'waiting')`,
