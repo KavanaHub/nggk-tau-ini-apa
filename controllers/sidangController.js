@@ -14,37 +14,46 @@ const sidangController = {
     try {
       // 1. Cek Data Mahasiswa & Syarat
       const [mhsRows] = await pool.query(
-        'SELECT dosen_id, status_proposal, kelompok_id FROM mahasiswa WHERE id = ?',
+        'SELECT id, nama, dosen_id, status_proposal, kelompok_id FROM mahasiswa WHERE id = ?',
         [mahasiswaId]
       );
 
       if (mhsRows.length === 0) return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
 
       const mhs = mhsRows[0];
+      const kelompokId = mhs.kelompok_id;
 
       if (!mhs.dosen_id) return res.status(400).json({ message: 'Anda belum memiliki dosen pembimbing' });
       if (mhs.status_proposal !== 'approved') return res.status(400).json({ message: 'Proposal belum disetujui' });
 
-      // 2. Cek Bimbingan (Minimal 8x approved)
-      const [[{ total, approved }]] = await pool.query(
-        `SELECT COUNT(*) AS total, SUM(status = 'approved') AS approved 
-         FROM bimbingan WHERE mahasiswa_id = ?`,
-        [mahasiswaId]
-      );
-
-      if (total < 8) return res.status(400).json({ message: 'Bimbingan belum mencapai 8 kali' });
-      if (approved < 8) return res.status(400).json({ message: 'Semua bimbingan harus sudah disetujui' });
-
-      // 3. Logic Submit (Single vs Group)
-      const kelompokId = mhs.kelompok_id;
-
-      let affectedIds = [mahasiswaId];
-
-      // Jika punya kelompok, ambil semua member ID
+      // 2. Tentukan Anggota Kelompok (Self or Group)
+      let memberIds = [mahasiswaId];
       if (kelompokId) {
-        const [memberRows] = await pool.query('SELECT id FROM mahasiswa WHERE kelompok_id = ?', [kelompokId]);
-        affectedIds = memberRows.map(m => m.id);
+        const [groupMembers] = await pool.query('SELECT id, nama FROM mahasiswa WHERE kelompok_id = ?', [kelompokId]);
+        memberIds = groupMembers.map(m => m.id);
       }
+
+      // 3. Cek Bimbingan untuk SEMUA anggota (Minimal 8x approved per anggota)
+      for (const id of memberIds) {
+        const [[{ approved }]] = await pool.query(
+          `SELECT IFNULL(SUM(status = 'approved'), 0) AS approved 
+           FROM bimbingan WHERE mahasiswa_id = ?`,
+          [id]
+        );
+
+        if (approved < 8) {
+          // Jika anggota kelompok yang belum cukup, cari namanya siapa
+          let name = "Mahasiswa";
+          if (kelompokId) {
+            const [m] = await pool.query('SELECT nama FROM mahasiswa WHERE id = ?', [id]);
+            if (m.length) name = m[0].nama;
+          }
+          return res.status(400).json({ message: `Anggota ${name} belum mencapai 8 bimbingan yang disetujui (${approved}/8).` });
+        }
+      }
+
+      // 4. Logic Submit (Single vs Group) - Insert/Update
+      const affectedIds = memberIds; // Re-use list
 
       // Insert/Update untuk SEMUA member kelompok
       // Gunakan Loop atau Bulk Insert (Loop aman untuk trigger individual)
@@ -114,6 +123,9 @@ const sidangController = {
             m.kelompok_id,
             k.nama as kelompok_nama,
             
+            -- Bimbingan Count (Subquery)
+            (SELECT COUNT(*) FROM bimbingan b WHERE b.mahasiswa_id = m.id AND b.status = 'approved') as bimbingan_count,
+
             CASE WHEN m.dosen_id = ? THEN 'utama' ELSE 'kedua' END as peran_pembimbing
         FROM laporan_sidang ls
         JOIN mahasiswa m ON ls.mahasiswa_id = m.id
