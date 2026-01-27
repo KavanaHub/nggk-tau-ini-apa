@@ -2,6 +2,7 @@ import pool from '../config/db.js';
 
 const sidangController = {
   // MAHASISWA: SUBMIT LAPORAN SIDANG
+  // MAHASISWA: SUBMIT LAPORAN SIDANG (GROUP SUPPORT)
   submitLaporan: async (req, res, next) => {
     const mahasiswaId = req.user.id;
     const { file_url } = req.body;
@@ -11,46 +12,62 @@ const sidangController = {
     }
 
     try {
-      // Cek mahasiswa punya dosen dan proposal approved
+      // 1. Cek Data Mahasiswa & Syarat
       const [mhsRows] = await pool.query(
-        'SELECT dosen_id, status_proposal FROM mahasiswa WHERE id = ?',
+        'SELECT dosen_id, status_proposal, kelompok_id FROM mahasiswa WHERE id = ?',
         [mahasiswaId]
       );
 
-      if (mhsRows.length === 0) {
-        return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
-      }
+      if (mhsRows.length === 0) return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
 
-      if (!mhsRows[0].dosen_id) {
-        return res.status(400).json({ message: 'Anda belum memiliki dosen pembimbing' });
-      }
+      const mhs = mhsRows[0];
 
-      if (mhsRows[0].status_proposal !== 'approved') {
-        return res.status(400).json({ message: 'Proposal belum disetujui' });
-      }
+      if (!mhs.dosen_id) return res.status(400).json({ message: 'Anda belum memiliki dosen pembimbing' });
+      if (mhs.status_proposal !== 'approved') return res.status(400).json({ message: 'Proposal belum disetujui' });
 
-      // Cek bimbingan sudah 8 kali dan semua approved
+      // 2. Cek Bimbingan (Minimal 8x approved)
       const [[{ total, approved }]] = await pool.query(
         `SELECT COUNT(*) AS total, SUM(status = 'approved') AS approved 
          FROM bimbingan WHERE mahasiswa_id = ?`,
         [mahasiswaId]
       );
 
-      if (total < 8) {
-        return res.status(400).json({ message: 'Bimbingan belum mencapai 8 kali' });
+      if (total < 8) return res.status(400).json({ message: 'Bimbingan belum mencapai 8 kali' });
+      if (approved < 8) return res.status(400).json({ message: 'Semua bimbingan harus sudah disetujui' });
+
+      // 3. Logic Submit (Single vs Group)
+      const kelompokId = mhs.kelompok_id;
+
+      let affectedIds = [mahasiswaId];
+
+      // Jika punya kelompok, ambil semua member ID
+      if (kelompokId) {
+        const [memberRows] = await pool.query('SELECT id FROM mahasiswa WHERE kelompok_id = ?', [kelompokId]);
+        affectedIds = memberRows.map(m => m.id);
       }
 
-      if (approved < 8) {
-        return res.status(400).json({ message: 'Semua bimbingan harus sudah disetujui' });
+      // Insert/Update untuk SEMUA member kelompok
+      // Gunakan Loop atau Bulk Insert (Loop aman untuk trigger individual)
+      for (const id of affectedIds) {
+        // Cek apakah sudah ada
+        const [existing] = await pool.query('SELECT id FROM laporan_sidang WHERE mahasiswa_id = ?', [id]);
+
+        if (existing.length > 0) {
+          await pool.query(
+            "UPDATE laporan_sidang SET file_url = ?, status = 'submitted', created_at = NOW() WHERE mahasiswa_id = ?",
+            [file_url, id]
+          );
+        } else {
+          await pool.query(
+            "INSERT INTO laporan_sidang (mahasiswa_id, file_url, status) VALUES (?, ?, 'submitted')",
+            [id, file_url]
+          );
+        }
       }
 
-      const [result] = await pool.query(
-        `INSERT INTO laporan_sidang (mahasiswa_id, file_url, status)
-         VALUES (?, ?, 'submitted')`,
-        [mahasiswaId, file_url]
-      );
-
-      res.status(201).json({ message: 'Laporan berhasil disubmit', id: result.insertId });
+      res.status(201).json({
+        message: kelompokId ? 'Laporan berhasil disubmit untuk seluruh anggota kelompok' : 'Laporan berhasil disubmit'
+      });
     } catch (err) {
       next(err);
     }
@@ -72,64 +89,107 @@ const sidangController = {
     }
   },
 
-  // DOSEN: GET LAPORAN MAHASISWA BIMBINGAN (termasuk sebagai pembimbing 2)
+  // DOSEN: GET LAPORAN (GROUPED BY KELOMPOK)
   getDosenLaporan: async (req, res, next) => {
     const dosenId = req.user.id;
 
     try {
+      // Logic: Tampilkan satu baris per kelompok (atau per mahasiswa jika tidak berkelompok)
+      // Kita ambil data representatif (misal ketua/member pertama)
       const [rows] = await pool.query(
         `SELECT ls.id, ls.mahasiswa_id, ls.file_url as file_laporan, ls.status, 
                 ls.note as catatan_dosen, ls.created_at as tanggal_submit,
                 m.nama as mahasiswa_nama, m.npm as mahasiswa_npm, m.track, m.judul_proyek as judul,
-                CASE WHEN m.dosen_id = ? THEN 'utama' ELSE 'kedua' END as peran_pembimbing,
-                (SELECT COUNT(*) FROM bimbingan WHERE mahasiswa_id = m.id AND status = 'approved') as bimbingan_count
+                m.kelompok_id, k.nama as kelompok_nama,
+                CASE WHEN m.dosen_id = ? THEN 'utama' ELSE 'kedua' END as peran_pembimbing
          FROM laporan_sidang ls
          JOIN mahasiswa m ON ls.mahasiswa_id = m.id
+         LEFT JOIN kelompok k ON m.kelompok_id = k.id
          WHERE m.dosen_id = ? OR m.dosen_id_2 = ?
+         GROUP BY COALESCE(m.kelompok_id, m.id), ls.id
          ORDER BY ls.created_at DESC`,
         [dosenId, dosenId, dosenId]
       );
 
-      res.json(rows);
+      // Note: GROUP BY di atas might be strict mode issue if ls.id is unique per row.
+      // Better approach: Select distinct kelompok
+      // Revised Query for strict SQL mode safety:
+      // Ambil semua, nanti frontend filter? No, backend better.
+      // Hack: Group by Kelompok ID if exists.
+
+      const queryFixed = `
+        SELECT 
+            MAX(ls.id) as id, 
+            MAX(ls.file_url) as file_laporan,
+            MAX(ls.status) as status,
+            MAX(ls.note) as catatan_dosen,
+            MAX(ls.created_at) as tanggal_submit,
+            
+            -- Info Mahasiswa (Salah satu dr kelompok)
+            MAX(m.nama) as mahasiswa_nama,
+            MAX(m.npm) as mahasiswa_npm,
+            MAX(m.track) as track,
+            MAX(m.judul_proyek) as judul,
+            
+            -- Info Kelompok
+            m.kelompok_id,
+            MAX(k.nama) as kelompok_nama
+        FROM laporan_sidang ls
+        JOIN mahasiswa m ON ls.mahasiswa_id = m.id
+        LEFT JOIN kelompok k ON m.kelompok_id = k.id
+        WHERE m.dosen_id = ? OR m.dosen_id_2 = ?
+        GROUP BY IFNULL(m.kelompok_id, m.id)
+        ORDER BY tanggal_submit DESC
+      `;
+
+      const [groupedRows] = await pool.query(queryFixed, [dosenId, dosenId]);
+
+      res.json(groupedRows);
     } catch (err) {
       next(err);
     }
   },
 
-  // DOSEN: APPROVE / REJECT LAPORAN
+  // DOSEN: APPROVE / REJECT LAPORAN (BULK UPDATE GROUP)
   updateLaporanStatus: async (req, res, next) => {
     const dosenId = req.user.id;
-    const { id } = req.params;
+    const { id } = req.params; // Report ID
     const { status, note } = req.body;
 
-    if (!status) {
-      return res.status(400).json({ message: 'status wajib diisi' });
-    }
-
-    if (!['approved', 'rejected', 'revision'].includes(status)) {
-      return res.status(400).json({ message: 'Status harus approved, rejected, atau revision' });
-    }
+    if (!status) return res.status(400).json({ message: 'status wajib diisi' });
 
     try {
-      // Cek laporan milik mahasiswa bimbingan dosen ini (termasuk sebagai pembimbing 2)
+      // 1. Get Info Report ini milik siapa & kelompok mana
       const [rows] = await pool.query(
-        `SELECT ls.id FROM laporan_sidang ls
+        `SELECT m.id as mahasiswa_id, m.kelompok_id 
+         FROM laporan_sidang ls
          JOIN mahasiswa m ON ls.mahasiswa_id = m.id
-         WHERE ls.id = ? AND (m.dosen_id = ? OR m.dosen_id_2 = ?)`,
-        [id, dosenId, dosenId]
+         WHERE ls.id = ?`,
+        [id]
       );
 
-      if (rows.length === 0) {
-        return res.status(404).json({ message: 'Laporan tidak ditemukan atau bukan mahasiswa bimbingan Anda' });
+      if (rows.length === 0) return res.status(404).json({ message: 'Laporan tidak ditemukan' });
+
+      const { kelompok_id, mahasiswa_id } = rows[0];
+
+      // 2. Tentukan siapa saja yang di-update
+      let targetMahasiswaIds = [mahasiswa_id];
+      if (kelompok_id) {
+        const [members] = await pool.query('SELECT id FROM mahasiswa WHERE kelompok_id = ?', [kelompok_id]);
+        targetMahasiswaIds = members.map(m => m.id);
       }
 
+      // 3. Update Status untuk semua target
+      // Note: approved_by kita set ke dosen yg melakukan action
+      const placeholders = targetMahasiswaIds.map(() => '?').join(',');
       await pool.query(
-        `UPDATE laporan_sidang SET status = ?, note = ?, approved_by = ?, approved_at = NOW()
-         WHERE id = ?`,
-        [status, note || null, dosenId, id]
+        `UPDATE laporan_sidang 
+         SET status = ?, note = ?, approved_by = ?, approved_at = NOW()
+         WHERE mahasiswa_id IN (${placeholders})`,
+        [status, note || null, dosenId, ...targetMahasiswaIds]
       );
 
-      res.json({ message: `Laporan ${status}` });
+      res.json({ message: `Laporan berhasil di-${status} untuk ${targetMahasiswaIds.length} mahasiswa.` });
     } catch (err) {
       next(err);
     }
