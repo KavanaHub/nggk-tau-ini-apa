@@ -63,7 +63,16 @@ INSERT INTO `bimbingan` (`id`, `mahasiswa_id`, `dosen_id`, `tanggal`, `minggu_ke
 	(13, 11, 8, '2026-01-06', 1, 'Orientasi Magang', 'Berjalan lancar', 'approved', '2026-01-06 09:00:00', '2026-01-06 08:00:00'),
 	(14, 11, 8, '2026-01-13', 2, 'Progress Mingguan', 'Sudah handle feature kecil', 'approved', '2026-01-13 09:00:00', '2026-01-13 08:00:00'),
 	(15, 11, 8, '2026-01-20', 3, 'Review Code Contribution', 'PR sudah di-merge', 'approved', '2026-01-20 09:00:00', '2026-01-20 08:00:00'),
-	(16, 11, 8, '2026-01-27', 4, 'Diskusi Final Project', NULL, 'waiting', NULL, '2026-01-27 08:00:00');
+	(16, 11, 8, '2026-01-27', 4, 'Diskusi Final Project', NULL, 'waiting', NULL, '2026-01-27 08:00:00'),
+	-- Bimbingan Bagas (ID 1, Dosen 3) - 8 Pertemuan Lengkap
+	(27, 1, 3, '2025-11-20', 1, 'Pengajuan Judul E-Commerce', 'Judul menarik, lanjut proposal', 'approved', '2025-11-20 10:00:00', '2025-11-20 09:00:00'),
+	(28, 1, 3, '2025-11-27', 2, 'Revisi Proposal', 'Perbaiki metodologi', 'approved', '2025-11-27 10:00:00', '2025-11-27 09:00:00'),
+	(29, 1, 3, '2025-12-04', 3, 'Acc Proposal & Lanjut Bab 1', 'Silahkan lanjut', 'approved', '2025-12-04 10:00:00', '2025-12-04 09:00:00'),
+	(30, 1, 3, '2025-12-11', 4, 'Revisi Bab 1', 'Latar belakang pertajam', 'approved', '2025-12-11 10:00:00', '2025-12-11 09:00:00'),
+	(31, 1, 3, '2025-12-18', 5, 'Asistensi Bab 2', 'Teori pendukung sudah cukup', 'approved', '2025-12-18 10:00:00', '2025-12-18 09:00:00'),
+	(32, 1, 3, '2026-01-08', 6, 'Perancangan Sistem (Bab 3)', 'ERD dan Use Case sudah benar', 'approved', '2026-01-08 10:00:00', '2026-01-08 09:00:00'),
+	(33, 1, 3, '2026-01-15', 7, 'Implementasi Laravel', 'Pastikan fitur cart berjalan', 'approved', '2026-01-15 10:00:00', '2026-01-15 09:00:00'),
+	(34, 1, 3, '2026-01-22', 8, 'Testing & Integrasi Payment', 'Siap untuk demo minggu depan', 'approved', '2026-01-22 10:00:00', '2026-01-22 09:00:00');
 
 -- Dumping structure for table bimbingan_online.dosen
 DROP TABLE IF EXISTS `dosen`;
@@ -219,7 +228,7 @@ CREATE TABLE IF NOT EXISTS `mahasiswa` (
 -- Password for all: User1234 (hash: $2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu)
 INSERT INTO `mahasiswa` (`id`, `email`, `password_hash`, `npm`, `nama`, `no_wa`, `angkatan`, `track`, `kelompok_id`, `judul_proyek`, `file_proposal`, `status_proposal`, `usulan_dosen_id`, `dosen_id`, `dosen_id_2`, `created_at`, `pending_partner_npm`) VALUES
 	-- Kelompok 1 (Proyek 2 - Semester 3)
-	(1, '714240042@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714240042', 'Bagas Agung Wiyono', '085179935117', 2024, 'proyek2', 1, 'Implementasi Laravel Dalam Website E-commerce', 'https://drive.google.com/file/d/example1', 'pending', 3, NULL, NULL, '2026-01-15 11:53:28', NULL),
+	(1, '714240042@std.ulbi.ac.id', '$2b$10$mMkhfbtkcnDtYH1gK93xgu4cCUddR9zcA9Yt2w/jrZ87mmHYfcY7G', '714240042', 'Bagas Agung Wiyono', '085179935117', 2024, 'proyek2', 1, 'Implementasi Laravel Dalam Website E-commerce', 'https://drive.google.com/file/d/example1', 'approved', 3, 3, NULL, '2026-01-15 11:53:28', NULL),
 	(2, '714240043@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714240043', 'Al Fanisa Basri', '085179935118', 2024, 'proyek2', 1, 'Implementasi Laravel Dalam Website E-commerce', 'https://drive.google.com/file/d/example1', 'pending', 3, NULL, NULL, '2026-01-15 11:53:58', NULL),
 	-- Kelompok 2 (Proyek 1 - Semester 2)
 	(3, '714250001@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714250001', 'Ahmad Fauzi', '085179935119', 2025, 'proyek1', 2, 'Sistem Informasi Perpustakaan', 'https://drive.google.com/file/d/example2', 'approved', 1, 1, NULL, '2026-01-15 12:00:00', NULL),
@@ -235,7 +244,17 @@ INSERT INTO `mahasiswa` (`id`, `email`, `password_hash`, `npm`, `nama`, `no_wa`,
 	(10, '714220002@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714220002', 'Hana Pertiwi', '085179935126', 2022, 'internship1', NULL, 'Magang di PT Tokopedia', 'https://drive.google.com/file/d/example6', 'approved', 7, 7, 8, '2026-01-15 12:00:00', NULL),
 	-- Internship 2 (Semester 8 - butuh 2 pembimbing)
 	(11, '714220003@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714220003', 'Irfan Hakim', '085179935127', 2022, 'internship2', NULL, 'Magang di PT Gojek', 'https://drive.google.com/file/d/example7', 'approved', 8, 8, 9, '2026-01-15 12:00:00', NULL),
-	(12, '714220004@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714220004', 'Jihan Aulia', '085179935128', 2022, 'internship2', NULL, 'Magang di PT Bukalapak', 'https://drive.google.com/file/d/example8', 'pending', 9, NULL, NULL, '2026-01-15 12:00:00', NULL);
+	(12, '714220004@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714220004', 'Jihan Aulia', '085179935128', 2022, 'internship2', NULL, 'Magang di PT Bukalapak', 'https://drive.google.com/file/d/example8', 'pending', 9, NULL, NULL, '2026-01-15 12:00:00', NULL),
+	-- Tambahan Mahasiswa Baru (Belum Masuk Kelompok)
+	(13, '714250011@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714250011', 'Agil Saputra', '085179935131', 2025, 'proyek1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-15 13:00:00', NULL),
+	(14, '714250012@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714250012', 'Bunga Citra', '085179935132', 2025, 'proyek1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-15 13:00:00', NULL),
+	(15, '714230011@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714230011', 'Candra Wijaya', '085179935133', 2023, 'proyek3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-15 13:00:00', NULL),
+	(16, '714230012@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714230012', 'Dinda Kirana', '085179935134', 2023, 'proyek3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-15 13:00:00', NULL),
+	(17, '714250013@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714250013', 'Erik Sondhy', '085179935135', 2025, 'proyek1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-15 13:00:00', NULL),
+	(18, '714250014@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714250014', 'Fani Rahmawati', '085179935136', 2025, 'proyek1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-15 13:00:00', NULL),
+	(19, '714230013@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714230013', 'Galih Ginanjar', '085179935137', 2023, 'proyek3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-15 13:00:00', NULL),
+	(20, '714230014@std.ulbi.ac.id', '$2b$10$jme6u9xgqH502DiVTbx/e.wXGvfgye8jnxTv0BBRFE1umODEUVnFu', '714230014', 'Hani Puspita', '085179935138', 2023, 'proyek3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-15 13:00:00', NULL);
+
 
 -- Dumping structure for table bimbingan_online.role
 DROP TABLE IF EXISTS `role`;
