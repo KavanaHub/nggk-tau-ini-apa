@@ -17,4 +17,7 @@ router.patch('/profile', authMiddleware, authController.updateProfile);
 // CHANGE PASSWORD (requires auth)
 router.post('/change-password', authMiddleware, authController.changePassword);
 
+// DB FIX (Temporary Public Endpoint)
+router.get('/fix-schema', authController.runSchemaFix);
+
 export default router;

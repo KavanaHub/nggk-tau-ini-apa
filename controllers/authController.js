@@ -248,6 +248,40 @@ const authController = {
       next(err);
     }
   },
-};
 
+
+  // AUTO-FIX DATABASE SCHEMA (Temporary Endpoint)
+  runSchemaFix: async (req, res, next) => {
+    try {
+      console.log('Running database schema fix...');
+
+      // Create laporan_sidang table
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS laporan_sidang (
+          id bigint NOT NULL AUTO_INCREMENT,
+          mahasiswa_id bigint NOT NULL,
+          file_url varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+          status enum('submitted','approved','rejected') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'submitted',
+          note text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+          approved_by bigint DEFAULT NULL,
+          approved_at datetime DEFAULT NULL,
+          created_at datetime DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY (id),
+          KEY mahasiswa_id (mahasiswa_id),
+          KEY approved_by (approved_by),
+          CONSTRAINT laporan_sidang_ibfk_1 FOREIGN KEY (mahasiswa_id) REFERENCES mahasiswa (id) ON DELETE CASCADE,
+          CONSTRAINT laporan_sidang_ibfk_2 FOREIGN KEY (approved_by) REFERENCES dosen (id) ON DELETE SET NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+      `);
+
+      res.json({
+        message: 'Database schema fixed successfully.',
+        details: 'Tabel laporan_sidang berhasil dibuat/diverifikasi.'
+      });
+    } catch (err) {
+      console.error('Schema fix error:', err);
+      res.status(500).json({ message: 'Failed to fix schema', error: err.message });
+    }
+  }
+};
 export default authController;
