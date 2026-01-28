@@ -218,15 +218,10 @@ const authController = {
       if (role === 'mahasiswa') {
         table = 'mahasiswa';
         [rows] = await pool.query('SELECT password_hash FROM mahasiswa WHERE id = ?', [id]);
-      } else if (role === 'dosen' || role === 'kaprodi') {
+      } else if (role === 'dosen' || role === 'kaprodi' || role === 'koordinator' || role === 'penguji') {
+        // koordinator, kaprodi, and penguji are all dosen with special roles
         table = 'dosen';
         [rows] = await pool.query('SELECT password_hash FROM dosen WHERE id = ?', [id]);
-      } else if (role === 'koordinator') {
-        table = 'koordinator';
-        [rows] = await pool.query('SELECT password_hash FROM koordinator WHERE id = ?', [id]);
-      } else if (role === 'penguji') {
-        table = 'penguji';
-        [rows] = await pool.query('SELECT password_hash FROM penguji WHERE id = ?', [id]);
       } else {
         return res.status(400).json({ message: 'Cannot change password for this role' });
       }

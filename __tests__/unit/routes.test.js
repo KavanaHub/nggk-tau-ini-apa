@@ -1,136 +1,329 @@
-// Routes Tests - Import all route files for coverage
+// Comprehensive Route Tests with App Import for Coverage
 import { describe, it, expect } from '@jest/globals';
+import request from 'supertest';
+import app from '../../index.js';
 
-// Import all routes (this executes the route definition code for coverage)
-import authRoutes from '../../routes/authRoutes.js';
-import adminRoutes from '../../routes/adminRoutes.js';
-import mahasiswaRoutes from '../../routes/mahasiswaRoutes.js';
-import dosenRoutes from '../../routes/dosenRoutes.js';
-import kaprodiRoutes from '../../routes/kaprodiRoutes.js';
-import koordinatorRoutes from '../../routes/koordinatorRoutes.js';
-import bimbinganRoutes from '../../routes/bimbinganRoutes.js';
-import proposalRoutes from '../../routes/proposalRoutes.js';
-import sidangRoutes from '../../routes/sidangRoutes.js';
-import profileRoutes from '../../routes/profileRoutes.js';
-import reportRoutes from '../../routes/reportRoutes.js';
-import pengujiRoutes from '../../routes/pengujiRoutes.js';
-
-describe('Routes - Coverage', () => {
-    describe('Auth Routes', () => {
-        it('should export a router', () => {
-            expect(authRoutes).toBeDefined();
-            expect(authRoutes.stack).toBeDefined();
+describe('All Routes - Comprehensive Coverage Tests', () => {
+    // ============================================
+    // AUTH ROUTES
+    // ============================================
+    describe('Auth Routes (/api/auth)', () => {
+        it('POST /login - missing fields returns 400', async () => {
+            const res = await request(app).post('/api/auth/login').send({});
+            expect(res.status).toBe(400);
         });
 
-        it('should have POST /login route', () => {
-            const loginRoute = authRoutes.stack.find(r =>
-                r.route && r.route.path === '/login' && r.route.methods.post
-            );
-            expect(loginRoute).toBeDefined();
+        it('POST /login - missing password returns 400', async () => {
+            const res = await request(app).post('/api/auth/login').send({ email: 'test@test.com' });
+            expect(res.status).toBe(400);
         });
 
-        it('should have POST /register/mahasiswa route', () => {
-            const registerRoute = authRoutes.stack.find(r =>
-                r.route && r.route.path === '/register/mahasiswa'
-            );
-            expect(registerRoute).toBeDefined();
-        });
-    });
-
-    describe('Admin Routes', () => {
-        it('should export a router', () => {
-            expect(adminRoutes).toBeDefined();
-            expect(adminRoutes.stack).toBeDefined();
+        it('POST /login - missing email returns 400', async () => {
+            const res = await request(app).post('/api/auth/login').send({ password: 'test123' });
+            expect(res.status).toBe(400);
         });
 
-        it('should have routes defined', () => {
-            expect(adminRoutes.stack.length).toBeGreaterThan(0);
-        });
-    });
-
-    describe('Mahasiswa Routes', () => {
-        it('should export a router', () => {
-            expect(mahasiswaRoutes).toBeDefined();
-            expect(mahasiswaRoutes.stack).toBeDefined();
+        it('POST /login - invalid credentials returns 400', async () => {
+            const res = await request(app).post('/api/auth/login').send({
+                email: 'invalid@email.com',
+                password: 'wrongpass'
+            });
+            expect([400, 401]).toContain(res.status);
         });
 
-        it('should have routes defined', () => {
-            expect(mahasiswaRoutes.stack.length).toBeGreaterThan(0);
-        });
-    });
-
-    describe('Dosen Routes', () => {
-        it('should export a router', () => {
-            expect(dosenRoutes).toBeDefined();
-            expect(dosenRoutes.stack).toBeDefined();
+        it('POST /register/mahasiswa - missing fields returns error', async () => {
+            const res = await request(app).post('/api/auth/register/mahasiswa').send({});
+            expect([400, 500]).toContain(res.status);
         });
 
-        it('should have routes defined', () => {
-            expect(dosenRoutes.stack.length).toBeGreaterThan(0);
+        it('GET /profile - no token returns 401', async () => {
+            const res = await request(app).get('/api/auth/profile');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /profile - invalid token returns 401', async () => {
+            const res = await request(app)
+                .get('/api/auth/profile')
+                .set('Authorization', 'Bearer invalid.token');
+            expect(res.status).toBe(401);
+        });
+
+        it('PATCH /profile - no token returns 401', async () => {
+            const res = await request(app).patch('/api/auth/profile').send({ nama: 'Test' });
+            expect(res.status).toBe(401);
+        });
+
+        it('POST /change-password - no token returns 401', async () => {
+            const res = await request(app).post('/api/auth/change-password').send({});
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /fix-schema - returns response', async () => {
+            const res = await request(app).get('/api/auth/fix-schema');
+            expect([200, 500]).toContain(res.status);
         });
     });
 
-    describe('Kaprodi Routes', () => {
-        it('should export a router', () => {
-            expect(kaprodiRoutes).toBeDefined();
-            expect(kaprodiRoutes.stack).toBeDefined();
+    // ============================================
+    // ADMIN ROUTES
+    // ============================================
+    describe('Admin Routes (/api/admin)', () => {
+        it('GET /stats - no token returns 401', async () => {
+            const res = await request(app).get('/api/admin/stats');
+            expect(res.status).toBe(401);
         });
 
-        it('should have routes defined', () => {
-            expect(kaprodiRoutes.stack.length).toBeGreaterThan(0);
-        });
-    });
-
-    describe('Koordinator Routes', () => {
-        it('should export a router', () => {
-            expect(koordinatorRoutes).toBeDefined();
-            expect(koordinatorRoutes.stack).toBeDefined();
+        it('GET /users - no token returns 401', async () => {
+            const res = await request(app).get('/api/admin/users');
+            expect(res.status).toBe(401);
         });
 
-        it('should have routes defined', () => {
-            expect(koordinatorRoutes.stack.length).toBeGreaterThan(0);
+        it('GET /dosen - no token returns 401', async () => {
+            const res = await request(app).get('/api/admin/dosen');
+            expect(res.status).toBe(401);
         });
-    });
 
-    describe('Bimbingan Routes', () => {
-        it('should export a router', () => {
-            expect(bimbinganRoutes).toBeDefined();
-            expect(bimbinganRoutes.stack).toBeDefined();
+        it('GET /mahasiswa - no token returns 401', async () => {
+            const res = await request(app).get('/api/admin/mahasiswa');
+            expect(res.status).toBe(401);
         });
-    });
 
-    describe('Proposal Routes', () => {
-        it('should export a router', () => {
-            expect(proposalRoutes).toBeDefined();
-            expect(proposalRoutes.stack).toBeDefined();
+        it('POST /dosen - no token returns 401', async () => {
+            const res = await request(app).post('/api/admin/dosen').send({});
+            expect(res.status).toBe(401);
         });
-    });
 
-    describe('Sidang Routes', () => {
-        it('should export a router', () => {
-            expect(sidangRoutes).toBeDefined();
-            expect(sidangRoutes.stack).toBeDefined();
+        it('GET /activity - no token returns 401', async () => {
+            const res = await request(app).get('/api/admin/activity');
+            expect(res.status).toBe(401);
         });
     });
 
-    describe('Profile Routes', () => {
-        it('should export a router', () => {
-            expect(profileRoutes).toBeDefined();
-            expect(profileRoutes.stack).toBeDefined();
+    // ============================================
+    // MAHASISWA ROUTES
+    // ============================================
+    describe('Mahasiswa Routes (/api/mahasiswa)', () => {
+        it('GET /profile - no token returns 401', async () => {
+            const res = await request(app).get('/api/mahasiswa/profile');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /bimbingan - no token returns 401', async () => {
+            const res = await request(app).get('/api/mahasiswa/bimbingan');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /proposal - no token returns 401', async () => {
+            const res = await request(app).get('/api/mahasiswa/proposal');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /dosen - no token returns 401', async () => {
+            const res = await request(app).get('/api/mahasiswa/dosen');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /periode-aktif - no token returns 401', async () => {
+            const res = await request(app).get('/api/mahasiswa/periode-aktif');
+            expect(res.status).toBe(401);
+        });
+
+        it('POST /track - no token returns 401', async () => {
+            const res = await request(app).post('/api/mahasiswa/track').send({});
+            expect(res.status).toBe(401);
+        });
+
+        it('POST /proposal - no token returns 401', async () => {
+            const res = await request(app).post('/api/mahasiswa/proposal').send({});
+            expect(res.status).toBe(401);
         });
     });
 
-    describe('Report Routes', () => {
-        it('should export a router', () => {
-            expect(reportRoutes).toBeDefined();
-            expect(reportRoutes.stack).toBeDefined();
+    // ============================================
+    // DOSEN ROUTES
+    // ============================================
+    describe('Dosen Routes (/api/dosen)', () => {
+        it('GET /profile - no token returns 401', async () => {
+            const res = await request(app).get('/api/dosen/profile');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /mahasiswa - no token returns 401', async () => {
+            const res = await request(app).get('/api/dosen/mahasiswa');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /bimbingan - no token returns 401', async () => {
+            const res = await request(app).get('/api/dosen/bimbingan');
+            expect(res.status).toBe(401);
         });
     });
 
-    describe('Penguji Routes', () => {
-        it('should export a router', () => {
-            expect(pengujiRoutes).toBeDefined();
-            expect(pengujiRoutes.stack).toBeDefined();
+    // ============================================
+    // KOORDINATOR ROUTES
+    // ============================================
+    describe('Koordinator Routes (/api/koordinator)', () => {
+        it('GET /stats - no token returns 401', async () => {
+            const res = await request(app).get('/api/koordinator/stats');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /mahasiswa - no token returns 401', async () => {
+            const res = await request(app).get('/api/koordinator/mahasiswa');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /proposal - no token returns 401', async () => {
+            const res = await request(app).get('/api/koordinator/proposal');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /dosen - no token returns 401', async () => {
+            const res = await request(app).get('/api/koordinator/dosen');
+            expect(res.status).toBe(401);
+        });
+    });
+
+    // ============================================
+    // KAPRODI ROUTES
+    // ============================================
+    describe('Kaprodi Routes (/api/kaprodi)', () => {
+        it('GET /stats - no token returns 401', async () => {
+            const res = await request(app).get('/api/kaprodi/stats');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /mahasiswa - no token returns 401', async () => {
+            const res = await request(app).get('/api/kaprodi/mahasiswa');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /dosen - no token returns 401', async () => {
+            const res = await request(app).get('/api/kaprodi/dosen');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /koordinator - no token returns 401', async () => {
+            const res = await request(app).get('/api/kaprodi/koordinator');
+            expect(res.status).toBe(401);
+        });
+    });
+
+    // ============================================
+    // BIMBINGAN ROUTES
+    // ============================================
+    describe('Bimbingan Routes (/api/bimbingan)', () => {
+        it('GET / - no token returns 401', async () => {
+            const res = await request(app).get('/api/bimbingan');
+            expect(res.status).toBe(401);
+        });
+
+        it('POST / - no token returns 401', async () => {
+            const res = await request(app).post('/api/bimbingan').send({});
+            expect(res.status).toBe(401);
+        });
+    });
+
+    // ============================================
+    // PROPOSAL ROUTES
+    // ============================================
+    describe('Proposal Routes (/api/proposal)', () => {
+        it('GET / - no token returns 401', async () => {
+            const res = await request(app).get('/api/proposal');
+            expect(res.status).toBe(401);
+        });
+
+        it('POST / - no token returns 401', async () => {
+            const res = await request(app).post('/api/proposal').send({});
+            expect(res.status).toBe(401);
+        });
+    });
+
+    // ============================================
+    // SIDANG ROUTES
+    // ============================================
+    describe('Sidang Routes (/api/sidang)', () => {
+        it('GET / - no token returns 401', async () => {
+            const res = await request(app).get('/api/sidang');
+            expect(res.status).toBe(401);
+        });
+    });
+
+    // ============================================
+    // PENGUJI ROUTES
+    // ============================================
+    describe('Penguji Routes (/api/penguji)', () => {
+        it('GET /profile - no token returns 401', async () => {
+            const res = await request(app).get('/api/penguji/profile');
+            expect(res.status).toBe(401);
+        });
+
+        it('GET /mahasiswa - no token returns 401', async () => {
+            const res = await request(app).get('/api/penguji/mahasiswa');
+            expect(res.status).toBe(401);
+        });
+    });
+
+    // ============================================
+    // NOTIFICATION ROUTES
+    // ============================================
+    describe('Notification Routes (/api/notifications)', () => {
+        it('GET / - no token returns 401', async () => {
+            const res = await request(app).get('/api/notifications');
+            expect(res.status).toBe(401);
+        });
+    });
+
+    // ============================================
+    // PROFILE ROUTES
+    // ============================================
+    describe('Profile Routes (/api/profile)', () => {
+        it('GET / - no token returns 401', async () => {
+            const res = await request(app).get('/api/profile');
+            expect(res.status).toBe(401);
+        });
+    });
+
+    // ============================================
+    // REPORT ROUTES
+    // ============================================
+    describe('Report Routes (/api/report)', () => {
+        it('GET / - no token returns 401', async () => {
+            const res = await request(app).get('/api/report');
+            expect(res.status).toBe(401);
+        });
+    });
+
+    // ============================================
+    // HEALTH CHECK & ERROR HANDLING
+    // ============================================
+    describe('Health Check & Error Handling', () => {
+        it('GET / - returns API status', async () => {
+            const res = await request(app).get('/');
+            expect(res.status).toBe(200);
+            expect(res.body).toHaveProperty('message');
+        });
+
+        it('GET /ping - returns pong', async () => {
+            const res = await request(app).get('/ping');
+            expect(res.status).toBe(200);
+            expect(res.body).toHaveProperty('status', 'ok');
+            expect(res.body).toHaveProperty('message', 'pong');
+        });
+
+        it('GET /docs - returns swagger page', async () => {
+            const res = await request(app).get('/docs/');
+            expect([200, 301, 304]).toContain(res.status);
+        });
+
+        it('GET /docs.json - returns swagger spec', async () => {
+            const res = await request(app).get('/docs.json');
+            expect(res.status).toBe(200);
+        });
+
+        it('GET /unknown-route - returns 404', async () => {
+            const res = await request(app).get('/api/unknown-xyz-route');
+            expect([404, 500]).toContain(res.status);
         });
     });
 });
