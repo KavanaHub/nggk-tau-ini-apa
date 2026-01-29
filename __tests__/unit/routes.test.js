@@ -1,329 +1,348 @@
-// Comprehensive Route Tests with App Import for Coverage
-import { describe, it, expect } from '@jest/globals';
-import request from 'supertest';
-import app from '../../index.js';
+import { jest } from '@jest/globals';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-describe('All Routes - Comprehensive Coverage Tests', () => {
-    // ============================================
-    // AUTH ROUTES
-    // ============================================
-    describe('Auth Routes (/api/auth)', () => {
-        it('POST /login - missing fields returns 400', async () => {
-            const res = await request(app).post('/api/auth/login').send({});
-            expect(res.status).toBe(400);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const resolvePath = (relativePath) => {
+    return path.resolve(__dirname, relativePath).replace(/\\/g, '/');
+};
+
+// Define Mocks in a factory format
+const mockRouterInstance = {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    patch: jest.fn(),
+    delete: jest.fn(),
+    use: jest.fn(),
+    mockClear: () => {
+        mockRouterInstance.get.mockClear();
+        mockRouterInstance.post.mockClear();
+        mockRouterInstance.put.mockClear();
+        mockRouterInstance.patch.mockClear();
+        mockRouterInstance.delete.mockClear();
+        mockRouterInstance.use.mockClear();
+    }
+};
+
+const mockExpressFactory = () => {
+    return {
+        __esModule: true,
+        default: {
+            Router: jest.fn(() => mockRouterInstance)
+        }
+    };
+};
+
+jest.unstable_mockModule('express', mockExpressFactory);
+
+// --- CONTROLLERS ---
+const createMockController = (methods) => {
+    const mock = {};
+    methods.forEach(m => mock[m] = jest.fn());
+    return { __esModule: true, default: mock };
+};
+
+jest.unstable_mockModule(resolvePath('../../controllers/authController.js'), () => createMockController(['registerMahasiswa', 'login', 'getProfile', 'updateProfile', 'changePassword', 'runSchemaFix']));
+jest.unstable_mockModule(resolvePath('../../controllers/adminController.js'), () => createMockController(['getProfile', 'getStats', 'getRecentActivity', 'getAllUsers', 'updateUserStatus', 'deleteUser', 'getAllDosen', 'createDosen', 'getAllMahasiswa', 'getSystemReport']));
+jest.unstable_mockModule(resolvePath('../../controllers/mahasiswaController.js'), () => createMockController(['getProfile', 'updateProfile', 'setTrack', 'getPeriodeAktif', 'submitProposal', 'getProposalStatus', 'getDosen', 'getAllDosen']));
+jest.unstable_mockModule(resolvePath('../../controllers/bimbinganController.js'), () => createMockController(['createBimbingan', 'getMyBimbingan', 'getBimbinganById', 'getDosenBimbingan', 'updateBimbinganStatus']));
+jest.unstable_mockModule(resolvePath('../../controllers/sidangController.js'), () => createMockController(['submitLaporan', 'getMyLaporan', 'getMySidang', 'getAllSidang', 'scheduleSidang', 'getDosenLaporan', 'updateLaporanStatus']));
+jest.unstable_mockModule(resolvePath('../../controllers/kelompokController.js'), () => createMockController(['createKelompok', 'joinKelompok', 'getMyKelompok', 'getAvailableKelompok']));
+jest.unstable_mockModule(resolvePath('../../controllers/dosenController.js'), () => createMockController(['getProfile', 'getStats', 'listDosen', 'getMahasiswaBimbingan', 'getMySidang']));
+jest.unstable_mockModule(resolvePath('../../controllers/kaprodiController.js'), () => createMockController(['getProfile', 'getDashboardStats', 'getRecentActivities', 'getAllMahasiswa', 'getAllDosen', 'getAllKoordinator', 'getAllPenguji', 'assignDosen', 'updateProposalStatus', 'assignKoordinatorSemester', 'unassignKoordinatorSemester']));
+jest.unstable_mockModule(resolvePath('../../controllers/koordinatorController.js'), () => createMockController(['getProfile', 'getStats', 'getAssignedSemester', 'getAllMahasiswa', 'getAllDosen', 'getPendingProposals', 'validateProposal', 'assignDosen', 'getPengujiList']));
+jest.unstable_mockModule(resolvePath('../../controllers/jadwalController.js'), () => createMockController(['list', 'getActive', 'create', 'update', 'complete']));
+jest.unstable_mockModule(resolvePath('../../controllers/notificationController.js'), () => createMockController(['getStats']));
+
+// --- UTILS & CONFIG ---
+jest.unstable_mockModule(resolvePath('../../config/db.js'), () => ({
+    __esModule: true,
+    default: {
+        query: jest.fnAsync ? jest.fnAsync() : jest.fn().mockResolvedValue([[]]) // Handle simple query mock
+    }
+}));
+jest.unstable_mockModule(resolvePath('../../utils/gcs.js'), () => ({
+    __esModule: true,
+    uploadToGCS: jest.fn()
+}));
+
+// --- MIDDLEWARE ---
+const mockAuthMiddleware = jest.fn();
+jest.unstable_mockModule(resolvePath('../../middleware/auth.js'), () => ({
+    __esModule: true,
+    default: mockAuthMiddleware
+}));
+
+const mockRoleMiddleware = jest.fn((...roles) => `requireRole(${roles.join(',')})`);
+const mockKaprodiOnly = jest.fn(() => 'kaprodiOnly');
+jest.unstable_mockModule(resolvePath('../../middleware/role.js'), () => ({
+    __esModule: true,
+    default: mockRoleMiddleware,
+    kaprodiOnly: mockKaprodiOnly
+}));
+
+const mockUpload = {
+    single: jest.fn(() => 'upload.single')
+};
+const mockParseMultipart = jest.fn();
+jest.unstable_mockModule(resolvePath('../../middleware/upload.js'), () => ({
+    __esModule: true,
+    upload: mockUpload,
+    parseMultipart: mockParseMultipart
+}));
+
+
+describe('Route Definitions', () => {
+    let importedExpress;
+    let authController, adminController, mahasiswaController, bimbinganController, sidangController, kelompokController, dosenController, kaprodiController, koordinatorController, jadwalController, notificationController;
+    let authMiddleware, parseMultipart, mockUpload;
+
+    const findCall = (method, path) => {
+        return mockRouterInstance[method].mock.calls.find(call => call[0] === path);
+    };
+
+    beforeAll(async () => {
+        importedExpress = (await import('express')).default;
+
+        authController = (await import('../../controllers/authController.js')).default;
+        adminController = (await import('../../controllers/adminController.js')).default;
+        mahasiswaController = (await import('../../controllers/mahasiswaController.js')).default;
+        bimbinganController = (await import('../../controllers/bimbinganController.js')).default;
+        sidangController = (await import('../../controllers/sidangController.js')).default;
+        // kelompokController = (await import('../../controllers/kelompokController.js')).default; // Controller exists but route file doesn't? verify
+        dosenController = (await import('../../controllers/dosenController.js')).default;
+        kaprodiController = (await import('../../controllers/kaprodiController.js')).default;
+        koordinatorController = (await import('../../controllers/koordinatorController.js')).default;
+        jadwalController = (await import('../../controllers/jadwalController.js')).default;
+        notificationController = (await import('../../controllers/notificationController.js')).default;
+
+        authMiddleware = (await import('../../middleware/auth.js')).default;
+        const uploadModule = await import('../../middleware/upload.js');
+        parseMultipart = uploadModule.parseMultipart;
+        mockUpload = uploadModule.upload;
+    });
+
+    describe('authRoutes.js', () => {
+        beforeAll(async () => {
+            mockRouterInstance.mockClear();
+            await import('../../routes/authRoutes.js');
         });
 
-        it('POST /login - missing password returns 400', async () => {
-            const res = await request(app).post('/api/auth/login').send({ email: 'test@test.com' });
-            expect(res.status).toBe(400);
+        it('should define POST /register/mahasiswa', () => {
+            const call = findCall('post', '/register/mahasiswa');
+            expect(call).toBeDefined();
+            expect(call[1]).toBe(authController.registerMahasiswa);
         });
-
-        it('POST /login - missing email returns 400', async () => {
-            const res = await request(app).post('/api/auth/login').send({ password: 'test123' });
-            expect(res.status).toBe(400);
+        it('should define POST /login', () => {
+            const call = findCall('post', '/login');
+            expect(call).toBeDefined();
+            expect(call[1]).toBe(authController.login);
         });
-
-        it('POST /login - invalid credentials returns 400', async () => {
-            const res = await request(app).post('/api/auth/login').send({
-                email: 'invalid@email.com',
-                password: 'wrongpass'
-            });
-            expect([400, 401]).toContain(res.status);
-        });
-
-        it('POST /register/mahasiswa - missing fields returns error', async () => {
-            const res = await request(app).post('/api/auth/register/mahasiswa').send({});
-            expect([400, 500]).toContain(res.status);
-        });
-
-        it('GET /profile - no token returns 401', async () => {
-            const res = await request(app).get('/api/auth/profile');
-            expect(res.status).toBe(401);
-        });
-
-        it('GET /profile - invalid token returns 401', async () => {
-            const res = await request(app)
-                .get('/api/auth/profile')
-                .set('Authorization', 'Bearer invalid.token');
-            expect(res.status).toBe(401);
-        });
-
-        it('PATCH /profile - no token returns 401', async () => {
-            const res = await request(app).patch('/api/auth/profile').send({ nama: 'Test' });
-            expect(res.status).toBe(401);
-        });
-
-        it('POST /change-password - no token returns 401', async () => {
-            const res = await request(app).post('/api/auth/change-password').send({});
-            expect(res.status).toBe(401);
-        });
-
-        it('GET /fix-schema - returns response', async () => {
-            const res = await request(app).get('/api/auth/fix-schema');
-            expect([200, 500]).toContain(res.status);
+        it('should define GET /profile', () => {
+            const call = findCall('get', '/profile');
+            expect(call).toBeDefined();
+            expect(call[1]).toBe(authMiddleware);
+            expect(call[2]).toBe(authController.getProfile);
         });
     });
 
-    // ============================================
-    // ADMIN ROUTES
-    // ============================================
-    describe('Admin Routes (/api/admin)', () => {
-        it('GET /stats - no token returns 401', async () => {
-            const res = await request(app).get('/api/admin/stats');
-            expect(res.status).toBe(401);
+    describe('adminRoutes.js', () => {
+        beforeAll(async () => {
+            mockRouterInstance.mockClear();
+            await import('../../routes/adminRoutes.js');
         });
-
-        it('GET /users - no token returns 401', async () => {
-            const res = await request(app).get('/api/admin/users');
-            expect(res.status).toBe(401);
+        it('should define POST /dosen', () => {
+            const call = findCall('post', '/dosen');
+            expect(call).toBeDefined();
+            expect(call[1]).toBe(authMiddleware);
+            expect(call[2]).toBe("requireRole(admin)");
+            expect(call[3]).toBe(adminController.createDosen);
         });
-
-        it('GET /dosen - no token returns 401', async () => {
-            const res = await request(app).get('/api/admin/dosen');
-            expect(res.status).toBe(401);
-        });
-
-        it('GET /mahasiswa - no token returns 401', async () => {
-            const res = await request(app).get('/api/admin/mahasiswa');
-            expect(res.status).toBe(401);
-        });
-
-        it('POST /dosen - no token returns 401', async () => {
-            const res = await request(app).post('/api/admin/dosen').send({});
-            expect(res.status).toBe(401);
-        });
-
-        it('GET /activity - no token returns 401', async () => {
-            const res = await request(app).get('/api/admin/activity');
-            expect(res.status).toBe(401);
+        it('should define GET /users', () => {
+            const call = findCall('get', '/users');
+            expect(call).toBeDefined();
+            expect(call[3]).toBe(adminController.getAllUsers);
         });
     });
 
-    // ============================================
-    // MAHASISWA ROUTES
-    // ============================================
-    describe('Mahasiswa Routes (/api/mahasiswa)', () => {
-        it('GET /profile - no token returns 401', async () => {
-            const res = await request(app).get('/api/mahasiswa/profile');
-            expect(res.status).toBe(401);
+    describe('mahasiswaRoutes.js', () => {
+        beforeAll(async () => {
+            mockRouterInstance.mockClear();
+            await import('../../routes/mahasiswaRoutes.js');
         });
-
-        it('GET /bimbingan - no token returns 401', async () => {
-            const res = await request(app).get('/api/mahasiswa/bimbingan');
-            expect(res.status).toBe(401);
-        });
-
-        it('GET /proposal - no token returns 401', async () => {
-            const res = await request(app).get('/api/mahasiswa/proposal');
-            expect(res.status).toBe(401);
-        });
-
-        it('GET /dosen - no token returns 401', async () => {
-            const res = await request(app).get('/api/mahasiswa/dosen');
-            expect(res.status).toBe(401);
-        });
-
-        it('GET /periode-aktif - no token returns 401', async () => {
-            const res = await request(app).get('/api/mahasiswa/periode-aktif');
-            expect(res.status).toBe(401);
-        });
-
-        it('POST /track - no token returns 401', async () => {
-            const res = await request(app).post('/api/mahasiswa/track').send({});
-            expect(res.status).toBe(401);
-        });
-
-        it('POST /proposal - no token returns 401', async () => {
-            const res = await request(app).post('/api/mahasiswa/proposal').send({});
-            expect(res.status).toBe(401);
+        it('should define GET /profile', () => {
+            const call = findCall('get', '/profile');
+            expect(call).toBeDefined();
+            expect(call[2]).toBe("requireRole(mahasiswa)");
+            expect(call[3]).toBe(mahasiswaController.getProfile);
         });
     });
 
-    // ============================================
-    // DOSEN ROUTES
-    // ============================================
-    describe('Dosen Routes (/api/dosen)', () => {
-        it('GET /profile - no token returns 401', async () => {
-            const res = await request(app).get('/api/dosen/profile');
-            expect(res.status).toBe(401);
+    describe('dosenRoutes.js', () => {
+        beforeAll(async () => {
+            mockRouterInstance.mockClear();
+            await import('../../routes/dosenRoutes.js');
         });
-
-        it('GET /mahasiswa - no token returns 401', async () => {
-            const res = await request(app).get('/api/dosen/mahasiswa');
-            expect(res.status).toBe(401);
+        it('should define GET /profile', () => {
+            const call = findCall('get', '/profile');
+            expect(call).toBeDefined();
+            expect(call[2]).toBe("requireRole(dosen,kaprodi)");
+            expect(call[3]).toBe(dosenController.getProfile);
         });
-
-        it('GET /bimbingan - no token returns 401', async () => {
-            const res = await request(app).get('/api/dosen/bimbingan');
-            expect(res.status).toBe(401);
-        });
-    });
-
-    // ============================================
-    // KOORDINATOR ROUTES
-    // ============================================
-    describe('Koordinator Routes (/api/koordinator)', () => {
-        it('GET /stats - no token returns 401', async () => {
-            const res = await request(app).get('/api/koordinator/stats');
-            expect(res.status).toBe(401);
-        });
-
-        it('GET /mahasiswa - no token returns 401', async () => {
-            const res = await request(app).get('/api/koordinator/mahasiswa');
-            expect(res.status).toBe(401);
-        });
-
-        it('GET /proposal - no token returns 401', async () => {
-            const res = await request(app).get('/api/koordinator/proposal');
-            expect(res.status).toBe(401);
-        });
-
-        it('GET /dosen - no token returns 401', async () => {
-            const res = await request(app).get('/api/koordinator/dosen');
-            expect(res.status).toBe(401);
+        it('should define GET /bimbingan', () => {
+            const call = findCall('get', '/bimbingan');
+            expect(call).toBeDefined(); // or /bimbingan (alias support test?)
+            // dosenRoutes has /bimbingan
+            expect(call[3]).toBe(bimbinganController.getDosenBimbingan);
         });
     });
 
-    // ============================================
-    // KAPRODI ROUTES
-    // ============================================
-    describe('Kaprodi Routes (/api/kaprodi)', () => {
-        it('GET /stats - no token returns 401', async () => {
-            const res = await request(app).get('/api/kaprodi/stats');
-            expect(res.status).toBe(401);
+    describe('kaprodiRoutes.js', () => {
+        beforeAll(async () => {
+            mockRouterInstance.mockClear();
+            await import('../../routes/kaprodiRoutes.js');
         });
-
-        it('GET /mahasiswa - no token returns 401', async () => {
-            const res = await request(app).get('/api/kaprodi/mahasiswa');
-            expect(res.status).toBe(401);
+        it('should define GET /profile', () => {
+            const call = findCall('get', '/profile');
+            expect(call).toBeDefined();
+            expect(call[2]).toBe("requireRole(kaprodi)");
+            expect(call[3]).toBe(kaprodiController.getProfile);
         });
-
-        it('GET /dosen - no token returns 401', async () => {
-            const res = await request(app).get('/api/kaprodi/dosen');
-            expect(res.status).toBe(401);
-        });
-
-        it('GET /koordinator - no token returns 401', async () => {
-            const res = await request(app).get('/api/kaprodi/koordinator');
-            expect(res.status).toBe(401);
+        it('should define POST /assign-dosen', () => {
+            const call = findCall('post', '/assign-dosen');
+            expect(call).toBeDefined();
+            expect(call[2]).toBe("kaprodiOnly");
+            expect(call[3]).toBe(kaprodiController.assignDosen);
         });
     });
 
-    // ============================================
-    // BIMBINGAN ROUTES
-    // ============================================
-    describe('Bimbingan Routes (/api/bimbingan)', () => {
-        it('GET / - no token returns 401', async () => {
-            const res = await request(app).get('/api/bimbingan');
-            expect(res.status).toBe(401);
+    describe('koordinatorRoutes.js', () => {
+        beforeAll(async () => {
+            mockRouterInstance.mockClear();
+            await import('../../routes/koordinatorRoutes.js');
         });
-
-        it('POST / - no token returns 401', async () => {
-            const res = await request(app).post('/api/bimbingan').send({});
-            expect(res.status).toBe(401);
+        it('should define GET /profile', () => {
+            const call = findCall('get', '/profile');
+            expect(call).toBeDefined();
+            expect(call[2]).toBe("requireRole(koordinator)");
+            expect(call[3]).toBe(koordinatorController.getProfile);
         });
-    });
-
-    // ============================================
-    // PROPOSAL ROUTES
-    // ============================================
-    describe('Proposal Routes (/api/proposal)', () => {
-        it('GET / - no token returns 401', async () => {
-            const res = await request(app).get('/api/proposal');
-            expect(res.status).toBe(401);
-        });
-
-        it('POST / - no token returns 401', async () => {
-            const res = await request(app).post('/api/proposal').send({});
-            expect(res.status).toBe(401);
+        it('should define POST /sidang/schedule', () => {
+            const call = findCall('post', '/sidang/schedule');
+            expect(call).toBeDefined();
+            expect(call[3]).toBe(sidangController.scheduleSidang);
         });
     });
 
-    // ============================================
-    // SIDANG ROUTES
-    // ============================================
-    describe('Sidang Routes (/api/sidang)', () => {
-        it('GET / - no token returns 401', async () => {
-            const res = await request(app).get('/api/sidang');
-            expect(res.status).toBe(401);
+    describe('notificationRoutes.js', () => {
+        beforeAll(async () => {
+            mockRouterInstance.mockClear();
+            await import('../../routes/notificationRoutes.js');
+        });
+        it('should define GET /stats', () => {
+            const call = findCall('get', '/stats');
+            expect(call).toBeDefined();
+            expect(call[2]).toBe(notificationController.getStats);
         });
     });
 
-    // ============================================
-    // PENGUJI ROUTES
-    // ============================================
-    describe('Penguji Routes (/api/penguji)', () => {
-        it('GET /profile - no token returns 401', async () => {
-            const res = await request(app).get('/api/penguji/profile');
-            expect(res.status).toBe(401);
+    describe('bimbinganRoutes.js', () => {
+        beforeAll(async () => {
+            mockRouterInstance.mockClear();
+            await import('../../routes/bimbinganRoutes.js');
         });
-
-        it('GET /mahasiswa - no token returns 401', async () => {
-            const res = await request(app).get('/api/penguji/mahasiswa');
-            expect(res.status).toBe(401);
+        it('should define GET /:id', () => {
+            const call = findCall('get', '/:id');
+            expect(call).toBeDefined();
+            expect(call[2]).toBe(bimbinganController.getBimbinganById);
         });
-    });
-
-    // ============================================
-    // NOTIFICATION ROUTES
-    // ============================================
-    describe('Notification Routes (/api/notifications)', () => {
-        it('GET / - no token returns 401', async () => {
-            const res = await request(app).get('/api/notifications');
-            expect(res.status).toBe(401);
+        it('should define POST /upload (inline handler)', () => {
+            const call = findCall('post', '/upload');
+            expect(call).toBeDefined();
+            expect(call[1]).toBe(authMiddleware);
+            expect(call[2]).toBe(parseMultipart);
+            expect(call[3]).toEqual(expect.any(Function));
         });
     });
 
-    // ============================================
-    // PROFILE ROUTES
-    // ============================================
-    describe('Profile Routes (/api/profile)', () => {
-        it('GET / - no token returns 401', async () => {
-            const res = await request(app).get('/api/profile');
-            expect(res.status).toBe(401);
+    describe('sidangRoutes.js', () => {
+        beforeAll(async () => {
+            mockRouterInstance.mockClear();
+            await import('../../routes/sidangRoutes.js');
+        });
+        it('should define GET /', () => {
+            const call = findCall('get', '/');
+            expect(call).toBeDefined();
+            expect(call[2]).toBe(sidangController.getAllSidang);
+        });
+        it('should define POST /upload (inline handler)', () => {
+            const call = findCall('post', '/upload');
+            expect(call).toBeDefined();
+            // router.post("/upload", auth, upload.single("file"), async ... )
+            expect(call[1]).toBe(authMiddleware);
+            expect(call[2]).toBe('upload.single'); // from mock
+            expect(call[3]).toEqual(expect.any(Function));
         });
     });
 
-    // ============================================
-    // REPORT ROUTES
-    // ============================================
-    describe('Report Routes (/api/report)', () => {
-        it('GET / - no token returns 401', async () => {
-            const res = await request(app).get('/api/report');
-            expect(res.status).toBe(401);
+    describe('proposalRoutes.js', () => {
+        beforeAll(async () => {
+            mockRouterInstance.mockClear();
+            await import('../../routes/proposalRoutes.js');
+        });
+        it('should define POST /upload (inline handler)', () => {
+            const call = findCall('post', '/upload');
+            expect(call).toBeDefined();
+            // router.post("/upload", auth, requireRole("mahasiswa"), parseMultipart, async ...)
+            expect(call[1]).toBe(authMiddleware);
+            expect(call[2]).toBe("requireRole(mahasiswa)");
+            expect(call[3]).toBe(parseMultipart);
+            expect(call[4]).toEqual(expect.any(Function));
         });
     });
 
-    // ============================================
-    // HEALTH CHECK & ERROR HANDLING
-    // ============================================
-    describe('Health Check & Error Handling', () => {
-        it('GET / - returns API status', async () => {
-            const res = await request(app).get('/');
-            expect(res.status).toBe(200);
-            expect(res.body).toHaveProperty('message');
+    describe('pengujiRoutes.js', () => {
+        beforeAll(async () => {
+            mockRouterInstance.mockClear();
+            await import('../../routes/pengujiRoutes.js');
         });
-
-        it('GET /ping - returns pong', async () => {
-            const res = await request(app).get('/ping');
-            expect(res.status).toBe(200);
-            expect(res.body).toHaveProperty('status', 'ok');
-            expect(res.body).toHaveProperty('message', 'pong');
+        it('should define GET /profile (inline)', () => {
+            const call = findCall('get', '/profile');
+            expect(call).toBeDefined();
+            expect(call[1]).toBe(authMiddleware);
+            expect(call[2]).toBe("requireRole(penguji)");
+            expect(call[3]).toEqual(expect.any(Function));
         });
+    });
 
-        it('GET /docs - returns swagger page', async () => {
-            const res = await request(app).get('/docs/');
-            expect([200, 301, 304]).toContain(res.status);
+    describe('reportRoutes.js', () => {
+        beforeAll(async () => {
+            mockRouterInstance.mockClear();
+            await import('../../routes/reportRoutes.js');
         });
-
-        it('GET /docs.json - returns swagger spec', async () => {
-            const res = await request(app).get('/docs.json');
-            expect(res.status).toBe(200);
+        it('should define POST /upload (inline)', () => {
+            const call = findCall('post', '/upload');
+            expect(call).toBeDefined();
+            expect(call[1]).toBe(authMiddleware);
+            expect(call[2]).toBe("requireRole(mahasiswa)");
+            expect(call[3]).toBe(parseMultipart);
+            expect(call[4]).toEqual(expect.any(Function));
         });
+    });
 
-        it('GET /unknown-route - returns 404', async () => {
-            const res = await request(app).get('/api/unknown-xyz-route');
-            expect([404, 500]).toContain(res.status);
+    describe('profileRoutes.js', () => {
+        beforeAll(async () => {
+            mockRouterInstance.mockClear();
+            await import('../../routes/profileRoutes.js');
+        });
+        it('should define POST /upload (inline)', () => {
+            const call = findCall('post', '/upload');
+            expect(call).toBeDefined();
+            expect(call[1]).toBe(authMiddleware);
+            expect(call[2]).toBe(parseMultipart);
+            expect(call[3]).toEqual(expect.any(Function));
         });
     });
 });

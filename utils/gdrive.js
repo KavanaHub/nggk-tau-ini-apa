@@ -24,7 +24,7 @@ if (process.env.GOOGLE_CREDENTIALS) {
       throw new Error("GOOGLE_CREDENTIALS is not valid JSON or base64 encoded JSON");
     }
   }
-  
+
   auth = new google.auth.GoogleAuth({
     credentials: credentials,
     scopes: ["https://www.googleapis.com/auth/drive.file"],
@@ -50,24 +50,15 @@ if (process.env.GOOGLE_CREDENTIALS) {
 
 const drive = google.drive({ version: "v3", auth });
 
-// Folder ID where files will be uploaded (create a folder in Google Drive and get its ID)
-const FOLDER_IDS = {
-  proposals: process.env.GDRIVE_FOLDER_PROPOSALS || "",
-  reports: process.env.GDRIVE_FOLDER_REPORTS || "",
-  profiles: process.env.GDRIVE_FOLDER_PROFILES || "",
-  bimbingan: process.env.GDRIVE_FOLDER_BIMBINGAN || "",
-  default: process.env.GDRIVE_FOLDER_DEFAULT || "",
-};
-
 /**
  * Get folder ID based on file path
  */
 const getFolderId = (customPath) => {
-  if (customPath.startsWith("proposals/")) return FOLDER_IDS.proposals;
-  if (customPath.startsWith("reports/")) return FOLDER_IDS.reports;
-  if (customPath.startsWith("profile/")) return FOLDER_IDS.profiles;
-  if (customPath.startsWith("bimbingan/")) return FOLDER_IDS.bimbingan;
-  return FOLDER_IDS.default;
+  if (customPath.startsWith("proposals/")) return process.env.GDRIVE_FOLDER_PROPOSALS;
+  if (customPath.startsWith("reports/")) return process.env.GDRIVE_FOLDER_REPORTS;
+  if (customPath.startsWith("profile/")) return process.env.GDRIVE_FOLDER_PROFILES;
+  if (customPath.startsWith("bimbingan/")) return process.env.GDRIVE_FOLDER_BIMBINGAN;
+  return process.env.GDRIVE_FOLDER_DEFAULT;
 };
 
 /**
@@ -75,7 +66,7 @@ const getFolderId = (customPath) => {
  */
 const bufferToStream = (buffer) => {
   const readable = new Readable();
-  readable._read = () => {};
+  readable._read = () => { };
   readable.push(buffer);
   readable.push(null);
   return readable;
@@ -163,10 +154,10 @@ export const deleteFromGDrive = async (fileUrl) => {
     if (!match) {
       throw new Error("Invalid Google Drive URL");
     }
-    
+
     const fileId = match[1];
     await drive.files.delete({ fileId });
-    
+
     return true;
   } catch (error) {
     console.error("Google Drive delete error:", error);
@@ -184,7 +175,7 @@ export const getFileInfo = async (fileId) => {
       fileId: fileId,
       fields: "id, name, mimeType, size, webViewLink, webContentLink",
     });
-    
+
     return response.data;
   } catch (error) {
     console.error("Google Drive get file error:", error);

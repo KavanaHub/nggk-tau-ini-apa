@@ -1,0 +1,148 @@
+﻿
+> nggk-tau-ini-apa@1.0.0 test
+> cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --passWithNoTests --testPathPattern=unit/middleware.test.js --no-cache
+
+node.exe : [baseline-b
+rowser-mapping] The 
+data in this module 
+is over two months 
+old.  To ensure 
+accurate Baseline 
+data, please update: 
+`npm i baseline-browse
+r-mapping@latest -D`
+At line:1 char:1
++ & "D:\ENV\NodeJS/nod
+e.exe" "C:\Users\Renz\
+AppData\Roaming\npm/no
+de_mo ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: ([baseline-   
+ brows...ping@late    
+st -D`:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+  console.log
+    [dotenv@17.2.3] injecting env (9) from .env -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+(node:12708) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+PASS __tests__/unit/mi
+ddleware.test.js
+  Middleware Unit 
+Tests
+    Auth Middleware
+      √ should return 
+401 if no auth header 
+(2 ms)
+      √ should return 
+401 if invalid header 
+format
+      √ should return 
+401 if token invalid 
+(2 ms)
+      √ should call 
+next and set user if 
+token valid (3 ms)
+    Role Middleware
+      requireRole
+        √ should 
+return 403 if no user
+        √ should 
+allow admin (1 ms)
+        √ should 
+allow correct role
+        √ should 
+return 403 for 
+mismatch
+        √ should 
+allow Kaprodi to 
+Dosen (1 ms)
+      kaprodiOnly
+        √ should 
+allow kaprodi
+        √ should 
+block admin (1 ms)
+    Upload Middleware
+      parseMultipart
+        √ should skip 
+if req.file exists (1 
+ms)
+        √ should skip 
+if not multipart
+        √ should 
+parse fields and 
+files via Busboy (2 
+ms)
+
+----------------------------|---------|----------|---------|---------|-------------------
+File                        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------------------------|---------|----------|---------|---------|-------------------
+All files                   |    4.07 |      4.8 |     7.8 |     4.2 |                   
+ controllers                |       0 |        0 |       0 |       0 |                   
+  adminController.js        |       0 |        0 |       0 |       0 | 3-285             
+  authController.js         |       0 |        0 |       0 |       0 | 6-278             
+  bimbinganController.js    |       0 |        0 |       0 |       0 | 3-170             
+  dosenController.js        |       0 |        0 |       0 |       0 | 4-156             
+  jadwalController.js       |       0 |        0 |       0 |       0 | 3-197             
+  kaprodiController.js      |       0 |        0 |       0 |       0 | 4-376             
+  kelompokController.js     |       0 |        0 |       0 |       0 | 3-209             
+  koordinatorController.js  |       0 |        0 |       0 |       0 | 5-192             
+  mahasiswaController.js    |       0 |        0 |       0 |       0 | 4-391             
+  notificationController.js |       0 |        0 |       0 |       0 | 3-72              
+  sharedController.js       |       0 |        0 |       0 |       0 | 8-253             
+  sidangController.js       |       0 |        0 |       0 |       0 | 3-336             
+ middleware                 |   90.16 |    80.55 |   91.66 |   90.16 |                   
+  auth.js                   |     100 |      100 |     100 |     100 |                   
+  role.js                   |      85 |    77.27 |     100 |      85 | 17,29,43          
+  upload.js                 |   89.65 |       75 |   85.71 |   89.65 | 59-60,65          
+ routes                     |       0 |        0 |       0 |       0 |                   
+  adminRoutes.js            |       0 |      100 |     100 |       0 | 6-28              
+  authRoutes.js             |       0 |      100 |     100 |       0 | 5-21              
+  bimbinganRoutes.js        |       0 |        0 |       0 |       0 | 8-40              
+  dosenRoutes.js            |       0 |      100 |     100 |       0 | 8-32              
+  kaprodiRoutes.js          |       0 |      100 |     100 |       0 | 6-27              
+  koordinatorRoutes.js      |       0 |      100 |     100 |       0 | 8-40              
+  mahasiswaRoutes.js        |       0 |      100 |     100 |       0 | 9-42              
+  notificationRoutes.js     |       0 |      100 |     100 |       0 | 5-8               
+  pengujiRoutes.js          |       0 |        0 |       0 |       0 | 6-45              
+  profileRoutes.js          |       0 |        0 |       0 |       0 | 7-63              
+  proposalRoutes.js         |       0 |        0 |       0 |       0 | 8-58              
+  reportRoutes.js           |       0 |        0 |       0 |       0 | 8-51              
+  sidangRoutes.js           |       0 |      100 |       0 |       0 | 8-30              
+ utils                      |       0 |        0 |       0 |       0 |                   
+  constants.js              |       0 |        0 |       0 |       0 | 6-71              
+  gcs.js                    |       0 |        0 |       0 |       0 | 3-42              
+  gdrive.js                 |       0 |        0 |       0 |       0 | 12-191            
+  httpResponses.js          |       0 |        0 |       0 |       0 | 6-54              
+  jwt.js                    |       0 |        0 |       0 |       0 | 4-7               
+  password.js               |       0 |      100 |       0 |       0 | 4-9               
+  roleHelper.js             |       0 |        0 |       0 |       0 | 13-157            
+----------------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 
+passed, 1 total
+Tests:       14 
+passed, 14 total
+Snapshots:   0 total
+Time:        3.338 s
+Ran all test suites 
+matching /unit\\middle
+ware.test.js/i.

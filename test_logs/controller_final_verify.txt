@@ -1,0 +1,1577 @@
+﻿
+> nggk-tau-ini-apa@1.0.0 test
+> cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --passWithNoTests --testPathPattern=unit/controllers.test.js --no-cache
+
+  console.log
+    [dotenv@17.2.3] injecting env (9) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+node.exe : [baseline-b
+rowser-mapping] The 
+data in this module 
+is over two months 
+old.  To ensure 
+accurate Baseline 
+data, please update: 
+`npm i baseline-browse
+r-mapping@latest -D`
+At line:1 char:1
++ & "D:\ENV\NodeJS/nod
+e.exe" "C:\Users\Renz\
+AppData\Roaming\npm/no
+de_mo ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: ([baseline-   
+ brows...ping@late    
+st -D`:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+(node:4412) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+  console.log
+    Error checking dosen: undefined is not iterable (cannot read property Symbol(Symbol.iterator))
+
+      at Object.log [as login] (controllers/authController.js:85:19)
+
+  console.log
+    Error checking dosen (fallback): undefined is not iterable (cannot read property Symbol(Symbol.iterator))
+
+      at Object.log [as login] (controllers/authController.js:93:21)
+
+  console.log
+    Running database schema fix...
+
+      at Object.log [as runSchemaFix] (controllers/authController.js:251:15)
+
+  console.log
+    [Match] Kelompok created: Kelompok PROYEK1 - Mhs 1 & Mhs 2 for Mhs 1 & Mhs 2
+
+      at Object.log [as setTrack] (controllers/mahasiswaController.js:135:21)
+
+FAIL __tests__/unit/co
+ntrollers.test.js
+  Controller Unit 
+Tests
+    AuthController
+      login
+        √ should 
+return 400 if fields 
+missing (3 ms)
+        √ should 
+login successfully 
+for Mahasiswa (146 ms)
+        √ should 
+return 400 if user 
+not found (7 ms)
+      
+registerMahasiswa
+        √ should 
+register new 
+mahasiswa 
+successfully (64 ms)
+        √ should 
+return 400 if email 
+already exists
+      getProfile
+        √ should 
+return mahasiswa 
+profile
+        √ should 
+return dosen profile 
+with roles (1 ms)
+        √ should 
+return admin profile
+      updateProfile
+        √ should 
+update mahasiswa 
+profile (1 ms)
+        √ should 
+update dosen profile
+      changePassword
+        √ should 
+change password 
+successfully (190 ms)
+        √ should 
+return 401 if old 
+password incorrect 
+(127 ms)
+      runSchemaFix
+        √ should run 
+schema fix 
+successfully (3 ms)
+    
+MahasiswaController
+      getProfile
+        √ should 
+return profile with 
+dosen info (1 ms)
+        √ should 
+return 404 if not 
+found
+      submitProposal
+        √ should 
+submit proposal 
+successfully (1 ms)
+        √ should 
+return 400 if track 
+not set
+      getBimbinganList
+        √ should 
+return list of 
+bimbingan
+      setTrack
+        √ should set 
+track successfully 
+(no partner) (1 ms)
+        √ should fail 
+if track already set
+      
+getProposalStatus
+        √ should 
+return proposal 
+status (1 ms)
+      getDosen
+        √ should 
+return dosen 
+pembimbing info
+      getPeriodeAktif
+        √ should 
+return active periode 
+(1 ms)
+        √ should 
+return active: false 
+if no periode found
+    AdminController
+      getStats
+        √ should 
+return dashboard stats
+      
+getRecentActivity
+        √ should 
+return combined 
+recent activities (1 
+ms)
+      getAllUsers
+        √ should 
+return merged user 
+list
+      getAllDosen
+        √ should 
+return all dosen
+      createDosen
+        √ should 
+create dosen 
+successfully with 
+roles (63 ms)
+        √ should 
+return 400 if email 
+exists
+      updateUserStatus
+        √ should 
+update mahasiswa 
+status (1 ms)
+      deleteUser
+        √ should 
+delete user
+      getSystemReport
+        √ should 
+return system report
+    DosenController
+      getProfile
+        √ should 
+return profile with 
+roles
+      
+getMahasiswaBimbingan
+        √ should 
+return mahasiswa list
+      getBimbinganList
+        √ should 
+return all bimbingan
+      getLaporanSidang
+        √ should 
+return laporan sidang 
+list
+      getMySidang
+        √ should 
+return sidang 
+schedule as penguji
+      getStats
+        √ should 
+return dosen 
+dashboard stats
+    
+BimbinganController
+      createBimbingan
+        √ should 
+create bimbingan 
+successfully (1 ms)
+      
+getDosenBimbingan
+        √ should 
+return list of 
+bimbingan for dosen 
+(1 ms)
+      getMyBimbingan
+        √ should 
+return list of own 
+bimbingan (1 ms)
+      
+updateBimbinganStatus
+        √ should 
+approve bimbingan 
+successfully (1 ms)
+        √ should 
+return 400 if status 
+invalid
+      getBimbinganById
+        √ should 
+return bimbingan 
+detail
+        √ should 
+return 404 if not 
+found
+    JadwalController
+      getActive
+        √ should 
+return active 
+schedules (1 ms)
+      create
+        √ should 
+create new jadwal
+      list
+        √ should 
+return all schedules 
+(1 ms)
+      update
+        √ should 
+update jadwal 
+successfully
+      complete
+        √ should 
+complete active 
+jadwal and remove 
+koordinator role
+    
+MahasiswaController 
+Extension
+      setTrack 
+(Partner Match)
+        √ should 
+match partner and 
+create kelompok (2 ms)
+      submitProposal 
+(Validation)
+        √ should 
+return 400 if user 
+has no track
+        √ should 
+return 400 if 
+validation fails 
+(already submitted)
+  KelompokController
+    createKelompok
+      × should create 
+kelompok successfully 
+(1 ms)
+    joinKelompok
+      × should join 
+kelompok successfully
+    getMyKelompok
+      × should return 
+my kelompok (1 ms)
+    getAllKelompok
+      × should return 
+all kelompok
+    
+getAvailableKelompok
+      × should return 
+available kelompok 
+for track
+  
+KoordinatorController
+    getProfile
+      × should return 
+koordinator profile 
+(1 ms)
+    
+getAssignedSemester
+      × should return 
+assigned semester
+    
+getPendingProposals
+      × should return 
+pending proposals 
+grouped by kelompok
+    getPengujiList
+      × should return 
+list of penguji (1 ms)
+    getStats
+      × should return 
+koordinator stats
+  KaprodiController
+    
+getRecentActivities
+      × should return 
+combined activities
+    assignKoordinatorS
+emester
+      × should assign 
+koordinator 
+successfully (1 ms)
+    unassignKoordinato
+rSemester
+      × should 
+unassign koordinator
+    getDashboardStats
+      × should return 
+kaprodi dashboard 
+stats
+  
+NotificationController
+    getStats
+      × should return 
+notification stats 
+for Dosen
+  SidangController
+    submitLaporan
+      × should submit 
+laporan successfully
+    scheduleSidang
+      × should 
+schedule sidang 
+successfully
+    getMyLaporan
+      × should return 
+my laporan
+    getDosenLaporan
+      × should return 
+grouped laporan for 
+dosen
+    
+updateLaporanStatus
+      × should update 
+laporan status for 
+group (1 ms)
+    getAllSidang
+      × should return 
+all sidang
+    getMySidang
+      × should return 
+my sidang
+  SharedController
+    assignDosen
+      × should assign 
+dosen to mahasiswa (1 
+ms)
+
+  ● 
+KelompokController › 
+createKelompok › 
+should create 
+kelompok successfully
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1015 
+|[39m
+     [90m 1016 
+|[39m             
+[90m// Mock 1: Check 
+mahasiswa track[39m
+    [31m[1m>[22m[3
+9m[90m 1017 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{ 
+track[33m:[39m [32m
+'proyek1'[39m[33m,[
+39m kelompok_id[33m:
+[39m [36mnull[39m 
+}]])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1018 
+|[39m             
+[90m// Mock 2: 
+Insert kelompok[39m
+     [90m 1019 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([{ 
+insertId[33m:[39m 
+[35m200[39m 
+}])[33m;[39m
+     [90m 1020 
+|[39m             
+[90m// Mock 3: 
+Update 
+mahasiswa[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1017:13)
+
+  ● 
+KelompokController › 
+joinKelompok › should 
+join kelompok 
+successfully
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1033 
+|[39m
+     [90m 1034 
+|[39m             
+[90m// Mock 1: Check 
+mahasiswa[39m
+    [31m[1m>[22m[3
+9m[90m 1035 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{ 
+track[33m:[39m [32m
+'proyek1'[39m[33m,[
+39m kelompok_id[33m:
+[39m [36mnull[39m 
+}]])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1036 
+|[39m             
+[90m// Mock 2: Check 
+kelompok track[39m
+     [90m 1037 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[{ 
+id[33m:[39m [35m200
+[39m[33m,[39m 
+track[33m:[39m 
+[32m'proyek1'[39m 
+}]])[33m;[39m
+     [90m 1038 
+|[39m             
+[90m// Mock 3: Check 
+count[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1035:13)
+
+  ● 
+KelompokController › 
+getMyKelompok › 
+should return my 
+kelompok
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1054 
+|[39m             
+[90m// Mock 1: Get 
+kelompok info[39m
+     [90m 1055 
+|[39m             
+[36mconst[39m 
+mockKelompok 
+[33m=[39m { 
+id[33m:[39m [35m200
+[39m[33m,[39m 
+nama[33m:[39m 
+[32m'Grp'[39m 
+}[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 1056 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[mockKelompok]
+])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1057 
+|[39m             
+[90m// Mock 2: Get 
+members[39m
+     [90m 1058 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[{ 
+id[33m:[39m [35m1[
+39m[33m,[39m 
+nama[33m:[39m 
+[32m'Me'[39m 
+}]])[33m;[39m
+     [90m 1059 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1056:13)
+
+  ● 
+KelompokController › 
+getAllKelompok › 
+should return all 
+kelompok
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1070 
+|[39m
+     [90m 1071 
+|[39m             
+[36mconst[39m 
+mockList [33m=[39m 
+[{ id[33m:[39m [35m
+200[39m[33m,[39m 
+nama[33m:[39m 
+[32m'Grp'[39m 
+}][33m;[39m
+    [31m[1m>[22m[3
+9m[90m 1072 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([mockList])[33
+m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1073 |[39m
+     [90m 1074 
+|[39m             
+[36mawait[39m kelomp
+okController[33m.[39
+mgetAllKelompok(req[3
+3m,[39m 
+res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 1075 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1072:13)
+
+  ● 
+KelompokController › 
+getAvailableKelompok 
+› should return 
+available kelompok 
+for track
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1084 
+|[39m
+     [90m 1085 
+|[39m             
+[90m// Mock 1: Check 
+mahasiswa track[39m
+    [31m[1m>[22m[3
+9m[90m 1086 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{ 
+track[33m:[39m 
+[32m'proyek1'[39m 
+}]])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1087 
+|[39m             
+[90m// Mock 2: Get 
+groups[39m
+     [90m 1088 
+|[39m             
+[36mconst[39m 
+mockList [33m=[39m 
+[{ id[33m:[39m [35m
+200[39m[33m,[39m 
+nama[33m:[39m 
+[32m'Grp'[39m 
+}][33m;[39m
+     [90m 1089 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([mockL
+ist])[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1086:13)
+
+  ● 
+KoordinatorController 
+› getProfile › should 
+return koordinator 
+profile
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1106 
+|[39m
+     [90m 1107 
+|[39m             
+[36mconst[39m 
+mockProfile 
+[33m=[39m { 
+id[33m:[39m [35m10
+[39m[33m,[39m 
+nama[33m:[39m 
+[32m'Dosen 
+K'[39m[33m,[39m ass
+igned_semester[33m:[
+39m [35m2[39m 
+}[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 1108 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{ [33m...[3
+9mmockProfile 
+}]])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1109 |[39m
+     [90m 1110 
+|[39m             
+[36mawait[39m koordi
+natorController[33m.
+[39mgetProfile(req[33
+m,[39m 
+res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 1111 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1108:13)
+
+  ● 
+KoordinatorController 
+› getAssignedSemester 
+› should return 
+assigned semester
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1119 
+|[39m             
+[36mconst[39m res 
+[33m=[39m mockRespon
+se()[33m;[39m
+     [90m 1120 |[39m
+    [31m[1m>[22m[3
+9m[90m 1121 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{ assigned_se
+mester[33m:[39m 
+[35m5[39m 
+}]])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1122 |[39m
+     [90m 1123 
+|[39m             
+[36mawait[39m koordi
+natorController[33m.
+[39mgetAssignedSemeste
+r(req[33m,[39m 
+res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 1124 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1121:13)
+
+  ● 
+KoordinatorController 
+› getPendingProposals 
+› should return 
+pending proposals 
+grouped by kelompok
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1138 
+|[39m                
+ { id[33m:[39m [35m
+3[39m[33m,[39m 
+nama[33m:[39m [32m'
+C'[39m[33m,[39m 
+track[33m:[39m [32m
+'internship'[39m[33m
+,[39m kelompok_id[33
+m:[39m [36mnull[39m
+[33m,[39m status_pro
+posal[33m:[39m 
+[32m'pending'[39m }
+     [90m 1139 
+|[39m             
+][33m;[39m
+    [31m[1m>[22m[3
+9m[90m 1140 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([mockRows])[33
+m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1141 |[39m
+     [90m 1142 
+|[39m             
+[36mawait[39m koordi
+natorController[33m.
+[39mgetPendingProposal
+s(req[33m,[39m 
+res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 1143 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1140:13)
+
+  ● 
+KoordinatorController 
+› getPengujiList › 
+should return list of 
+penguji
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1156 
+|[39m
+     [90m 1157 
+|[39m             
+[36mconst[39m 
+mockList [33m=[39m 
+[{ id[33m:[39m [35m
+50[39m[33m,[39m 
+nama[33m:[39m 
+[32m'Penguji 1'[39m 
+}][33m;[39m
+    [31m[1m>[22m[3
+9m[90m 1158 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([mockList])[33
+m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1159 |[39m
+     [90m 1160 
+|[39m             
+[36mawait[39m koordi
+natorController[33m.
+[39mgetPengujiList(req
+[33m,[39m 
+res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 1161 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1158:13)
+
+  ● 
+KoordinatorController 
+› getStats › should 
+return koordinator 
+stats
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1169 
+|[39m             
+[36mconst[39m res 
+[33m=[39m mockRespon
+se()[33m;[39m
+     [90m 1170 |[39m
+    [31m[1m>[22m[3
+9m[90m 1171 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{ total_mahas
+iswa[33m:[39m 
+[35m100[39m 
+}]])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1172 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[{ pr
+oposal_pending[33m:[
+39m [35m5[39m 
+}]])[33m;[39m
+     [90m 1173 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[{ me
+nunggu_pembimbing[33m
+:[39m [35m3[39m 
+}]])[33m;[39m
+     [90m 1174 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[{ si
+ap_sidang[33m:[39m 
+[35m2[39m 
+}]])[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1171:13)
+
+  ● KaprodiController 
+› getRecentActivities 
+› should return 
+combined activities
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1194 
+|[39m
+     [90m 1195 
+|[39m             
+[90m// Mock 1: New 
+Students[39m
+    [31m[1m>[22m[3
+9m[90m 1196 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{ 
+nama[33m:[39m [32m'
+Mhs1'[39m[33m,[39m 
+created_at[33m:[39m 
+[36mnew[39m 
+[33mDate[39m() 
+}]])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1197 
+|[39m             
+[90m// Mock 2: Track 
+Select[39m
+     [90m 1198 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[]])
+[33m;[39m
+     [90m 1199 
+|[39m             
+[90m// Mock 3: 
+Proposals 
+Pending[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1196:13)
+
+  ● KaprodiController 
+› assignKoordinatorSem
+ester › should assign 
+koordinator 
+successfully
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1224 
+|[39m
+     [90m 1225 
+|[39m             
+[90m// Mock 1: Check 
+dosen exists[39m
+    [31m[1m>[22m[3
+9m[90m 1226 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{ 
+id[33m:[39m [35m10
+[39m[33m,[39m 
+nama[33m:[39m 
+[32m'Dosen'[39m 
+}]])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1227 
+|[39m             
+[90m// Mock 2: Check 
+existing 
+assignment[39m
+     [90m 1228 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[]])
+[33m;[39m
+     [90m 1229 
+|[39m             
+[90m// Mock 3: 
+Insert/Update 
+role[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1226:13)
+
+  ● KaprodiController 
+› unassignKoordinatorS
+emester › should 
+unassign koordinator
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1241 
+|[39m             
+[36mconst[39m res 
+[33m=[39m mockRespon
+se()[33m;[39m
+     [90m 1242 |[39m
+    [31m[1m>[22m[3
+9m[90m 1243 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([{ affectedRows
+[33m:[39m 
+[35m1[39m 
+}])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1244 |[39m
+     [90m 1245 
+|[39m             
+[36mawait[39m kaprod
+iController[33m.[39m
+unassignKoordinatorSem
+ester(req[33m,[39m 
+res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 1246 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1243:13)
+
+  ● KaprodiController 
+› getDashboardStats › 
+should return kaprodi 
+dashboard stats
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1254 
+|[39m             
+[36mconst[39m res 
+[33m=[39m mockRespon
+se()[33m;[39m
+     [90m 1255 |[39m
+    [31m[1m>[22m[3
+9m[90m 1256 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{ total_mahas
+iswa[33m:[39m 
+[35m200[39m 
+}]])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1257 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[{ to
+tal_dosen[33m:[39m 
+[35m50[39m 
+}]])[33m;[39m
+     [90m 1258 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[{ ma
+hasiswa_aktif[33m:[3
+9m [35m180[39m 
+}]])[33m;[39m
+     [90m 1259 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[{ 
+lulus[33m:[39m 
+[35m20[39m 
+}]])[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1256:13)
+
+  ● NotificationContro
+ller › getStats › 
+should return 
+notification stats 
+for Dosen
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1287 
+|[39m             
+[36mconst[39m res 
+[33m=[39m mockRespon
+se()[33m;[39m
+     [90m 1288 |[39m
+    [31m[1m>[22m[3
+9m[90m 1289 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{ pending_bim
+bingan[33m:[39m 
+[35m2[39m 
+}]])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1290 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[{ pe
+nding_laporan[33m:[3
+9m [35m1[39m 
+}]])[33m;[39m
+     [90m 1291 |[39m
+     [90m 1292 
+|[39m             
+[36mawait[39m notifi
+cationController[33m.
+[39mgetStats(req[33m
+,[39m res[33m,[39m 
+mockNext)[33m;[39m[
+0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1289:13)
+
+  ● SidangController 
+› submitLaporan › 
+should submit laporan 
+successfully
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1314 
+|[39m
+     [90m 1315 
+|[39m             
+[90m// Mock 1: Get 
+mahasiswa info 
+(approved proposal, 
+has dosen)[39m
+    [31m[1m>[22m[3
+9m[90m 1316 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1317 
+|[39m                
+ id[33m:[39m 
+[35m1[39m[33m,[39m
+     [90m 1318 
+|[39m                
+ nama[33m:[39m [32m
+'Mhs'[39m[33m,[39m
+     [90m 1319 
+|[39m                
+ dosen_id[33m:[39m 
+[35m10[39m[33m,[39m
+[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1316:13)
+
+  ● SidangController 
+› scheduleSidang › 
+should schedule 
+sidang successfully
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1349 
+|[39m
+     [90m 1350 
+|[39m             
+[90m// Mock 1: Get 
+mahasiswa info (has 
+dosen)[39m
+    [31m[1m>[22m[3
+9m[90m 1351 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{ 
+dosen_id[33m:[39m 
+[35m10[39m 
+}]])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1352 
+|[39m             
+[90m// Mock 2: Check 
+laporan (optional, 
+skipped in controller 
+logic for now or 
+mocked)[39m
+     [90m 1353 
+|[39m             
+[90m// (Controller 
+logic: try-catch for 
+laporan check, 
+continues if 
+empty)[39m
+     [90m 1354 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[{ 
+id[33m:[39m 
+[35m300[39m 
+}]])[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1351:13)
+
+  ● SidangController 
+› getMyLaporan › 
+should return my 
+laporan
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1371 
+|[39m
+     [90m 1372 
+|[39m             
+[36mconst[39m 
+mockList [33m=[39m 
+[{ id[33m:[39m [35m
+100[39m[33m,[39m 
+status[33m:[39m 
+[32m'submitted'[39m 
+}][33m;[39m
+    [31m[1m>[22m[3
+9m[90m 1373 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([mockList])[33
+m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1374 |[39m
+     [90m 1375 
+|[39m             
+[36mawait[39m sidang
+Controller[33m.[39mg
+etMyLaporan(req[33m,
+[39m res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 1376 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1373:13)
+
+  ● SidangController 
+› getDosenLaporan › 
+should return grouped 
+laporan for dosen
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1389 
+|[39m                
+ { id[33m:[39m [35m
+3[39m[33m,[39m maha
+siswa_id[33m:[39m [
+35m3[39m[33m,[39m f
+ile_laporan[33m:[39m
+ [32m'url'[39m[33m,
+[39m kelompok_id[33m
+:[39m [36mnull[39m 
+}
+     [90m 1390 
+|[39m             
+][33m;[39m
+    [31m[1m>[22m[3
+9m[90m 1391 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([mockRows])[33
+m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1392 |[39m
+     [90m 1393 
+|[39m             
+[36mawait[39m sidang
+Controller[33m.[39mg
+etDosenLaporan(req[33
+m,[39m 
+res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 1394 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1391:13)
+
+  ● SidangController 
+› updateLaporanStatus 
+› should update 
+laporan status for 
+group
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1407 
+|[39m
+     [90m 1408 
+|[39m             
+[90m// Mock 1: Get 
+laporan info[39m
+    [31m[1m>[22m[3
+9m[90m 1409 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{ mahasiswa_i
+d[33m:[39m [35m1[3
+9m[33m,[39m kelompok
+_id[33m:[39m 
+[35m200[39m 
+}]])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1410 
+|[39m             
+[90m// Mock 2: Get 
+group members[39m
+     [90m 1411 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[{ 
+id[33m:[39m 
+[35m1[39m 
+}[33m,[39m { 
+id[33m:[39m 
+[35m2[39m 
+}]])[33m;[39m
+     [90m 1412 
+|[39m             
+[90m// Mock 3: Bulk 
+Update[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1409:13)
+
+  ● SidangController 
+› getAllSidang › 
+should return all 
+sidang
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1425 
+|[39m
+     [90m 1426 
+|[39m             
+[36mconst[39m 
+mockList [33m=[39m 
+[{ id[33m:[39m [35m
+500[39m[33m,[39m 
+tanggal[33m:[39m [3
+2m'2026-06-01'[39m 
+}][33m;[39m
+    [31m[1m>[22m[3
+9m[90m 1427 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([mockList])[33
+m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1428 |[39m
+     [90m 1429 
+|[39m             
+[36mawait[39m sidang
+Controller[33m.[39mg
+etAllSidang(req[33m,
+[39m res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 1430 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1427:13)
+
+  ● SidangController 
+› getMySidang › 
+should return my 
+sidang
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1439 
+|[39m
+     [90m 1440 
+|[39m             
+[36mconst[39m 
+mockList [33m=[39m 
+[{ id[33m:[39m [35m
+500[39m[33m,[39m 
+tanggal[33m:[39m [3
+2m'2026-06-01'[39m 
+}][33m;[39m
+    [31m[1m>[22m[3
+9m[90m 1441 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([mockList])[33
+m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1442 |[39m
+     [90m 1443 
+|[39m             
+[36mawait[39m sidang
+Controller[33m.[39mg
+etMySidang(req[33m,[
+39m res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 1444 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1441:13)
+
+  ● SharedController 
+› assignDosen › 
+should assign dosen 
+to mahasiswa
+
+    ReferenceError: 
+querySpy is not 
+defined
+
+    [0m [90m 1458 
+|[39m
+     [90m 1459 
+|[39m             
+[90m// Mock 1: Check 
+Mhs[39m
+    [31m[1m>[22m[3
+9m[90m 1460 |[39m   
+          querySpy[33
+m.[39mmockResolvedVal
+ueOnce([[{ 
+id[33m:[39m [35m1[
+39m[33m,[39m 
+track[33m:[39m 
+[32m'proyek'[39m 
+}]])[33m;[39m
+     [90m      
+|[39m             
+[31m[1m^[22m[39m
+     [90m 1461 
+|[39m             
+[90m// Mock 2: Check 
+Dosen[39m
+     [90m 1462 
+|[39m             que
+rySpy[33m.[39mmockRe
+solvedValueOnce([[{ 
+id[33m:[39m 
+[35m10[39m 
+}]])[33m;[39m
+     [90m 1463 
+|[39m             
+[90m// Mock 3: 
+Update[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:1460:13)
+
+----------------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------------
+File                        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                                                                             
+----------------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------------
+All files                   |   29.65 |    28.31 |   29.07 |   29.94 |                                                                                               
+ controllers                |   40.87 |    37.61 |   43.67 |   41.42 |                                                                                               
+  adminController.js        |   84.03 |    66.66 |   81.81 |   82.88 | 6,22,27,37,46,86,123,138,151,155,169,216-232,246,260,285                                      
+  authController.js         |   72.97 |    60.81 |     100 |   72.97 | 22,34,51-52,63,68,105,111-112,136,141,150,155,177-188,192,197,208,212,221-226,230,243,277-278 
+  bimbinganController.js    |   76.92 |       68 |     100 |   76.92 | 10,21,25,35,49,64,85,108,119,134,146,170                                                      
+  dosenController.js        |   80.55 |       50 |     100 |   80.55 | 17,22,51,70,89,110,156                                                                        
+  jadwalController.js       |   68.91 |    68.08 |     100 |   68.91 | 13,28,36,42,58,70,81,89,92,101,112,121,127,130,141,146,162-163,166-167,193-195                
+  kaprodiController.js      |    0.92 |        0 |       0 |    1.02 | 8-376                                                                                         
+  kelompokController.js     |    1.51 |        0 |       0 |    1.51 | 6-209                                                                                         
+  koordinatorController.js  |    1.92 |        0 |       0 |    1.96 | 8-192                                                                                         
+  mahasiswaController.js    |   74.56 |    72.85 |    87.5 |   74.56 | 30-49,61,77-78,158-159,172,197-203,211-217,230,245,250,271,296,316,335,340,358,365,391        
+  notificationController.js |    4.16 |        0 |       0 |    4.54 | 6-72                                                                                          
+  sharedController.js       |     1.2 |        0 |       0 |    1.23 | 12-253                                                                                        
+  sidangController.js       |    0.83 |        0 |       0 |     0.9 | 7-336                                                                                         
+ middleware                 |       0 |        0 |       0 |       0 |                                                                                               
+  auth.js                   |       0 |        0 |       0 |       0 | 4-22                                                                                          
+  role.js                   |       0 |        0 |       0 |       0 | 5-50                                                                                          
+  upload.js                 |       0 |        0 |       0 |       0 | 4-67                                                                                          
+ routes                     |       0 |        0 |       0 |       0 |                                                                                               
+  adminRoutes.js            |       0 |      100 |     100 |       0 | 6-28                                                                                          
+  authRoutes.js             |       0 |      100 |     100 |       0 | 5-21                                                                                          
+  bimbinganRoutes.js        |       0 |        0 |       0 |       0 | 8-40                                                                                          
+  dosenRoutes.js            |       0 |      100 |     100 |       0 | 8-32                                                                                          
+  kaprodiRoutes.js          |       0 |      100 |     100 |       0 | 6-27                                                                                          
+  koordinatorRoutes.js      |       0 |      100 |     100 |       0 | 8-40                                                                                          
+  mahasiswaRoutes.js        |       0 |      100 |     100 |       0 | 9-42                                                                                          
+  notificationRoutes.js     |       0 |      100 |     100 |       0 | 5-8                                                                                           
+  pengujiRoutes.js          |       0 |        0 |       0 |       0 | 6-45                                                                                          
+  profileRoutes.js          |       0 |        0 |       0 |       0 | 7-63                                                                                          
+  proposalRoutes.js         |       0 |        0 |       0 |       0 | 8-58                                                                                          
+  reportRoutes.js           |       0 |        0 |       0 |       0 | 8-51                                                                                          
+  sidangRoutes.js           |       0 |      100 |       0 |       0 | 8-30                                                                                          
+ utils                      |     5.4 |     1.28 |    8.57 |    5.71 |                                                                                               
+  constants.js              |   17.64 |        0 |       0 |   18.75 | 25-26,40-71                                                                                   
+  gcs.js                    |       0 |        0 |       0 |       0 | 3-42                                                                                          
+  gdrive.js                 |       0 |        0 |       0 |       0 | 12-191                                                                                        
+  httpResponses.js          |       0 |        0 |       0 |       0 | 6-54                                                                                          
+  jwt.js                    |     100 |       50 |     100 |     100 | 13                                                                                            
+  password.js               |     100 |      100 |     100 |     100 |                                                                                               
+  roleHelper.js             |       0 |        0 |       0 |       0 | 13-157                                                                                        
+----------------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------------
+Test Suites: 1 
+failed, 1 total
+Tests:       23 
+failed, 54 passed, 77 
+total
+Snapshots:   0 total
+Time:        3.531 s
+Ran all test suites 
+matching /unit\\contro
+llers.test.js/i.

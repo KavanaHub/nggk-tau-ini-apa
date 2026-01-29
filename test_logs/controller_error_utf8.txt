@@ -1,0 +1,623 @@
+﻿
+> nggk-tau-ini-apa@1.0.0 test
+> cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --passWithNoTests --testPathPattern=unit/controllers.test.js --no-cache
+
+  console.log
+    [dotenv@17.2.3] injecting env (9) from .env -- tip: 🔄 add secrets lifecycle management: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+node.exe : [baseline-b
+rowser-mapping] The 
+data in this module 
+is over two months 
+old.  To ensure 
+accurate Baseline 
+data, please update: 
+`npm i baseline-browse
+r-mapping@latest -D`
+At line:1 char:1
++ & "D:\ENV\NodeJS/nod
+e.exe" "C:\Users\Renz\
+AppData\Roaming\npm/no
+de_mo ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: ([baseline-   
+ brows...ping@late    
+st -D`:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+(node:13504) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+  console.error
+    Login error: Error: Illegal arguments: string, undefined
+        at _async (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\bcryptjs\index.js:252:11)
+        at D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\bcryptjs\index.js:280:7
+        at new Promise (<anonymous>)
+        at Object.compare (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\bcryptjs\index.js:279:12)
+        at compare (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\utils\password.js:9:17)
+        at Object.comparePassword [as login] (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\controllers\authController.js:103:27)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at Object.<anonymous> (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\__tests__\unit\controllers.test.js:81:17)
+
+    [0m [90m 109 |[39m       res[33m.[39mjson({ token[33m,[39m role[33m:[39m user[33m.[39mrole[33m,[39m user_id[33m:[39m user[33m.[39mid })[33m;[39m
+     [90m 110 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 111 |[39m       console[33m.[39merror([32m'Login error:'[39m[33m,[39m err)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 112 |[39m       next(err)[33m;[39m
+     [90m 113 |[39m     }
+     [90m 114 |[39m   }[33m,[39m[0m
+
+      at Object.error (controllers/authController.js:111:15)
+      at Object.<anonymous> (__tests__/unit/controllers.test.js:81:17)
+
+  console.log
+    Error counting sidang bulan ini: Cannot read properties of undefined (reading 'sidang_bulan_ini')
+
+      at Object.log [as getStats] (controllers/adminController.js:46:35)
+
+FAIL __tests__/unit/co
+ntrollers.test.js
+  Controller Unit 
+Tests
+    AuthController
+      login
+        √ should 
+return 400 if fields 
+missing (3 ms)
+        × should 
+login successfully 
+for Mahasiswa (21 ms)
+        × should 
+return 401 if user 
+not found (128 ms)
+      
+registerMahasiswa
+        × should 
+register new 
+mahasiswa 
+successfully (22 ms)
+        × should 
+return 400 if email 
+already exists (43 ms)
+    
+MahasiswaController
+      getProfile
+        √ should 
+return profile with 
+dosen info (1 ms)
+        √ should 
+return 404 if not 
+found
+      submitProposal
+        √ should 
+submit proposal 
+successfully (1 ms)
+        √ should 
+return 400 if track 
+not set
+      getBimbinganList
+        √ should 
+return list of 
+bimbingan
+    AdminController
+      getStats
+        × should 
+return dashboard 
+stats (107 ms)
+      getAllUsers
+        × should 
+return user list (24 
+ms)
+    DosenController
+      getProfile
+        √ should 
+return profile with 
+roles
+      
+getMahasiswaBimbingan
+        √ should 
+return mahasiswa list 
+(1 ms)
+
+  ● Controller Unit 
+Tests › 
+AuthController › 
+login › should login 
+successfully for 
+Mahasiswa
+
+    expect(jest.fn()).
+toHaveBeenCalledWith(.
+..expected)
+
+    Expected: 
+ObjectContaining 
+{"role": "mahasiswa", 
+"token": Any<String>}
+
+    Number of calls: 0
+
+    [0m [90m 82 
+|[39m
+     [90m 83 |[39m  
+               expect(
+querySpy)[33m.[39mto
+HaveBeenCalled()[33m;
+[39m
+    [31m[1m>[22m[3
+9m[90m 84 |[39m     
+            expect(res
+[33m.[39mjson)[33m.
+[39mtoHaveBeenCalledW
+ith(expect[33m.[39mo
+bjectContaining({
+     [90m    |[39m  
+                      
+          
+[31m[1m^[22m[39m
+     [90m 85 |[39m  
+                   
+token[33m:[39m expec
+t[33m.[39many([33mS
+tring[39m)[33m,[39m
+     [90m 86 |[39m  
+                   
+role[33m:[39m 
+[32m'mahasiswa'[39m
+     [90m 87 |[39m  
+               
+}))[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:84:34)
+
+  ● Controller Unit 
+Tests › 
+AuthController › 
+login › should return 
+401 if user not found
+
+    expect(jest.fn()).
+toHaveBeenCalledWith(.
+..expected)
+
+    Expected: 401
+    Received: 400
+
+    Number of calls: 1
+
+    [0m [90m  97 
+|[39m                
+ [36mawait[39m authC
+ontroller[33m.[39mlo
+gin(req[33m,[39m 
+res[33m,[39m 
+mockNext)[33m;[39m
+     [90m  98 |[39m
+    [31m[1m>[22m[3
+9m[90m  99 |[39m    
+             expect(re
+s[33m.[39mstatus)[3
+3m.[39mtoHaveBeenCall
+edWith([35m401[39m)
+[33m;[39m
+     [90m     |[39m 
+                      
+             
+[31m[1m^[22m[39m
+     [90m 100 |[39m 
+            
+})[33m;[39m
+     [90m 101 |[39m 
+        })[33m;[39m
+     [90m 102 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:99:36)
+
+  ● Controller Unit 
+Tests › 
+AuthController › 
+registerMahasiswa › 
+should register new 
+mahasiswa successfully
+
+    expect(jest.fn()).
+toHaveBeenCalled()
+
+    Expected number 
+of calls: >= 1
+    Received number 
+of calls:    0
+
+    [0m [90m 119 
+|[39m                
+ [36mawait[39m authC
+ontroller[33m.[39mre
+gisterMahasiswa(req[3
+3m,[39m 
+res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 120 |[39m
+    [31m[1m>[22m[3
+9m[90m 121 |[39m    
+             expect(mo
+ckConnection[33m.[39
+mbeginTransaction)[33
+m.[39mtoHaveBeenCalle
+d()[33m;[39m
+     [90m     |[39m 
+                      
+                      
+            
+[31m[1m^[22m[39m
+     [90m 122 |[39m 
+                expect
+(mockConnection[33m.
+[39mcommit)[33m.[39m
+toHaveBeenCalled()[33
+m;[39m
+     [90m 123 |[39m 
+                expect
+(res[33m.[39mstatus)
+[33m.[39mtoHaveBeenC
+alledWith([35m201[39
+m)[33m;[39m
+     [90m 124 |[39m 
+            
+})[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:121:57)
+
+  ● Controller Unit 
+Tests › 
+AuthController › 
+registerMahasiswa › 
+should return 400 if 
+email already exists
+
+    expect(jest.fn()).
+toHaveBeenCalled()
+
+    Expected number 
+of calls: >= 1
+    Received number 
+of calls:    0
+
+    [0m [90m 138 
+|[39m                
+ [36mawait[39m authC
+ontroller[33m.[39mre
+gisterMahasiswa(req[3
+3m,[39m 
+res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 139 |[39m
+    [31m[1m>[22m[3
+9m[90m 140 |[39m    
+             expect(mo
+ckConnection[33m.[39
+mrollback)[33m.[39mt
+oHaveBeenCalled()[33m
+;[39m
+     [90m     |[39m 
+                      
+                      
+    
+[31m[1m^[22m[39m
+     [90m 141 |[39m 
+                expect
+(res[33m.[39mstatus)
+[33m.[39mtoHaveBeenC
+alledWith([35m400[39
+m)[33m;[39m
+     [90m 142 |[39m 
+            
+})[33m;[39m
+     [90m 143 |[39m 
+        
+})[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:140:49)
+
+  ● Controller Unit 
+Tests › 
+AdminController › 
+getStats › should 
+return dashboard stats
+
+    expect(jest.fn()).
+toHaveBeenCalledWith(.
+..expected)
+
+    Expected: 
+ObjectContaining 
+{"total_dosen": 5, 
+"total_mahasiswa": 10}
+    Received: 
+{"bimbingan_aktif": 
+0, "laporan_pending": 
+0, 
+"proposal_pending": 
+0, 
+"sidang_bulan_ini": 
+0, 
+"sidang_scheduled": 
+0, "total_dosen": 0, 
+"total_koordinator": 
+0, "total_mahasiswa": 
+0, "users_inactive": 
+0}
+
+    Number of calls: 1
+
+    [0m [90m 244 
+|[39m                
+ [36mawait[39m admin
+Controller[33m.[39mg
+etStats(req[33m,[39m
+ res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 245 |[39m
+    [31m[1m>[22m[3
+9m[90m 246 |[39m    
+             expect(re
+s[33m.[39mjson)[33m
+.[39mtoHaveBeenCalled
+With(expect[33m.[39m
+objectContaining({
+     [90m     |[39m 
+                      
+           
+[31m[1m^[22m[39m
+     [90m 247 |[39m 
+                    to
+tal_mahasiswa[33m:[3
+9m [35m10[39m[33m,
+[39m
+     [90m 248 |[39m 
+                    to
+tal_dosen[33m:[39m 
+[35m5[39m
+     [90m 249 |[39m 
+                
+}))[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:246:34)
+
+  ● Controller Unit 
+Tests › 
+AdminController › 
+getAllUsers › should 
+return user list
+
+    expect(jest.fn()).
+toHaveBeenCalledWith(.
+..expected)
+
+    Expected: [{"id": 
+1, "nama": "Test"}]
+    Received: 
+{"dosen": 
+[{"created_at": 2026-0
+1-14T20:50:50.000Z, 
+"email": "yusrilhelmi@
+ulbi.ac.id", "id": 1, 
+"nama": "M. Yusril 
+Helmi Setyawan, 
+S.Kom., 
+M.Kom.,SFPC.", 
+"nidn": "0407117405", 
+"role": "dosen", 
+"roles": "dosen"}, 
+{"created_at": 2026-01
+-14T20:50:50.000Z, 
+"email": 
+"awangga@ulbi.ac.id", 
+"id": 2, "nama": 
+"Rolly Maulana Awangga
+,S.T.,MT.,CAIP, 
+SFPC.", "nidn": 
+"0410118609", "role": 
+"dosen", "roles": 
+"dosen"}, 
+{"created_at": 2026-01
+-14T20:50:50.000Z, 
+"email": "roniandarsya
+h@ulbi.ac.id", "id": 
+3, "nama": "Roni 
+Andarsyah, S.T., 
+M.Kom., SFPC", 
+"nidn": "0420058801", 
+"role": "kaprodi", 
+"roles": "dosen,koordi
+nator,kaprodi"}, 
+{"created_at": 2026-01
+-14T20:50:50.000Z, 
+"email": "m.nurkamal.f
+@ulbi.ac.id", "id": 
+4, "nama": "Mohamad 
+Nurkamal Fauzan, 
+S.T., M.T., SFPC", 
+"nidn": "0402058005", 
+"role": "dosen", 
+"roles": "dosen"}, 
+{"created_at": 2026-01
+-14T20:50:50.000Z, 
+"email": 
+"cahyo@ulbi.ac.id", 
+"id": 5, "nama": 
+"Cahyo Prianto, 
+S.Pd., M.T.,CDSP, 
+SFPC", "nidn": 
+"0427078404", "role": 
+"dosen", "roles": 
+"dosen"}, 
+{"created_at": 2026-01
+-14T20:50:50.000Z, 
+"email": "syafrial.fac
+hri@ulbi.ac.id", 
+"id": 6, "nama": 
+"Syafrial Fachri 
+Pane,ST. 
+MTI,EBDP.CDSP,SFPC", 
+"nidn": "0416048803", 
+"role": "dosen", 
+"roles": "dosen"}, 
+{"created_at": 2026-01
+-14T20:50:50.000Z, 
+"email": "roni.habibi@
+ulbi.ac.id", "id": 7, 
+"nama": "Roni Habibi, 
+S.Kom., M.T., SFPC", 
+"nidn": "0423127804", 
+"role": "dosen", 
+"roles": "dosen"}, 
+{"created_at": 2026-01
+-14T20:50:50.000Z, 
+"email": 
+"nisa@ulbi.ac.id", 
+"id": 8, "nama": 
+"Nisa Hanum Harani, 
+S.Kom., M.T.,CDSP, 
+SFPC", "nidn": 
+"0415048901", "role": 
+"dosen", "roles": 
+"dosen"}, 
+{"created_at": 2026-01
+-14T20:50:50.000Z, 
+"email": "nurainisf@ul
+bi.ac.id", "id": 9, 
+"nama": "Rd. Nuraini 
+Siti Fathonah, S.S., 
+M.Hum., SFPC", 
+"nidn": "0402047205", 
+"role": "dosen", 
+"roles": "dosen"}], 
+"mahasiswa": [{"id": 
+1, "nama": "Test"}]}
+
+    Number of calls: 1
+
+    [0m [90m 261 
+|[39m                
+ [36mawait[39m admin
+Controller[33m.[39mg
+etAllUsers(req[33m,[
+39m res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 262 |[39m
+    [31m[1m>[22m[3
+9m[90m 263 |[39m    
+             expect(re
+s[33m.[39mjson)[33m
+.[39mtoHaveBeenCalled
+With(mockUsers)[33m;
+[39m
+     [90m     |[39m 
+                      
+           
+[31m[1m^[22m[39m
+     [90m 264 |[39m 
+            
+})[33m;[39m
+     [90m 265 |[39m 
+        })[33m;[39m
+     [90m 266 |[39m 
+    })[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/controlle
+rs.test.js:263:34)
+
+----------------------------|---------|----------|---------|---------|------------------------------------------------
+File                        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                              
+----------------------------|---------|----------|---------|---------|------------------------------------------------
+All files                   |    8.89 |     7.45 |    7.09 |    8.63 |                                                
+ controllers                |   11.99 |     9.95 |   10.34 |   11.65 |                                                
+  adminController.js        |   41.17 |    41.66 |   18.18 |   37.83 | 6,22,27,37,71,86-123,138,151,155-285           
+  authController.js         |   27.92 |    21.62 |   33.33 |   27.92 | 25-34,51-52,63,68,85-93,104-109,118-278        
+  bimbinganController.js    |       0 |        0 |       0 |       0 | 3-170                                          
+  dosenController.js        |   27.77 |       50 |   33.33 |   27.77 | 17,22,51-156                                   
+  jadwalController.js       |       0 |        0 |       0 |       0 | 3-197                                          
+  kaprodiController.js      |       0 |        0 |       0 |       0 | 4-376                                          
+  kelompokController.js     |       0 |        0 |       0 |       0 | 3-209                                          
+  koordinatorController.js  |       0 |        0 |       0 |       0 | 5-192                                          
+  mahasiswaController.js    |   21.05 |    18.57 |    37.5 |   21.05 | 30-161,172,189,197-203,211-217,230-296,316-391 
+  notificationController.js |       0 |        0 |       0 |       0 | 3-72                                           
+  sharedController.js       |     1.2 |        0 |       0 |    1.23 | 12-253                                         
+  sidangController.js       |       0 |        0 |       0 |       0 | 3-336                                          
+ middleware                 |       0 |        0 |       0 |       0 |                                                
+  auth.js                   |       0 |        0 |       0 |       0 | 4-22                                           
+  role.js                   |       0 |        0 |       0 |       0 | 5-50                                           
+  upload.js                 |       0 |        0 |       0 |       0 | 4-67                                           
+ routes                     |       0 |        0 |       0 |       0 |                                                
+  adminRoutes.js            |       0 |      100 |     100 |       0 | 6-28                                           
+  authRoutes.js             |       0 |      100 |     100 |       0 | 5-21                                           
+  bimbinganRoutes.js        |       0 |        0 |       0 |       0 | 8-40                                           
+  dosenRoutes.js            |       0 |      100 |     100 |       0 | 8-32                                           
+  kaprodiRoutes.js          |       0 |      100 |     100 |       0 | 6-27                                           
+  koordinatorRoutes.js      |       0 |      100 |     100 |       0 | 8-40                                           
+  mahasiswaRoutes.js        |       0 |      100 |     100 |       0 | 9-42                                           
+  notificationRoutes.js     |       0 |      100 |     100 |       0 | 5-8                                            
+  pengujiRoutes.js          |       0 |        0 |       0 |       0 | 6-45                                           
+  profileRoutes.js          |       0 |        0 |       0 |       0 | 7-63                                           
+  proposalRoutes.js         |       0 |        0 |       0 |       0 | 8-58                                           
+  reportRoutes.js           |       0 |        0 |       0 |       0 | 8-51                                           
+  sidangRoutes.js           |       0 |      100 |       0 |       0 | 8-30                                           
+ utils                      |    3.37 |        0 |    2.85 |    3.57 |                                                
+  constants.js              |   17.64 |        0 |       0 |   18.75 | 25-26,40-71                                    
+  gcs.js                    |       0 |        0 |       0 |       0 | 3-42                                           
+  gdrive.js                 |       0 |        0 |       0 |       0 | 12-191                                         
+  httpResponses.js          |       0 |        0 |       0 |       0 | 6-54                                           
+  jwt.js                    |      50 |        0 |       0 |      50 | 7                                              
+  password.js               |   33.33 |      100 |      50 |   33.33 | 4-5                                            
+  roleHelper.js             |       0 |        0 |       0 |       0 | 13-157                                         
+----------------------------|---------|----------|---------|---------|------------------------------------------------
+Test Suites: 1 
+failed, 1 total
+Tests:       6 
+failed, 8 passed, 14 
+total
+Snapshots:   0 total
+Time:        3.312 s
+Ran all test suites 
+matching /unit\\contro
+llers.test.js/i.

@@ -1,0 +1,97 @@
+# ALUR PROYEK BIMBINGAN ONLINE
+## D4 Teknik Informatika - Polindra
+
+---
+
+## STRUKTUR TRACK
+
+### Proyek 1, 2, 3
+- Setiap mahasiswa membuat kelompok yang terdiri dari 2 orang
+- 1 dosen pembimbing per kelompok
+
+### Internship 1 dan 2
+- Hanya 1 mahasiswa saja (tidak perlu kelompok)
+- 2 pembimbing: Pembimbing Utama dan Pembimbing 2
+
+---
+
+## ALUR LENGKAP
+
+### 1. Registrasi
+- Mahasiswa register sendiri dengan identitas (email, password, NPM, nama, no WA, angkatan)
+- Dosen, Koordinator, Penguji diisi manual oleh developer
+- Admin: hardcoded di sistem
+
+### 2. Pilih Track
+- Mahasiswa memilih track: proyek1, proyek2, proyek3, internship1, atau internship2
+- Proyek: mahasiswa harus buat/join kelompok (max 2 orang)
+- Internship: tidak perlu kelompok
+
+### 3. Submit Proposal
+- Mahasiswa upload proposal (judul + file)
+- Mahasiswa bisa mengusulkan dosen pembimbing
+
+### 4. Validasi Proposal
+- Koordinator validasi proposal (approve/reject)
+- Koordinator assign dosen pembimbing ke mahasiswa
+- Internship wajib 2 pembimbing (utama + kedua)
+
+### 5. Bimbingan Online
+- Mahasiswa melakukan bimbingan maksimal 8 kali
+- Dosen pembimbing approve/reject setiap bimbingan
+- Bimbingan bisa dilihat oleh pembimbing utama DAN pembimbing 2
+
+### 6. Submit Laporan Sidang
+- Setelah 8 bimbingan approved, mahasiswa upload laporan
+- Dosen pembimbing (utama atau kedua) approve/reject laporan
+
+### 7. Jadwal Sidang
+- Koordinator jadwalkan sidang
+- Penguji 1 = Dosen Pembimbing (otomatis)
+- Penguji 2 = Penguji utama (dipilih koordinator)
+
+---
+
+## ROLE SISTEM
+
+| Role | Akses |
+|------|-------|
+| Mahasiswa | Register, pilih track, kelompok, proposal, bimbingan, laporan |
+| Dosen | Lihat mahasiswa bimbingan, approve bimbingan/laporan |
+| Koordinator | Validasi proposal, assign dosen, jadwal sidang |
+| Kaprodi | Overview semua data, assign dosen, statistik |
+| Penguji | Lihat jadwal sidang |
+| Admin | Akses semua (kecuali action kaprodi) |
+
+---
+
+## STATUS IMPLEMENTASI BACKEND
+
+### ✅ SUDAH ADA
+1. [x] Register & Login multi-role
+2. [x] Admin hardcoded
+3. [x] Pilih track (proyek1-3, internship1-2)
+4. [x] Create/join kelompok (max 2 anggota)
+5. [x] Submit proposal + usulan dosen
+6. [x] Validasi proposal
+7. [x] Assign dosen pembimbing (2 untuk internship)
+8. [x] Bimbingan online (max 8x)
+9. [x] Approve/reject bimbingan
+10. [x] Submit laporan sidang
+11. [x] Approve/reject laporan
+12. [x] Jadwal sidang
+13. [x] Dosen pembimbing 2 bisa lihat/approve mahasiswa & laporan
+
+### ❌ BELUM ADA (Prioritas Rendah)
+1. [ ] Kaprodi assign koordinator per track
+2. [ ] Jadwal periode proyek/internship
+3. [ ] Tutup periode & reset data
+
+---
+
+## TEKNOLOGI
+
+- Backend: Express.js
+- Database: MySQL
+- Storage: Google Cloud Storage (GCS)
+- Deploy: Railway (branch dev)

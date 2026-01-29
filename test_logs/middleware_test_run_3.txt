@@ -1,0 +1,353 @@
+﻿
+> nggk-tau-ini-apa@1.0.0 test
+> cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --passWithNoTests --testPathPattern=unit/middleware.test.js --no-cache
+
+node.exe : [baseline-b
+rowser-mapping] The 
+data in this module 
+is over two months 
+old.  To ensure 
+accurate Baseline 
+data, please update: 
+`npm i baseline-browse
+r-mapping@latest -D`
+At line:1 char:1
++ & "D:\ENV\NodeJS/nod
+e.exe" "C:\Users\Renz\
+AppData\Roaming\npm/no
+de_mo ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: ([baseline-   
+ brows...ping@late    
+st -D`:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+  console.log
+    [dotenv@17.2.3] injecting env (9) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+(node:13488) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+FAIL __tests__/unit/mi
+ddleware.test.js
+  Middleware Unit 
+Tests
+    Auth Middleware
+      √ should return 
+401 if no auth header 
+(4 ms)
+      √ should return 
+401 if invalid header 
+format (1 ms)
+      √ should return 
+401 if token invalid
+      × should call 
+next and set user if 
+token valid (1 ms)
+    Role Middleware
+      requireRole
+        × should 
+return 403 if no user
+        √ should 
+allow admin
+        √ should 
+allow correct role
+        √ should 
+return 403 for 
+mismatch
+        √ should 
+allow Koordinator to 
+Dosen (1 ms)
+        √ should 
+allow Kaprodi to 
+Dosen/Koordinator
+      kaprodiOnly
+        √ should 
+allow kaprodi
+        √ should 
+block admin
+    Upload Middleware
+      parseMultipart
+        √ should skip 
+if req.file exists
+        √ should skip 
+if not multipart
+        × should 
+parse fields and 
+files via Busboy (2 
+ms)
+        × should 
+handle busboy errors 
+(1 ms)
+
+  ● Middleware Unit 
+Tests › Auth 
+Middleware › should 
+call next and set 
+user if token valid
+
+    expect(received).t
+oEqual(expected) // 
+deep equality
+
+    Expected: {"id": 
+1, "role": "admin"}
+    Received: null
+
+    [0m [90m 92 
+|[39m             
+auth(req[33m,[39m 
+res[33m,[39m 
+mockNext)[33m;[39m
+     [90m 93 |[39m
+    [31m[1m>[22m[3
+9m[90m 94 |[39m     
+        expect(req[33
+m.[39muser)[33m.[39
+mtoEqual(mockUser)[33
+m;[39m
+     [90m    |[39m  
+                      
+      
+[31m[1m^[22m[39m
+     [90m 95 |[39m  
+           expect(mock
+Next)[33m.[39mtoHave
+BeenCalled()[33m;[39
+m
+     [90m 96 |[39m  
+       })[33m;[39m
+     [90m 97 |[39m  
+   })[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/middlewar
+e.test.js:94:30)
+
+  ● Middleware Unit 
+Tests › Role 
+Middleware › 
+requireRole › should 
+return 403 if no user
+
+    expect(jest.fn()).
+toHaveBeenCalledWith(.
+..expected)
+
+    Expected: 403
+
+    Number of calls: 0
+
+    [0m [90m 104 
+|[39m             
+it([32m'should 
+return 403 if no 
+user'[39m[33m,[39m 
+() [33m=>[39m {
+     [90m 105 |[39m 
+                requir
+eRole([32m'mahasiswa'
+[39m)(mockRequest()[
+33m,[39m mockResponse
+()[33m,[39m 
+mockNext)[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 106 |[39m    
+             expect(mo
+ckResponse()[33m.[39
+mstatus)[33m.[39mtoH
+aveBeenCalledWith([35
+m403[39m)[33m;[39m
+     [90m     |[39m 
+                      
+                      
+  [31m[1m^[22m[39m
+     [90m 107 |[39m 
+            
+})[33m;[39m
+     [90m 108 |[39m
+     [90m 109 |[39m 
+            
+it([32m'should allow 
+admin'[39m[33m,[39m
+ () [33m=>[39m {[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/middlewar
+e.test.js:106:47)
+
+  ● Middleware Unit 
+Tests › Upload 
+Middleware › 
+parseMultipart › 
+should parse fields 
+and files via Busboy
+
+    expect(received).t
+oBe(expected) // 
+Object.is equality
+
+    Expected: 
+"testuser"
+    Received: 
+undefined
+
+    [0m [90m 204 
+|[39m                
+ [36mif[39m (callbac
+ks[[32m'finish'[39m]
+) callbacks[[32m'fini
+sh'[39m]()[33m;[39m
+     [90m 205 |[39m
+    [31m[1m>[22m[3
+9m[90m 206 |[39m    
+             expect(re
+q[33m.[39mbody[33m.
+[39musername)[33m.[
+39mtoBe([32m'testuser
+'[39m)[33m;[39m
+     [90m     |[39m 
+                      
+                    
+[31m[1m^[22m[39m
+     [90m 207 |[39m 
+                expect
+(req[33m.[39mfile)[
+33m.[39mtoMatchObject
+({
+     [90m 208 |[39m 
+                    
+fieldname[33m:[39m 
+[32m'avatar'[39m[33m
+,[39m
+     [90m 209 |[39m 
+                    or
+iginalname[33m:[39m 
+[32m'pic.jpg'[39m[3
+3m,[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/middlewar
+e.test.js:206:43)
+
+  ● Middleware Unit 
+Tests › Upload 
+Middleware › 
+parseMultipart › 
+should handle busboy 
+errors
+
+    expect(jest.fn()).
+toHaveBeenCalledWith(.
+..expected)
+
+    Expected: [Error: 
+Busboy failed]
+
+    Number of calls: 0
+
+    [0m [90m 224 
+|[39m                
+ [36mif[39m (callbac
+ks[[32m'error'[39m])
+ callbacks[[32m'error
+'[39m](error)[33m;[
+39m
+     [90m 225 |[39m
+    [31m[1m>[22m[3
+9m[90m 226 |[39m    
+             expect(mo
+ckNext)[33m.[39mtoHa
+veBeenCalledWith(error
+)[33m;[39m
+     [90m     |[39m 
+                      
+           
+[31m[1m^[22m[39m
+     [90m 227 |[39m 
+            
+})[33m;[39m
+     [90m 228 |[39m 
+        })[33m;[39m
+     [90m 229 |[39m 
+    })[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/middlewar
+e.test.js:226:34)
+
+----------------------------|---------|----------|---------|---------|-------------------------
+File                        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s       
+----------------------------|---------|----------|---------|---------|-------------------------
+All files                   |    3.33 |     5.46 |    4.25 |    3.43 |                         
+ controllers                |       0 |        0 |       0 |       0 |                         
+  adminController.js        |       0 |        0 |       0 |       0 | 3-285                   
+  authController.js         |       0 |        0 |       0 |       0 | 6-278                   
+  bimbinganController.js    |       0 |        0 |       0 |       0 | 3-170                   
+  dosenController.js        |       0 |        0 |       0 |       0 | 4-156                   
+  jadwalController.js       |       0 |        0 |       0 |       0 | 3-197                   
+  kaprodiController.js      |       0 |        0 |       0 |       0 | 4-376                   
+  kelompokController.js     |       0 |        0 |       0 |       0 | 3-209                   
+  koordinatorController.js  |       0 |        0 |       0 |       0 | 5-192                   
+  mahasiswaController.js    |       0 |        0 |       0 |       0 | 4-391                   
+  notificationController.js |       0 |        0 |       0 |       0 | 3-72                    
+  sharedController.js       |       0 |        0 |       0 |       0 | 8-253                   
+  sidangController.js       |       0 |        0 |       0 |       0 | 3-336                   
+ middleware                 |   73.77 |    91.66 |      50 |   73.77 |                         
+  auth.js                   |   83.33 |      100 |     100 |   83.33 | 19-20                   
+  role.js                   |      95 |    95.45 |     100 |      95 | 43                      
+  upload.js                 |   55.17 |       75 |   14.28 |   55.17 | 30-38,49,53-55,59-60,65 
+ routes                     |       0 |        0 |       0 |       0 |                         
+  adminRoutes.js            |       0 |      100 |     100 |       0 | 6-28                    
+  authRoutes.js             |       0 |      100 |     100 |       0 | 5-21                    
+  bimbinganRoutes.js        |       0 |        0 |       0 |       0 | 8-40                    
+  dosenRoutes.js            |       0 |      100 |     100 |       0 | 8-32                    
+  kaprodiRoutes.js          |       0 |      100 |     100 |       0 | 6-27                    
+  koordinatorRoutes.js      |       0 |      100 |     100 |       0 | 8-40                    
+  mahasiswaRoutes.js        |       0 |      100 |     100 |       0 | 9-42                    
+  notificationRoutes.js     |       0 |      100 |     100 |       0 | 5-8                     
+  pengujiRoutes.js          |       0 |        0 |       0 |       0 | 6-45                    
+  profileRoutes.js          |       0 |        0 |       0 |       0 | 7-63                    
+  proposalRoutes.js         |       0 |        0 |       0 |       0 | 8-58                    
+  reportRoutes.js           |       0 |        0 |       0 |       0 | 8-51                    
+  sidangRoutes.js           |       0 |      100 |       0 |       0 | 8-30                    
+ utils                      |       0 |        0 |       0 |       0 |                         
+  constants.js              |       0 |        0 |       0 |       0 | 6-71                    
+  gcs.js                    |       0 |        0 |       0 |       0 | 3-42                    
+  gdrive.js                 |       0 |        0 |       0 |       0 | 12-191                  
+  httpResponses.js          |       0 |        0 |       0 |       0 | 6-54                    
+  jwt.js                    |       0 |        0 |       0 |       0 | 4-7                     
+  password.js               |       0 |      100 |       0 |       0 | 4-9                     
+  roleHelper.js             |       0 |        0 |       0 |       0 | 13-157                  
+----------------------------|---------|----------|---------|---------|-------------------------
+Test Suites: 1 
+failed, 1 total
+Tests:       4 
+failed, 12 passed, 16 
+total
+Snapshots:   0 total
+Time:        3.118 s
+Ran all test suites 
+matching /unit\\middle
+ware.test.js/i.

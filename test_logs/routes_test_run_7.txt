@@ -1,0 +1,114 @@
+﻿
+> nggk-tau-ini-apa@1.0.0 test
+> cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --passWithNoTests --testPathPattern=unit/routes.test.js --no-cache
+
+node.exe : [baseline-b
+rowser-mapping] The 
+data in this module 
+is over two months 
+old.  To ensure 
+accurate Baseline 
+data, please update: 
+`npm i baseline-browse
+r-mapping@latest -D`
+At line:1 char:1
++ & "D:\ENV\NodeJS/nod
+e.exe" "C:\Users\Renz\
+AppData\Roaming\npm/no
+de_mo ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: ([baseline-   
+ brows...ping@late    
+st -D`:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+(node:14312) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+PASS __tests__/unit/ro
+utes.test.js
+  Route Definitions
+    Auth Routes
+      √ should define 
+POST 
+/register/mahasiswa 
+(2 ms)
+      √ should define 
+POST /login (1 ms)
+      √ should define 
+GET /profile (2 ms)
+    Admin Routes
+      √ should define 
+POST /dosen (1 ms)
+    Mahasiswa Routes
+      √ should define 
+GET /profile (1 ms)
+
+----------------------------|---------|----------|---------|---------|-------------------
+File                        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------------------------|---------|----------|---------|---------|-------------------
+All files                   |    2.66 |        0 |       0 |    2.75 |                   
+ controllers                |       0 |        0 |       0 |       0 |                   
+  adminController.js        |       0 |        0 |       0 |       0 | 3-285             
+  authController.js         |       0 |        0 |       0 |       0 | 6-278             
+  bimbinganController.js    |       0 |        0 |       0 |       0 | 3-170             
+  dosenController.js        |       0 |        0 |       0 |       0 | 4-156             
+  jadwalController.js       |       0 |        0 |       0 |       0 | 3-197             
+  kaprodiController.js      |       0 |        0 |       0 |       0 | 4-376             
+  kelompokController.js     |       0 |        0 |       0 |       0 | 3-209             
+  koordinatorController.js  |       0 |        0 |       0 |       0 | 5-192             
+  mahasiswaController.js    |       0 |        0 |       0 |       0 | 4-391             
+  notificationController.js |       0 |        0 |       0 |       0 | 3-72              
+  sharedController.js       |       0 |        0 |       0 |       0 | 8-253             
+  sidangController.js       |       0 |        0 |       0 |       0 | 3-336             
+ middleware                 |       0 |        0 |       0 |       0 |                   
+  auth.js                   |       0 |        0 |       0 |       0 | 4-22              
+  role.js                   |       0 |        0 |       0 |       0 | 5-50              
+  upload.js                 |       0 |        0 |       0 |       0 | 4-67              
+ routes                     |   19.88 |        0 |       0 |   19.88 |                   
+  adminRoutes.js            |     100 |      100 |     100 |     100 |                   
+  authRoutes.js             |     100 |      100 |     100 |     100 |                   
+  bimbinganRoutes.js        |       0 |        0 |       0 |       0 | 8-40              
+  dosenRoutes.js            |       0 |      100 |     100 |       0 | 8-32              
+  kaprodiRoutes.js          |       0 |      100 |     100 |       0 | 6-27              
+  koordinatorRoutes.js      |       0 |      100 |     100 |       0 | 8-40              
+  mahasiswaRoutes.js        |     100 |      100 |     100 |     100 |                   
+  notificationRoutes.js     |       0 |      100 |     100 |       0 | 5-8               
+  pengujiRoutes.js          |       0 |        0 |       0 |       0 | 6-45              
+  profileRoutes.js          |       0 |        0 |       0 |       0 | 7-63              
+  proposalRoutes.js         |       0 |        0 |       0 |       0 | 8-58              
+  reportRoutes.js           |       0 |        0 |       0 |       0 | 8-51              
+  sidangRoutes.js           |       0 |      100 |       0 |       0 | 8-30              
+ utils                      |       0 |        0 |       0 |       0 |                   
+  constants.js              |       0 |        0 |       0 |       0 | 6-71              
+  gcs.js                    |       0 |        0 |       0 |       0 | 3-42              
+  gdrive.js                 |       0 |        0 |       0 |       0 | 12-191            
+  httpResponses.js          |       0 |        0 |       0 |       0 | 6-54              
+  jwt.js                    |       0 |        0 |       0 |       0 | 4-7               
+  password.js               |       0 |      100 |       0 |       0 | 4-9               
+  roleHelper.js             |       0 |        0 |       0 |       0 | 13-157            
+----------------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 
+passed, 1 total
+Tests:       5 
+passed, 5 total
+Snapshots:   0 total
+Time:        2.903 s
+Ran all test suites 
+matching /unit\\routes
+.test.js/i.

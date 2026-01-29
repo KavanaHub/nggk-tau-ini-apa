@@ -1,0 +1,228 @@
+﻿
+> nggk-tau-ini-apa@1.0.0 test
+> cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --passWithNoTests --testPathPattern=unit/controllers.test.js --no-cache
+
+  console.log
+    [dotenv@17.2.3] injecting env (9) from .env -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+node.exe : [baseline-b
+rowser-mapping] The 
+data in this module 
+is over two months 
+old.  To ensure 
+accurate Baseline 
+data, please update: 
+`npm i baseline-browse
+r-mapping@latest -D`
+At line:1 char:1
++ & "D:\ENV\NodeJS/nod
+e.exe" "C:\Users\Renz\
+AppData\Roaming\npm/no
+de_mo ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: ([baseline-   
+ brows...ping@late    
+st -D`:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: 🗂️ backup and recover secrets: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+(node:2948) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+  console.log
+    Error checking dosen: undefined is not iterable (cannot read property Symbol(Symbol.iterator))
+
+      at Object.log [as login] (controllers/authController.js:85:19)
+
+  console.log
+    Error checking dosen (fallback): undefined is not iterable (cannot read property Symbol(Symbol.iterator))
+
+      at Object.log [as login] (controllers/authController.js:93:21)
+
+PASS __tests__/unit/co
+ntrollers.test.js
+  Controller Unit 
+Tests
+    AuthController
+      login
+        √ should 
+return 400 if fields 
+missing (2 ms)
+        √ should 
+login successfully 
+for Mahasiswa (144 ms)
+        √ should 
+return 400 if user 
+not found (6 ms)
+      
+registerMahasiswa
+        √ should 
+register new 
+mahasiswa 
+successfully (63 ms)
+        √ should 
+return 400 if email 
+already exists
+    
+MahasiswaController
+      getProfile
+        √ should 
+return profile with 
+dosen info (1 ms)
+        √ should 
+return 404 if not 
+found
+      submitProposal
+        √ should 
+submit proposal 
+successfully (1 ms)
+        √ should 
+return 400 if track 
+not set
+      getBimbinganList
+        √ should 
+return list of 
+bimbingan (1 ms)
+    AdminController
+      getStats
+        √ should 
+return dashboard stats
+      getAllUsers
+        √ should 
+return user list
+    DosenController
+      getProfile
+        √ should 
+return profile with 
+roles
+      
+getMahasiswaBimbingan
+        √ should 
+return mahasiswa list
+    
+BimbinganController
+      createBimbingan
+        √ should 
+create bimbingan 
+successfully (1 ms)
+      
+getDosenBimbingan
+        √ should 
+return list of 
+bimbingan for dosen
+    JadwalController
+      getActive
+        √ should 
+return active 
+schedules
+      create
+        √ should 
+create new jadwal (1 
+ms)
+    KelompokController
+      createKelompok
+        √ should 
+create kelompok 
+successfully
+    
+KoordinatorController
+      getStats
+        √ should 
+return koordinator 
+stats (1 ms)
+    KaprodiController
+      
+getDashboardStats
+        √ should 
+return kaprodi 
+dashboard stats
+    
+NotificationController
+      getStats
+        √ should 
+return notification 
+stats for Dosen (1 ms)
+    SidangController
+      submitLaporan
+        √ should 
+submit laporan 
+successfully (1 ms)
+      scheduleSidang
+        √ should 
+schedule sidang 
+successfully
+
+----------------------------|---------|----------|---------|---------|------------------------------------------------------
+File                        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                                    
+----------------------------|---------|----------|---------|---------|------------------------------------------------------
+All files                   |   19.86 |    17.38 |   16.31 |   19.86 |                                                      
+ controllers                |   27.11 |       23 |   22.98 |   27.18 |                                                      
+  adminController.js        |   41.17 |    33.33 |   18.18 |   37.83 | 6,22,27,37,46,86-123,138,151,155-285                 
+  authController.js         |   34.23 |    27.02 |   33.33 |   34.23 | 22,34,51-52,63,68,105,111-278                        
+  bimbinganController.js    |   34.61 |       40 |      40 |   34.61 | 10,21,25,35,49,64-85,108-170                         
+  dosenController.js        |   27.77 |       50 |   33.33 |   27.77 | 17,22,51-156                                         
+  jadwalController.js       |   31.08 |    36.17 |      40 |   31.08 | 5-13,28,36,42,58,70,81,89,92,101,112-197             
+  kaprodiController.js      |   24.07 |       15 |   13.33 |   25.51 | 8-38,71,82,91,135-376                                
+  kelompokController.js     |   22.72 |    16.66 |      20 |   22.72 | 10,21,25,29,36,59-209                                
+  koordinatorController.js  |   13.46 |        0 |   16.66 |   13.72 | 8-147,175-192                                        
+  mahasiswaController.js    |   21.05 |    18.57 |    37.5 |   21.05 | 30-161,172,189,197-203,211-217,230-296,316-391       
+  notificationController.js |   54.16 |       40 |     100 |   59.09 | 39-48,55-67,72                                       
+  sharedController.js       |     1.2 |        0 |       0 |    1.23 | 12-253                                               
+  sidangController.js       |      30 |    32.07 |      20 |   32.43 | 11,32-33,46-51,65,81-208,219,230,234,250,257,270-336 
+ middleware                 |       0 |        0 |       0 |       0 |                                                      
+  auth.js                   |       0 |        0 |       0 |       0 | 4-22                                                 
+  role.js                   |       0 |        0 |       0 |       0 | 5-50                                                 
+  upload.js                 |       0 |        0 |       0 |       0 | 4-67                                                 
+ routes                     |       0 |        0 |       0 |       0 |                                                      
+  adminRoutes.js            |       0 |      100 |     100 |       0 | 6-28                                                 
+  authRoutes.js             |       0 |      100 |     100 |       0 | 5-21                                                 
+  bimbinganRoutes.js        |       0 |        0 |       0 |       0 | 8-40                                                 
+  dosenRoutes.js            |       0 |      100 |     100 |       0 | 8-32                                                 
+  kaprodiRoutes.js          |       0 |      100 |     100 |       0 | 6-27                                                 
+  koordinatorRoutes.js      |       0 |      100 |     100 |       0 | 8-40                                                 
+  mahasiswaRoutes.js        |       0 |      100 |     100 |       0 | 9-42                                                 
+  notificationRoutes.js     |       0 |      100 |     100 |       0 | 5-8                                                  
+  pengujiRoutes.js          |       0 |        0 |       0 |       0 | 6-45                                                 
+  profileRoutes.js          |       0 |        0 |       0 |       0 | 7-63                                                 
+  proposalRoutes.js         |       0 |        0 |       0 |       0 | 8-58                                                 
+  reportRoutes.js           |       0 |        0 |       0 |       0 | 8-51                                                 
+  sidangRoutes.js           |       0 |      100 |       0 |       0 | 8-30                                                 
+ utils                      |     5.4 |     1.28 |    8.57 |    5.71 |                                                      
+  constants.js              |   17.64 |        0 |       0 |   18.75 | 25-26,40-71                                          
+  gcs.js                    |       0 |        0 |       0 |       0 | 3-42                                                 
+  gdrive.js                 |       0 |        0 |       0 |       0 | 12-191                                               
+  httpResponses.js          |       0 |        0 |       0 |       0 | 6-54                                                 
+  jwt.js                    |     100 |       50 |     100 |     100 | 13                                                   
+  password.js               |     100 |      100 |     100 |     100 |                                                      
+  roleHelper.js             |       0 |        0 |       0 |       0 | 13-157                                               
+----------------------------|---------|----------|---------|---------|------------------------------------------------------
+Test Suites: 1 
+passed, 1 total
+Tests:       24 
+passed, 24 total
+Snapshots:   0 total
+Time:        2.96 s
+Ran all test suites 
+matching /unit\\contro
+llers.test.js/i.

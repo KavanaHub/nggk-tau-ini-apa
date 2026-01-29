@@ -1,0 +1,353 @@
+﻿
+> nggk-tau-ini-apa@1.0.0 test
+> cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --passWithNoTests --testPathPattern=unit/routes.test.js --no-cache
+
+  console.log
+    Importing authRoutes...
+
+      at Object.<anonymous> (__tests__/unit/routes.test.js:115:21)
+
+node.exe : [baseline-b
+rowser-mapping] The 
+data in this module 
+is over two months 
+old.  To ensure 
+accurate Baseline 
+data, please update: 
+`npm i baseline-browse
+r-mapping@latest -D`
+At line:1 char:1
++ & "D:\ENV\NodeJS/nod
+e.exe" "C:\Users\Renz\
+AppData\Roaming\npm/no
+de_mo ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: ([baseline-   
+ brows...ping@late    
+st -D`:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+  console.log
+    Mock Express Router called!
+
+      at Object.<anonymous> (__tests__/unit/routes.test.js:22:17)
+
+  console.log
+    Imported authRoutes. Default export: {
+      get: [Function: mockConstructor] {
+        _isMockFunction: true,
+        getMockImplementation: [Function (anonymous)],
+        mock: [Getter/Setter],
+        mockClear: [Function (anonymous)],
+        mockReset: [Function (anonymous)],
+        mockRestore: [Function (anonymous)],
+        mockReturnValueOnce: [Function (anonymous)],
+        mockResolvedValueOnce: [Function (anonymous)],
+        mockRejectedValueOnce: [Function (anonymous)],
+        mockReturnValue: [Function (anonymous)],
+        mockResolvedValue: [Function (anonymous)],
+        mockRejectedValue: [Function (anonymous)],
+        mockImplementationOnce: [Function (anonymous)],
+        withImplementation: [Function: bound withImplementation],
+        mockImplementation: [Function (anonymous)],
+        mockReturnThis: [Function (anonymous)],
+        mockName: [Function (anonymous)],
+        getMockName: [Function (anonymous)]
+      },
+      post: [Function: mockConstructor] {
+        _isMockFunction: true,
+        getMockImplementation: [Function (anonymous)],
+        mock: [Getter/Setter],
+        mockClear: [Function (anonymous)],
+        mockReset: [Function (anonymous)],
+        mockRestore: [Function (anonymous)],
+        mockReturnValueOnce: [Function (anonymous)],
+        mockResolvedValueOnce: [Function (anonymous)],
+        mockRejectedValueOnce: [Function (anonymous)],
+        mockReturnValue: [Function (anonymous)],
+        mockResolvedValue: [Function (anonymous)],
+        mockRejectedValue: [Function (anonymous)],
+        mockImplementationOnce: [Function (anonymous)],
+        withImplementation: [Function: bound withImplementation],
+        mockImplementation: [Function (anonymous)],
+        mockReturnThis: [Function (anonymous)],
+        mockName: [Function (anonymous)],
+        getMockName: [Function (anonymous)]
+      },
+      put: [Function: mockConstructor] {
+        _isMockFunction: true,
+        getMockImplementation: [Function (anonymous)],
+        mock: [Getter/Setter],
+        mockClear: [Function (anonymous)],
+        mockReset: [Function (anonymous)],
+        mockRestore: [Function (anonymous)],
+        mockReturnValueOnce: [Function (anonymous)],
+        mockResolvedValueOnce: [Function (anonymous)],
+        mockRejectedValueOnce: [Function (anonymous)],
+        mockReturnValue: [Function (anonymous)],
+        mockResolvedValue: [Function (anonymous)],
+        mockRejectedValue: [Function (anonymous)],
+        mockImplementationOnce: [Function (anonymous)],
+        withImplementation: [Function: bound withImplementation],
+        mockImplementation: [Function (anonymous)],
+        mockReturnThis: [Function (anonymous)],
+        mockName: [Function (anonymous)],
+        getMockName: [Function (anonymous)]
+      },
+      patch: [Function: mockConstructor] {
+        _isMockFunction: true,
+        getMockImplementation: [Function (anonymous)],
+        mock: [Getter/Setter],
+        mockClear: [Function (anonymous)],
+        mockReset: [Function (anonymous)],
+        mockRestore: [Function (anonymous)],
+        mockReturnValueOnce: [Function (anonymous)],
+        mockResolvedValueOnce: [Function (anonymous)],
+        mockRejectedValueOnce: [Function (anonymous)],
+        mockReturnValue: [Function (anonymous)],
+        mockResolvedValue: [Function (anonymous)],
+        mockRejectedValue: [Function (anonymous)],
+        mockImplementationOnce: [Function (anonymous)],
+        withImplementation: [Function: bound withImplementation],
+        mockImplementation: [Function (anonymous)],
+        mockReturnThis: [Function (anonymous)],
+        mockName: [Function (anonymous)],
+        getMockName: [Function (anonymous)]
+      },
+      delete: [Function: mockConstructor] {
+        _isMockFunction: true,
+        getMockImplementation: [Function (anonymous)],
+        mock: [Getter/Setter],
+        mockClear: [Function (anonymous)],
+        mockReset: [Function (anonymous)],
+        mockRestore: [Function (anonymous)],
+        mockReturnValueOnce: [Function (anonymous)],
+        mockResolvedValueOnce: [Function (anonymous)],
+        mockRejectedValueOnce: [Function (anonymous)],
+        mockReturnValue: [Function (anonymous)],
+        mockResolvedValue: [Function (anonymous)],
+        mockRejectedValue: [Function (anonymous)],
+        mockImplementationOnce: [Function (anonymous)],
+        withImplementation: [Function: bound withImplementation],
+        mockImplementation: [Function (anonymous)],
+        mockReturnThis: [Function (anonymous)],
+        mockName: [Function (anonymous)],
+        getMockName: [Function (anonymous)]
+      },
+      use: [Function: mockConstructor] {
+        _isMockFunction: true,
+        getMockImplementation: [Function (anonymous)],
+        mock: [Getter/Setter],
+        mockClear: [Function (anonymous)],
+        mockReset: [Function (anonymous)],
+        mockRestore: [Function (anonymous)],
+        mockReturnValueOnce: [Function (anonymous)],
+        mockResolvedValueOnce: [Function (anonymous)],
+        mockRejectedValueOnce: [Function (anonymous)],
+        mockReturnValue: [Function (anonymous)],
+        mockResolvedValue: [Function (anonymous)],
+        mockRejectedValue: [Function (anonymous)],
+        mockImplementationOnce: [Function (anonymous)],
+        withImplementation: [Function: bound withImplementation],
+        mockImplementation: [Function (anonymous)],
+        mockReturnThis: [Function (anonymous)],
+        mockName: [Function (anonymous)],
+        getMockName: [Function (anonymous)]
+      }
+    }
+
+      at Object.<anonymous> (__tests__/unit/routes.test.js:117:21)
+
+  console.log
+    Searching for post /login. Total calls: 0
+
+      at findCall (__tests__/unit/routes.test.js:108:17)
+
+(node:14512) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+FAIL __tests__/unit/ro
+utes.test.js
+  Route Definitions
+    Auth Routes
+      × should define 
+POST 
+/register/mahasiswa 
+(5 ms)
+      × should define 
+POST /login (1 ms)
+
+  ● Route Definitions 
+› Auth Routes › 
+should define POST 
+/register/mahasiswa
+
+    expect(jest.fn()).
+toHaveBeenCalled()
+
+    Expected number 
+of calls: >= 1
+    Received number 
+of calls:    0
+
+    [0m [90m 119 
+|[39m
+     [90m 120 |[39m 
+        
+it([32m'should 
+define POST /register/
+mahasiswa'[39m[33m,
+[39m () [33m=>[39m {
+    [31m[1m>[22m[3
+9m[90m 121 |[39m    
+         expect(mockEx
+press[33m.[39m[33mR
+outer[39m)[33m.[39m
+toHaveBeenCalled()[33
+m;[39m
+     [90m     |[39m 
+                      
+                 
+[31m[1m^[22m[39m
+     [90m 122 |[39m 
+            
+[36mconst[39m call 
+[33m=[39m findCall(
+[32m'post'[39m[33m,
+[39m [32m'/register/m
+ahasiswa'[39m)[33m;
+[39m
+     [90m 123 |[39m 
+            expect(cal
+l)[33m.[39mtoBeDefin
+ed()[33m;[39m
+     [90m 124 |[39m 
+            expect(cal
+l[[35m1[39m])[33m.
+[39mtoBe(mockAuthContr
+oller[33m.[39mregist
+erMahasiswa)[33m;[39
+m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/routes.te
+st.js:121:40)
+
+  ● Route Definitions 
+› Auth Routes › 
+should define POST 
+/login
+
+    expect(received).t
+oBeDefined()
+
+    Received: 
+undefined
+
+    [0m [90m 127 
+|[39m         
+it([32m'should 
+define POST /login'[3
+9m[33m,[39m () 
+[33m=>[39m {
+     [90m 128 |[39m 
+            
+[36mconst[39m call 
+[33m=[39m findCall(
+[32m'post'[39m[33m,
+[39m [32m'/login'[39
+m)[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 129 |[39m    
+         expect(call)
+[33m.[39mtoBeDefined(
+)[33m;[39m
+     [90m     |[39m 
+                      
+   
+[31m[1m^[22m[39m
+     [90m 130 |[39m 
+            expect(cal
+l[[35m1[39m])[33m.
+[39mtoBe(mockAuthContr
+oller[33m.[39mlogin)
+[33m;[39m
+     [90m 131 |[39m 
+        })[33m;[39m
+     [90m 132 |[39m 
+    })[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/routes.te
+st.js:129:26)
+
+----------------------------|---------|----------|---------|---------|-------------------
+File                        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------------------------|---------|----------|---------|---------|-------------------
+All files                   |    0.51 |        0 |       0 |    0.53 |                   
+ controllers                |       0 |        0 |       0 |       0 |                   
+  adminController.js        |       0 |        0 |       0 |       0 | 3-285             
+  authController.js         |       0 |        0 |       0 |       0 | 6-278             
+  bimbinganController.js    |       0 |        0 |       0 |       0 | 3-170             
+  dosenController.js        |       0 |        0 |       0 |       0 | 4-156             
+  jadwalController.js       |       0 |        0 |       0 |       0 | 3-197             
+  kaprodiController.js      |       0 |        0 |       0 |       0 | 4-376             
+  kelompokController.js     |       0 |        0 |       0 |       0 | 3-209             
+  koordinatorController.js  |       0 |        0 |       0 |       0 | 5-192             
+  mahasiswaController.js    |       0 |        0 |       0 |       0 | 4-391             
+  notificationController.js |       0 |        0 |       0 |       0 | 3-72              
+  sharedController.js       |       0 |        0 |       0 |       0 | 8-253             
+  sidangController.js       |       0 |        0 |       0 |       0 | 3-336             
+ middleware                 |       0 |        0 |       0 |       0 |                   
+  auth.js                   |       0 |        0 |       0 |       0 | 4-22              
+  role.js                   |       0 |        0 |       0 |       0 | 5-50              
+  upload.js                 |       0 |        0 |       0 |       0 | 4-67              
+ routes                     |    3.86 |        0 |       0 |    3.86 |                   
+  adminRoutes.js            |       0 |      100 |     100 |       0 | 6-28              
+  authRoutes.js             |     100 |      100 |     100 |     100 |                   
+  bimbinganRoutes.js        |       0 |        0 |       0 |       0 | 8-40              
+  dosenRoutes.js            |       0 |      100 |     100 |       0 | 8-32              
+  kaprodiRoutes.js          |       0 |      100 |     100 |       0 | 6-27              
+  koordinatorRoutes.js      |       0 |      100 |     100 |       0 | 8-40              
+  mahasiswaRoutes.js        |       0 |      100 |     100 |       0 | 9-42              
+  notificationRoutes.js     |       0 |      100 |     100 |       0 | 5-8               
+  pengujiRoutes.js          |       0 |        0 |       0 |       0 | 6-45              
+  profileRoutes.js          |       0 |        0 |       0 |       0 | 7-63              
+  proposalRoutes.js         |       0 |        0 |       0 |       0 | 8-58              
+  reportRoutes.js           |       0 |        0 |       0 |       0 | 8-51              
+  sidangRoutes.js           |       0 |      100 |       0 |       0 | 8-30              
+ utils                      |       0 |        0 |       0 |       0 |                   
+  constants.js              |       0 |        0 |       0 |       0 | 6-71              
+  gcs.js                    |       0 |        0 |       0 |       0 | 3-42              
+  gdrive.js                 |       0 |        0 |       0 |       0 | 12-191            
+  httpResponses.js          |       0 |        0 |       0 |       0 | 6-54              
+  jwt.js                    |       0 |        0 |       0 |       0 | 4-7               
+  password.js               |       0 |      100 |       0 |       0 | 4-9               
+  roleHelper.js             |       0 |        0 |       0 |       0 | 13-157            
+----------------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 
+failed, 1 total
+Tests:       2 
+failed, 2 total
+Snapshots:   0 total
+Time:        2.784 s
+Ran all test suites 
+matching /unit\\routes
+.test.js/i.

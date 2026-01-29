@@ -1,0 +1,2348 @@
+﻿
+> nggk-tau-ini-apa@1.0.0 test
+> cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --passWithNoTests --coverage --no-cache
+
+  console.log
+    [dotenv@17.2.3] injecting env (9) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+node.exe : [baseline-b
+rowser-mapping] The 
+data in this module 
+is over two months 
+old.  To ensure 
+accurate Baseline 
+data, please update: 
+`npm i baseline-browse
+r-mapping@latest -D`
+At line:1 char:1
++ & "D:\ENV\NodeJS/nod
+e.exe" "C:\Users\Renz\
+AppData\Roaming\npm/no
+de_mo ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: ([baseline-   
+ brows...ping@late    
+st -D`:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+[baseline-browser-mapp
+ing] The data in this 
+module is over two 
+months old.  To 
+ensure accurate 
+Baseline data, please 
+update: `npm i baselin
+e-browser-mapping@late
+st -D`
+[baseline-browser-mapp
+ing] The data in this 
+module is over two 
+months old.  To 
+ensure accurate 
+Baseline data, please 
+update: `npm i baselin
+e-browser-mapping@late
+st -D`
+[baseline-browser-mapp
+ing] The data in this 
+module is over two 
+months old.  To 
+ensure accurate 
+Baseline data, please 
+update: `npm i baselin
+e-browser-mapping@late
+st -D`
+[baseline-browser-mapp
+ing] The data in this 
+module is over two 
+months old.  To 
+ensure accurate 
+Baseline data, please 
+update: `npm i baselin
+e-browser-mapping@late
+st -D`
+[baseline-browser-mapp
+ing] The data in this 
+module is over two 
+months old.  To 
+ensure accurate 
+Baseline data, please 
+update: `npm i baselin
+e-browser-mapping@late
+st -D`
+(node:5880) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+PASS __tests__/unit/ht
+tpResponses.test.js
+  HTTP Responses 
+Utils - Full Coverage
+    ERROR_MESSAGES
+      √ should have 
+MAHASISWA_NOT_FOUND 
+message (25 ms)
+      √ should have 
+DOSEN_NOT_FOUND 
+message (5 ms)
+      √ should have 
+KOORDINATOR_NOT_FOUND 
+message (2 ms)
+      √ should have 
+KAPRODI_NOT_FOUND 
+message
+      √ should have 
+KELOMPOK_NOT_FOUND 
+message (1 ms)
+      √ should have 
+JADWAL_NOT_FOUND 
+message (1 ms)
+      √ should have 
+BIMBINGAN_NOT_FOUND 
+message (2 ms)
+      √ should have 
+USER_NOT_FOUND 
+message (2 ms)
+      √ should have 
+PENGUJI_NOT_FOUND 
+message
+      √ should have 
+UNAUTHORIZED message
+      √ should have 
+FORBIDDEN message (1 
+ms)
+      √ should have 
+BAD_REQUEST message
+    notFound
+      √ should return 
+404 with default 
+message (5 ms)
+      √ should return 
+404 with custom 
+message
+      √ should return 
+404 with 
+MAHASISWA_NOT_FOUND 
+message (1 ms)
+    badRequest
+      √ should return 
+400 with default 
+message (1 ms)
+      √ should return 
+400 with custom 
+message
+    unauthorized
+      √ should return 
+401 with default 
+message
+      √ should return 
+401 with custom 
+message (1 ms)
+    forbidden
+      √ should return 
+403 with default 
+message
+      √ should return 
+403 with custom 
+message (1 ms)
+    success
+      √ should return 
+data when provided (1 
+ms)
+      √ should return 
+message when data is 
+null
+      √ should return 
+message when data is 
+undefined (1 ms)
+      √ should return 
+array data (1 ms)
+      √ should return 
+custom message when 
+data is null
+    validateRequired
+      √ should return 
+null when all fields 
+are present (1 ms)
+      √ should return 
+400 when one field is 
+missing (13 ms)
+      √ should return 
+400 when multiple 
+fields are missing (1 
+ms)
+      √ should return 
+400 when all fields 
+are missing (4 ms)
+      √ should return 
+null for empty string 
+(truthy check)
+      √ should work 
+with single field (1 
+ms)
+    VALID_SEMESTERS
+      √ should 
+contain 5 valid 
+semesters
+      √ should 
+contain semester 2
+      √ should 
+contain semester 3 (1 
+ms)
+      √ should 
+contain semester 5
+      √ should 
+contain semester 7
+      √ should 
+contain semester 8
+      √ should not 
+contain semester 1
+      √ should not 
+contain semester 4 (1 
+ms)
+      √ should not 
+contain semester 6 (1 
+ms)
+    isValidSemester
+      √ should return 
+true for semester 2
+      √ should return 
+true for semester 3
+      √ should return 
+true for semester 5 
+(1 ms)
+      √ should return 
+true for semester 7
+      √ should return 
+true for semester 8
+      √ should return 
+false for semester 1 
+(1 ms)
+      √ should return 
+false for semester 4
+      √ should return 
+false for semester 6
+      √ should return 
+false for semester 9 
+(1 ms)
+      √ should return 
+false for null
+      √ should return 
+false for undefined
+      √ should return 
+false for string (1 
+ms)
+
+(node:5404) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+PASS __tests__/unit/co
+nstants.test.js
+  Constants Utils - 
+Full Coverage
+    SEMESTER_LABELS
+      √ should have 
+label for semester 2 
+(34 ms)
+      √ should have 
+label for semester 3
+      √ should have 
+label for semester 5 
+(1 ms)
+      √ should have 
+label for semester 7
+      √ should have 
+label for semester 8 
+(6 ms)
+      √ should have 5 
+semester labels (1 ms)
+    
+SEMESTER_LABELS_SHORT
+      √ should have 
+short label for 
+semester 2 (1 ms)
+      √ should have 
+short label for 
+semester 3
+      √ should have 
+short label for 
+semester 5
+      √ should have 
+short label for 
+semester 7 (1 ms)
+      √ should have 
+short label for 
+semester 8 (4 ms)
+    getSemesterLabel
+      √ should return 
+full label for 
+semester 2 (1 ms)
+      √ should return 
+short label for 
+semester 2 when 
+short=true
+      √ should return 
+full label for 
+semester 5 (2 ms)
+      √ should return 
+short label for 
+semester 5 when 
+short=true (3 ms)
+      √ should return 
+null for invalid 
+semester (1 ms)
+      √ should return 
+null for undefined 
+semester
+      √ should return 
+null for non-existent 
+semester 10 (1 ms)
+      √ should return 
+null for semester 4 
+(not in list) (10 ms)
+      √ should return 
+null for semester 6 
+(not in list)
+    TRACK_SEMESTER_MAP
+      √ should map 
+proyek1 to semester 2
+      √ should map 
+proyek2 to semester 3
+      √ should map 
+proyek3 to semester 5 
+(1 ms)
+      √ should map 
+internship1 to 
+semester 7
+      √ should map 
+internship2 to 
+semester 8
+      √ should return 
+undefined for invalid 
+track (1 ms)
+    isProyekTrack
+      √ should return 
+true for proyek1
+      √ should return 
+true for proyek2 (1 
+ms)
+      √ should return 
+true for proyek3
+      √ should return 
+false for internship1
+      √ should return 
+false for internship2 
+(1 ms)
+      √ should return 
+false for null (1 ms)
+      √ should return 
+false for undefined 
+(3 ms)
+      √ should return 
+false for empty 
+string (1 ms)
+    isInternshipTrack
+      √ should return 
+true for internship1
+      √ should return 
+true for internship2 
+(1 ms)
+      √ should return 
+false for proyek1 (1 
+ms)
+      √ should return 
+false for proyek2
+      √ should return 
+false for proyek3 (1 
+ms)
+      √ should return 
+false for null
+      √ should return 
+false for undefined 
+(1 ms)
+      √ should return 
+false for empty string
+    calculateSemester
+      √ should return 
+null for null angkatan
+      √ should return 
+null for undefined 
+angkatan
+      √ should return 
+null for 0 angkatan
+      √ should 
+calculate semester 1 
+for first year 
+student in October (1 
+ms)
+      √ should 
+calculate semester 1 
+for first year 
+student in November 
+(1 ms)
+      √ should 
+calculate semester 1 
+for first year 
+student in December
+      √ should 
+calculate semester 1 
+for first year 
+student in January 
+(next year) (2 ms)
+      √ should 
+calculate semester 1 
+for first year 
+student in February 
+(next year)
+      √ should 
+calculate semester 2 
+for first year 
+student in March (1 
+ms)
+      √ should 
+calculate semester 2 
+for first year 
+student in April (1 
+ms)
+      √ should 
+calculate semester 2 
+for first year 
+student in September
+      √ should 
+calculate semester 3 
+for second year 
+student in October
+      √ should 
+calculate semester 4 
+for second year 
+student in March (5 
+ms)
+      √ should 
+calculate semester 5 
+for third year 
+student in October (3 
+ms)
+      √ should 
+calculate semester 7 
+for fourth year 
+student in October (1 
+ms)
+      √ should 
+calculate semester 8 
+for fourth year 
+student in March
+
+  console.log
+    [dotenv@17.2.3] injecting env (9) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+(node:14740) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+PASS __tests__/unit/ro
+utes.test.js
+  Route Definitions
+    authRoutes.js
+      √ should define 
+POST 
+/register/mahasiswa 
+(22 ms)
+      √ should define 
+POST /login (1 ms)
+      √ should define 
+GET /profile (2 ms)
+    adminRoutes.js
+      √ should define 
+POST /dosen (1 ms)
+      √ should define 
+GET /users
+    mahasiswaRoutes.js
+      √ should define 
+GET /profile (1 ms)
+    dosenRoutes.js
+      √ should define 
+GET /profile (1 ms)
+      √ should define 
+GET /bimbingan
+    kaprodiRoutes.js
+      √ should define 
+GET /profile (1 ms)
+      √ should define 
+POST /assign-dosen (1 
+ms)
+    
+koordinatorRoutes.js
+      √ should define 
+GET /profile (1 ms)
+      √ should define 
+POST /sidang/schedule
+    
+notificationRoutes.js
+      √ should define 
+GET /stats
+    bimbinganRoutes.js
+      √ should define 
+GET /:id
+      √ should define 
+POST /upload (inline 
+handler) (1 ms)
+    sidangRoutes.js
+      √ should define 
+GET /
+      √ should define 
+POST /upload (inline 
+handler) (1 ms)
+    proposalRoutes.js
+      √ should define 
+POST /upload (inline 
+handler)
+    pengujiRoutes.js
+      √ should define 
+GET /profile (inline) 
+(1 ms)
+    reportRoutes.js
+      √ should define 
+POST /upload (inline) 
+(1 ms)
+    profileRoutes.js
+      √ should define 
+POST /upload (inline) 
+(1 ms)
+
+  console.log
+    [dotenv@17.2.3] injecting env (9) from .env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+(node:14048) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+(node:14512) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+  console.log
+    [dotenv@17.2.3] injecting env (9) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+[baseline-browser-mapp
+ing] The data in this 
+module is over two 
+months old.  To 
+ensure accurate 
+Baseline data, please 
+update: `npm i baselin
+e-browser-mapping@late
+st -D`
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    Upload to GDrive: {
+      fileName: 'test.pdf',
+      folderId: 'default_folder_id',
+      mimeType: 'application/pdf'
+    }
+
+      at log (utils/gdrive.js:94:11)
+
+PASS __tests__/unit/au
+thController.test.js
+  Auth Controller 
+with Mocked DB
+    login
+      √ should return 
+400 if email is 
+missing (37 ms)
+      √ should return 
+400 if password is 
+missing (1 ms)
+      √ should return 
+400 if both email and 
+password are missing 
+(1 ms)
+      √ should login 
+admin with correct 
+hardcoded credentials 
+(4 ms)
+      √ should return 
+400 for non-existing 
+user (1 ms)
+      √ should detect 
+NPM login (numeric 
+identifier)
+    registerMahasiswa
+      √ should return 
+400 if email already 
+exists (1 ms)
+      √ should return 
+400 if NPM already 
+exists (1 ms)
+      √ should 
+register successfully 
+for new user (143 ms)
+    getProfile
+      √ should return 
+admin profile (1 ms)
+      √ should return 
+404 for non-existing 
+mahasiswa
+      √ should return 
+mahasiswa profile (1 
+ms)
+      √ should return 
+dosen profile
+      √ should return 
+kaprodi profile (1 ms)
+      √ should return 
+koordinator profile
+      √ should return 
+penguji profile (1 ms)
+    updateProfile
+      √ should update 
+mahasiswa profile
+      √ should update 
+dosen profile (1 ms)
+      √ should return 
+404 for non-existing 
+user
+      √ should return 
+400 for unsupported 
+role (1 ms)
+    changePassword
+      √ should return 
+400 if old_password 
+is missing
+      √ should return 
+400 if new_password 
+is missing
+      √ should return 
+400 if new_password 
+is too short
+      √ should return 
+400 for unsupported 
+role (1 ms)
+      √ should return 
+404 for non-existing 
+user
+
+  console.log
+    Creating file in Google Drive...
+
+      at log (utils/gdrive.js:109:13)
+
+  console.log
+    File created with ID: file_123
+
+      at log (utils/gdrive.js:120:13)
+
+  console.log
+    Permissions set to public
+
+      at log (utils/gdrive.js:132:13)
+
+  console.log
+    Upload to GDrive: {
+      fileName: 'my_proposal.pdf',
+      folderId: 'proposal_folder_id',
+      mimeType: 'application/pdf'
+    }
+
+      at log (utils/gdrive.js:94:11)
+
+  console.log
+    Creating file in Google Drive...
+
+      at log (utils/gdrive.js:109:13)
+
+  console.log
+    File created with ID: file_proposal
+
+      at log (utils/gdrive.js:120:13)
+
+  console.log
+    Permissions set to public
+
+      at log (utils/gdrive.js:132:13)
+
+PASS __tests__/unit/ut
+ils_all.test.js
+  Utils Unit Tests
+    Google Cloud 
+Storage (gcs.js)
+      √ should upload 
+file successfully and 
+return public URL (5 
+ms)
+      √ should handle 
+upload error (11 ms)
+      √ should reject 
+if no file provided 
+(2 ms)
+    Google Drive 
+(gdrive.js)
+      √ should upload 
+to GDrive 
+successfully (31 ms)
+      √ should select 
+correct folder for 
+proposals (8 ms)
+      √ should throw 
+error if folder ID 
+missing (12 ms)
+      √ should delete 
+file from GDrive (1 
+ms)
+      √ should get 
+file info (1 ms)
+    JWT Utils (jwt.js)
+      √ should 
+generate token with 
+user data (23 ms)
+    Password Utils 
+(password.js)
+      √ should hash 
+password (1 ms)
+      √ should 
+compare password
+
+  console.log
+    [dotenv@17.2.3] injecting env (9) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+PASS __tests__/unit/ro
+leHelper.test.js
+  RoleHelper Utils - 
+Full Coverage
+    ROLES
+      √ should have 
+all role constants (2 
+ms)
+      √ should have 
+exactly 3 roles (1 ms)
+    getDosenRoles
+      √ should return 
+array of role names 
+(3 ms)
+      √ should return 
+empty array when 
+dosen has no roles
+    hasRole
+      √ should return 
+true when dosen has 
+role
+      √ should return 
+false when dosen does 
+not have role (1 ms)
+    addRole
+      √ should return 
+true when role added 
+successfully (1 ms)
+      √ should return 
+false when role 
+already exists 
+(duplicate)
+      √ should throw 
+error for other 
+database errors (7 ms)
+    removeRole
+      √ should return 
+true when role removed
+      √ should return 
+false when role was 
+not present (1 ms)
+    getDosenByRole
+      √ should return 
+array of dosen with 
+specific role (1 ms)
+      √ should return 
+empty array when no 
+dosen has role (1 ms)
+    getDosenWithRoles
+      √ should return 
+dosen with roles 
+array (1 ms)
+      √ should return 
+null when dosen not 
+found
+    isKoordinator
+      √ should return 
+true when dosen is 
+koordinator (1 ms)
+      √ should return 
+false when dosen is 
+not koordinator
+    isKaprodi
+      √ should return 
+true when dosen is 
+kaprodi (1 ms)
+      √ should return 
+false when dosen is 
+not kaprodi
+    
+getKoordinatorByJadwal
+      √ should return 
+koordinator for 
+jadwal (1 ms)
+      √ should return 
+null when jadwal not 
+found
+
+  console.log
+    [dotenv@17.2.3] injecting env (9) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+PASS __tests__/unit/ad
+minController.test.js
+  Admin Controller
+    getStats query 
+structure
+      √ should define 
+correct stat fields 
+(3 ms)
+    getAllUsers 
+response structure
+      √ should return 
+mahasiswa and dosen 
+arrays (1 ms)
+    deleteUser 
+validation
+      √ should 
+validate user id is 
+number
+      √ should 
+validate role is valid
+      √ should reject 
+invalid role (1 ms)
+    admin profile 
+structure
+      √ should have 
+correct admin profile 
+fields (1 ms)
+
+PASS __tests__/unit/mi
+ddleware.test.js
+  Middleware Unit 
+Tests
+    Auth Middleware
+      √ should return 
+401 if no auth header 
+(4 ms)
+      √ should return 
+401 if invalid header 
+format
+      √ should return 
+401 if token invalid 
+(1 ms)
+      √ should call 
+next and set user if 
+token valid (6 ms)
+    Role Middleware
+      requireRole
+        √ should 
+return 403 if no user 
+(6 ms)
+        √ should 
+allow admin
+        √ should 
+allow correct role (1 
+ms)
+        √ should 
+return 403 for 
+mismatch (1 ms)
+        √ should 
+allow Kaprodi to 
+Dosen (1 ms)
+      kaprodiOnly
+        √ should 
+allow kaprodi (1 ms)
+        √ should 
+block admin
+    Upload Middleware
+      parseMultipart
+        √ should skip 
+if req.file exists (1 
+ms)
+        √ should skip 
+if not multipart
+        √ should 
+parse fields and 
+files via Busboy (2 
+ms)
+
+(node:8640) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+PASS __tests__/unit/ma
+hasiswaController.test
+.js
+  Mahasiswa Controller
+    proposal 
+validation
+      √ should 
+validate required 
+proposal fields (2 ms)
+      √ should reject 
+empty judul
+    bimbingan 
+validation
+      √ should 
+validate catatan is 
+required (1 ms)
+      √ should 
+validate status values
+    track selection
+      √ should 
+validate track options
+      √ should accept 
+proyek track
+      √ should accept 
+internship track
+    laporan validation
+      √ should 
+validate laporan file 
+is required
+
+PASS __tests__/unit/ka
+prodiController.test.j
+s
+  Kaprodi Controller
+    dashboard stats
+      √ should define 
+required stat fields 
+(3 ms)
+      √ should 
+validate stats are 
+numbers (2 ms)
+    koordinator 
+assignment
+      √ should 
+validate semester 
+format (1 ms)
+      √ should 
+validate dosen id for 
+assignment (1 ms)
+    monitoring data
+      √ should return 
+array of mahasiswa (1 
+ms)
+
+  console.log
+    Error checking dosen: undefined is not iterable (cannot read property Symbol(Symbol.iterator))
+
+      at Object.log [as login] (controllers/authController.js:85:19)
+
+  console.log
+    Error checking dosen (fallback): undefined is not iterable (cannot read property Symbol(Symbol.iterator))
+
+      at Object.log [as login] (controllers/authController.js:93:21)
+
+PASS __tests__/unit/ko
+ordinatorController.te
+st.js
+  Koordinator 
+Controller
+    proposal 
+validation
+      √ should 
+validate proposal 
+status values (2 ms)
+      √ should accept 
+approved status
+    dosen assignment
+      √ should 
+validate dosen id is 
+required (1 ms)
+      √ should 
+validate mahasiswa id 
+is required
+    sidang scheduling
+      √ should 
+validate date format 
+(1 ms)
+      √ should 
+validate time format 
+(1 ms)
+
+PASS __tests__/unit/do
+senController.test.js
+  Dosen Controller
+    mahasiswa 
+bimbingan list
+      √ should 
+validate response is 
+array (2 ms)
+    bimbingan approval
+      √ should 
+validate approval 
+statuses
+      √ should 
+validate bimbingan id 
+is number (1 ms)
+    laporan approval
+      √ should 
+validate laporan id 
+is required
+      √ should accept 
+nilai in valid range
+
+  console.log
+    [dotenv@17.2.3] injecting env (9) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    Running database schema fix...
+
+      at Object.log [as runSchemaFix] (controllers/authController.js:251:15)
+
+  console.log
+    Error: Unknown column 'm.is_active' in 'field list'
+
+      at next (__tests__/integration/controllers.test.js:32:39)
+
+  console.log
+    [Match] Kelompok created: Kelompok PROYEK1 - Mhs 1 & Mhs 2 for Mhs 1 & Mhs 2
+
+      at Object.log [as setTrack] (controllers/mahasiswaController.js:135:21)
+
+PASS __tests__/unit/co
+ntrollers.test.js
+  Controller Unit 
+Tests
+    AuthController
+      login
+        √ should 
+return 400 if fields 
+missing (16 ms)
+        √ should 
+login successfully 
+for Mahasiswa (216 ms)
+        √ should 
+return 400 if user 
+not found (12 ms)
+      
+registerMahasiswa
+        √ should 
+register new 
+mahasiswa 
+successfully (92 ms)
+        √ should 
+return 400 if email 
+already exists (1 ms)
+      getProfile
+        √ should 
+return mahasiswa 
+profile (1 ms)
+        √ should 
+return dosen profile 
+with roles (1 ms)
+        √ should 
+return admin profile 
+(1 ms)
+      updateProfile
+        √ should 
+update mahasiswa 
+profile (1 ms)
+        √ should 
+update dosen profile
+      changePassword
+        √ should 
+change password 
+successfully (262 ms)
+        √ should 
+return 401 if old 
+password incorrect 
+(159 ms)
+      runSchemaFix
+        √ should run 
+schema fix 
+successfully (2 ms)
+    
+MahasiswaController
+      getProfile
+        √ should 
+return profile with 
+dosen info (1 ms)
+        √ should 
+return 404 if not 
+found
+      submitProposal
+        √ should 
+submit proposal 
+successfully (1 ms)
+        √ should 
+return 400 if track 
+not set
+      getBimbinganList
+        √ should 
+return list of 
+bimbingan (1 ms)
+      setTrack
+        √ should set 
+track successfully 
+(no partner) (1 ms)
+        √ should fail 
+if track already set
+      
+getProposalStatus
+        √ should 
+return proposal 
+status (1 ms)
+      getDosen
+        √ should 
+return dosen 
+pembimbing info
+      getPeriodeAktif
+        √ should 
+return active periode
+        √ should 
+return active: false 
+if no periode found 
+(1 ms)
+    AdminController
+      getStats
+        √ should 
+return dashboard 
+stats (1 ms)
+      
+getRecentActivity
+        √ should 
+return combined 
+recent activities
+      getAllUsers
+        √ should 
+return merged user 
+list (1 ms)
+      getAllDosen
+        √ should 
+return all dosen
+      createDosen
+        √ should 
+create dosen 
+successfully with 
+roles (71 ms)
+        √ should 
+return 400 if email 
+exists (1 ms)
+      updateUserStatus
+        √ should 
+update mahasiswa 
+status (1 ms)
+      deleteUser
+        √ should 
+delete user
+      getSystemReport
+        √ should 
+return system report 
+(1 ms)
+    DosenController
+      getProfile
+        √ should 
+return profile with 
+roles (1 ms)
+      
+getMahasiswaBimbingan
+        √ should 
+return mahasiswa list
+      getBimbinganList
+        √ should 
+return all bimbingan 
+(1 ms)
+      getLaporanSidang
+        √ should 
+return laporan sidang 
+list (1 ms)
+      getMySidang
+        √ should 
+return sidang 
+schedule as penguji
+      getStats
+        √ should 
+return dosen 
+dashboard stats (1 ms)
+    
+BimbinganController
+      createBimbingan
+        √ should 
+create bimbingan 
+successfully
+      
+getDosenBimbingan
+        √ should 
+return list of 
+bimbingan for dosen
+      getMyBimbingan
+        √ should 
+return list of own 
+bimbingan (1 ms)
+      
+updateBimbinganStatus
+        √ should 
+approve bimbingan 
+successfully
+        √ should 
+return 400 if status 
+invalid (1 ms)
+      getBimbinganById
+        √ should 
+return bimbingan 
+detail
+        √ should 
+return 404 if not 
+found (1 ms)
+    JadwalController
+      getActive
+        √ should 
+return active 
+schedules
+      create
+        √ should 
+create new jadwal (1 
+ms)
+      list
+        √ should 
+return all schedules
+      update
+        √ should 
+update jadwal 
+successfully (1 ms)
+      complete
+        √ should 
+complete active 
+jadwal and remove 
+koordinator role (1 
+ms)
+    
+MahasiswaController 
+Extension
+      setTrack 
+(Partner Match)
+        √ should 
+match partner and 
+create kelompok (4 ms)
+      submitProposal 
+(Validation)
+        √ should 
+return 400 if user 
+has no track
+        √ should 
+return 400 if 
+validation fails 
+(already submitted) 
+(1 ms)
+    KelompokController
+      createKelompok
+        √ should 
+create kelompok 
+successfully
+      joinKelompok
+        √ should join 
+kelompok successfully 
+(1 ms)
+      getMyKelompok
+        √ should 
+return my kelompok (1 
+ms)
+      getAllKelompok
+        √ should 
+return all kelompok
+      
+getAvailableKelompok
+        √ should 
+return available 
+kelompok for track (1 
+ms)
+    
+KoordinatorController
+      getProfile
+        √ should 
+return koordinator 
+profile (1 ms)
+      
+getAssignedSemester
+        √ should 
+return assigned 
+semester (1 ms)
+      
+getPendingProposals
+        √ should 
+return pending 
+proposals grouped by 
+kelompok (1 ms)
+      getPengujiList
+        √ should 
+return list of penguji
+      getStats
+        √ should 
+return koordinator 
+stats (1 ms)
+    KaprodiController
+      
+getRecentActivities
+        √ should 
+return combined 
+activities (2 ms)
+      assignKoordinato
+rSemester
+        √ should 
+assign koordinator 
+successfully (1 ms)
+      unassignKoordina
+torSemester
+        √ should 
+unassign koordinator 
+(1 ms)
+      
+getDashboardStats
+        √ should 
+return kaprodi 
+dashboard stats (1 ms)
+    
+NotificationController
+      getStats
+        √ should 
+return notification 
+stats for Dosen (1 ms)
+    SidangController
+      submitLaporan
+        √ should 
+submit laporan 
+successfully (1 ms)
+      scheduleSidang
+        √ should 
+schedule sidang 
+successfully
+      getMyLaporan
+        √ should 
+return my laporan
+      getDosenLaporan
+        √ should 
+return grouped 
+laporan for dosen (1 
+ms)
+      
+updateLaporanStatus
+        √ should 
+update laporan status 
+for group (1 ms)
+      getAllSidang
+        √ should 
+return all sidang
+      getMySidang
+        √ should 
+return my sidang (1 
+ms)
+    SharedController
+      assignDosen
+        √ should 
+assign dosen to 
+mahasiswa (1 ms)
+
+  console.log
+    Upload to GDrive: {
+      fileName: 'test.pdf',
+      folderId: 'default_folder_id',
+      mimeType: 'application/pdf'
+    }
+
+      at log (utils/gdrive.js:94:11)
+
+  console.log
+    Creating file in Google Drive...
+
+      at log (utils/gdrive.js:109:13)
+
+  console.log
+    File created with ID: file_123
+
+      at log (utils/gdrive.js:120:13)
+
+  console.log
+    Permissions set to public
+
+      at log (utils/gdrive.js:132:13)
+
+  console.log
+    Upload to GDrive: {
+      fileName: 'my_proposal.pdf',
+      folderId: 'proposal_folder_id',
+      mimeType: 'application/pdf'
+    }
+
+      at log (utils/gdrive.js:94:11)
+
+  console.log
+    Creating file in Google Drive...
+
+      at log (utils/gdrive.js:109:13)
+
+  console.log
+    File created with ID: file_proposal
+
+      at log (utils/gdrive.js:120:13)
+
+  console.log
+    Permissions set to public
+
+      at log (utils/gdrive.js:132:13)
+
+PASS __tests__/unit/ut
+ils.test.js
+  Constants Utils
+    SEMESTER_LABELS
+      √ should have 
+correct labels for 
+all valid semesters 
+(34 ms)
+      √ should have 
+exactly 5 entries
+      √ should return 
+undefined for invalid 
+semester
+    
+SEMESTER_LABELS_SHORT
+      √ should have 
+short labels for all 
+valid semesters (1 ms)
+      √ should have 
+exactly 5 entries (1 
+ms)
+    getSemesterLabel
+      √ should return 
+full label by default
+      √ should return 
+short label when 
+short=true
+      √ should return 
+null for invalid 
+semester (1 ms)
+      √ should return 
+null for invalid 
+semester with 
+short=true (11 ms)
+    TRACK_SEMESTER_MAP
+      √ should map 
+tracks to correct 
+semesters (3 ms)
+      √ should have 
+exactly 5 entries
+      √ should return 
+undefined for invalid 
+track (1 ms)
+    isProyekTrack
+      √ should return 
+true for proyek 
+tracks (1 ms)
+      √ should return 
+false for internship 
+tracks
+      √ should return 
+false for 
+null/undefined/empty
+      √ should return 
+true for strings 
+containing proyek
+    isInternshipTrack
+      √ should return 
+true for internship 
+tracks (1 ms)
+      √ should return 
+false for proyek 
+tracks
+      √ should return 
+false for 
+null/undefined/empty
+      √ should return 
+true for strings 
+containing internship
+    calculateSemester
+      √ should return 
+null for 
+null/undefined 
+angkatan (1 ms)
+      √ should 
+calculate semester 
+ganjil (Oktober) (4 
+ms)
+      √ should 
+calculate semester 
+ganjil (November) (1 
+ms)
+      √ should 
+calculate semester 
+ganjil (Desember)
+      √ should 
+calculate semester 
+ganjil (Januari - 
+next year) (1 ms)
+      √ should 
+calculate semester 
+ganjil (Februari - 
+next year)
+      √ should 
+calculate semester 
+genap (Maret) (1 ms)
+      √ should 
+calculate semester 
+genap (Juni)
+      √ should 
+calculate semester 
+genap (September) (1 
+ms)
+      √ should 
+calculate semester 3 
+(Oktober next year)
+      √ should 
+calculate semester 4 
+(Maret 2nd year) (1 
+ms)
+      √ should 
+calculate semester 5 
+(Oktober 2nd year)
+      √ should 
+calculate semester 7 
+(Oktober 3rd year)
+      √ should 
+calculate semester 8 
+(Maret 4th year) (1 
+ms)
+  HTTP Responses Utils
+    ERROR_MESSAGES
+      √ should have 
+all required error 
+messages (1 ms)
+      √ should have 
+exactly 12 error 
+messages
+    notFound
+      √ should return 
+404 with default 
+message (2 ms)
+      √ should return 
+404 with custom 
+message (9 ms)
+      √ should return 
+404 with specific 
+error message (1 ms)
+    badRequest
+      √ should return 
+400 with default 
+message (1 ms)
+      √ should return 
+400 with custom 
+message
+    unauthorized
+      √ should return 
+401 with default 
+message (1 ms)
+      √ should return 
+401 with custom 
+message (1 ms)
+    forbidden
+      √ should return 
+403 with default 
+message
+      √ should return 
+403 with custom 
+message (1 ms)
+    success
+      √ should return 
+data when provided
+      √ should return 
+message when data is 
+null (2 ms)
+      √ should return 
+message when data is 
+undefined (7 ms)
+      √ should return 
+custom message when 
+no data (1 ms)
+      √ should return 
+empty array if 
+provided (1 ms)
+      √ should return 
+0 if provided (2 ms)
+    validateRequired
+      √ should return 
+null when all fields 
+are present (5 ms)
+      √ should return 
+badRequest when 
+fields are missing (1 
+ms)
+      √ should 
+mention all missing 
+fields (1 ms)
+      √ should handle 
+empty string as 
+missing (1 ms)
+      √ should handle 
+undefined as missing 
+(1 ms)
+    VALID_SEMESTERS
+      √ should 
+contain exactly [2, 
+3, 5, 7, 8]
+      √ should have 
+exactly 5 elements
+    isValidSemester
+      √ should return 
+true for valid 
+semesters
+      √ should return 
+false for invalid 
+semesters (1 ms)
+      √ should return 
+false for non-numbers
+  JWT Utils
+    generateToken
+      √ should 
+generate a valid JWT 
+token (5 ms)
+      √ should 
+include user id and 
+role in token (9 ms)
+      √ should 
+generate different 
+tokens for different 
+users (1 ms)
+      √ should use 
+default expiry when 
+JWT_EXPIRES_IN is not 
+set (1 ms)
+  Password Utils
+    hashPassword
+      √ should hash a 
+password (147 ms)
+      √ should 
+generate different 
+hashes for same 
+password (263 ms)
+      √ should handle 
+empty password (141 
+ms)
+      √ should handle 
+special characters 
+(168 ms)
+      √ should handle 
+Unicode characters 
+(110 ms)
+    comparePassword
+      √ should return 
+true for matching 
+password (192 ms)
+      √ should return 
+false for wrong 
+password (168 ms)
+      √ should return 
+false for similar but 
+different password 
+(183 ms)
+      √ should be 
+case sensitive (152 
+ms)
+      √ should handle 
+empty password 
+comparison (155 ms)
+      √ should handle 
+special characters 
+comparison (154 ms)
+  Cloud Storage Utils
+    Google Cloud 
+Storage (gcs.js)
+      √ should upload 
+file successfully and 
+return public URL (3 
+ms)
+      √ should handle 
+upload error (8 ms)
+      √ should reject 
+if no file provided 
+(1 ms)
+    Google Drive 
+(gdrive.js)
+      √ should upload 
+to GDrive 
+successfully (10 ms)
+      √ should select 
+correct folder for 
+proposals (4 ms)
+      √ should throw 
+error if folder ID 
+missing (4 ms)
+      √ should delete 
+file from GDrive
+      √ should get 
+file info (1 ms)
+  Role Helper Utils
+    getDosenRoles
+      √ should return 
+array of role names 
+(1 ms)
+    hasRole
+      √ should return 
+true if count > 0
+      √ should return 
+false if count is 0
+    addRole
+      √ should add 
+role successfully
+      √ should return 
+false if role already 
+exists (ER_DUP_ENTRY)
+      √ should throw 
+other errors (1 ms)
+    removeRole
+      √ should return 
+true if row deleted
+      √ should return 
+false if row deleted 
+(1 ms)
+    getDosenByRole
+      √ should return 
+list of dosen
+    getDosenWithRoles
+      √ should return 
+dosen with roles
+      √ should return 
+null if dosen not 
+found
+    isKoordinator / 
+isKaprodi
+      √ should check 
+koordinator role (1 
+ms)
+      √ should check 
+kaprodi role
+    
+getKoordinatorByJadwal
+      √ should return 
+koordinator info
+      √ should return 
+null if not found
+
+  console.log
+    is_active column may not exist: Unknown column 'is_active' in 'where clause'
+
+      at Object.log [as getDashboardStats] (controllers/kaprodiController.js:71:29)
+
+  console.log
+    [dotenv@17.2.3] injecting env (9) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: 🔄 add secrets lifecycle management: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+(node:14172) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+PASS __tests__/integra
+tion/controllers.test.
+js
+  Admin Controller - 
+Database Connected
+    getProfile
+      √ should return 
+admin profile (3 ms)
+    getStats
+      √ should return 
+statistics (306 ms)
+    getAllUsers
+      √ should return 
+users list (45 ms)
+    getAllDosen
+      √ should return 
+dosen list (22 ms)
+    getAllMahasiswa
+      √ should return 
+mahasiswa list (25 ms)
+    getRecentActivity
+      √ should return 
+activity list (64 ms)
+  Auth Controller - 
+Database Connected
+    login - admin
+      √ should login 
+as admin with correct 
+credentials (3 ms)
+      √ should return 
+401 for invalid 
+credentials (42 ms)
+    getProfile
+      √ should return 
+admin profile for 
+admin user
+  Mahasiswa 
+Controller - Database 
+Connected
+    exports
+      √ should export 
+getProfile function
+      √ should export 
+getBimbinganList 
+function
+      √ should export 
+getProposalStatus 
+function
+  Dosen Controller - 
+Database Connected
+    exports
+      √ should export 
+getProfile function
+      √ should export 
+getMahasiswaBimbingan 
+function
+  Kaprodi Controller 
+- Database Connected
+    getDashboardStats
+      √ should return 
+dashboard stats (453 
+ms)
+    exports
+      √ should export 
+getAllMahasiswa 
+function
+      √ should export 
+getAllDosen function
+  Koordinator 
+Controller - Database 
+Connected
+    exports
+      √ should export 
+getProfile function
+      √ should export 
+getAssignedSemester 
+function
+
+  console.error
+    Error: Unknown column 'm.is_active' in 'field list'
+        at PromisePool.query (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\mysql2\lib\promise\pool.js:36:22)
+        at query (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\controllers\adminController.js:223:39)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\route.js:157:13)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\middleware\role.js:12:14)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\route.js:157:13)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\middleware\auth.js:20:5)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\route.js:157:13)
+        at Route.dispatch (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\route.js:117:3)
+        at handle (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:435:11)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:295:15
+        at processParams (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:582:12)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:291:5)
+        at Function.handle (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:186:3)
+        at router (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:60:12)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:342:13)
+        at D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:297:9
+        at processParams (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:582:12)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:291:5)
+        at read (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\body-parser\lib\read.js:54:5)
+        at jsonParser (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\body-parser\lib\types\json.js:90:5)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:342:13)
+        at D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:297:9
+        at processParams (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:582:12)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:291:5)
+        at cors (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\cors\lib\index.js:188:7)
+        at D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\cors\lib\index.js:224:17
+        at originCallback (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\cors\lib\index.js:214:15)
+        at D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\cors\lib\index.js:219:13
+        at optionsCallback (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\cors\lib\index.js:199:9)
+        at corsMiddleware (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\cors\lib\index.js:204:7)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:342:13)
+        at D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:297:9
+        at processParams (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:582:12)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:291:5)
+        at Function.handle (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:186:3)
+        at Function.handle (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\express\lib\application.js:177:15)
+        at Server.app (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\express\lib\express.js:38:9)
+        at Server.emit (node:events:519:28)
+        at parserOnIncoming (node:_http_server:1173:12)
+        at HTTPParser.parserOnHeadersComplete (node:_http_common:121:17) {
+      code: 'ER_BAD_FIELD_ERROR',
+      errno: 1054,
+      sql: 'SELECT m.id, m.nama, m.email, m.npm, m.angkatan, m.track, m.status_proposal,\n' +
+        '                m.is_active, m.created_at, d.nama as dosen_nama\n' +
+        '         FROM mahasiswa m\n' +
+        '         LEFT JOIN dosen d ON m.dosen_id = d.id\n' +
+        '         ORDER BY m.nama ASC',
+      sqlState: '42S22',
+      sqlMessage: "Unknown column 'm.is_active' in 'field list'"
+    }
+
+    [0m [90m 61 |[39m [90m// Error handler[39m
+     [90m 62 |[39m app[33m.[39muse((err[33m,[39m req[33m,[39m res[33m,[39m next) [33m=>[39m {
+    [31m[1m>[22m[39m[90m 63 |[39m   console[33m.[39merror(err)[33m;[39m
+     [90m    |[39m           [31m[1m^[22m[39m
+     [90m 64 |[39m   res[33m.[39mstatus([35m500[39m)[33m.[39mjson({ message[33m:[39m [32m'Internal server error'[39m })[33m;[39m
+     [90m 65 |[39m })[33m;[39m
+     [90m 66 |[39m[0m
+
+      at index.js:63:11
+      at Layer.handleError (node_modules/router/lib/layer.js:116:17)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/router/index.js:688:15
+      at next (node_modules/router/index.js:276:14)
+      at next (node_modules/router/lib/route.js:132:14)
+      at next (controllers/adminController.js:232:13)
+
+  console.log
+    is_active column may not exist: Unknown column 'is_active' in 'where clause'
+
+      at log (controllers/kaprodiController.js:71:29)
+
+  console.error
+    Error: Table 'bimbingan_online.penguji' doesn't exist
+        at PromisePool.query (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\mysql2\lib\promise\pool.js:36:22)
+        at query (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\controllers\sharedController.js:139:39)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\route.js:157:13)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\middleware\role.js:35:5)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\route.js:157:13)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\middleware\auth.js:20:5)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\route.js:157:13)
+        at Route.dispatch (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\route.js:117:3)
+        at handle (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:435:11)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:295:15
+        at processParams (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:582:12)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:291:5)
+        at Function.handle (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:186:3)
+        at router (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:60:12)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:342:13)
+        at D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:297:9
+        at processParams (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:582:12)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:291:5)
+        at read (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\body-parser\lib\read.js:54:5)
+        at jsonParser (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\body-parser\lib\types\json.js:90:5)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:342:13)
+        at D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:297:9
+        at processParams (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:582:12)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:291:5)
+        at cors (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\cors\lib\index.js:188:7)
+        at D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\cors\lib\index.js:224:17
+        at originCallback (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\cors\lib\index.js:214:15)
+        at D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\cors\lib\index.js:219:13
+        at optionsCallback (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\cors\lib\index.js:199:9)
+        at corsMiddleware (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\cors\lib\index.js:204:7)
+        at Layer.handleRequest (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:342:13)
+        at D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:297:9
+        at processParams (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:582:12)
+        at next (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:291:5)
+        at Function.handle (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\router\index.js:186:3)
+        at Function.handle (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\express\lib\application.js:177:15)
+        at Server.app (D:\Kegabutan\kavanahub\nggk-tau-ini-apa\node_modules\express\lib\express.js:38:9)
+        at Server.emit (node:events:519:28)
+        at parserOnIncoming (node:_http_server:1173:12)
+        at HTTPParser.parserOnHeadersComplete (node:_http_common:121:17) {
+      code: 'ER_NO_SUCH_TABLE',
+      errno: 1146,
+      sql: 'SELECT id, nidn, nama, email, no_wa, is_active FROM penguji ORDER BY nama ASC',
+      sqlState: '42S02',
+      sqlMessage: "Table 'bimbingan_online.penguji' doesn't exist"
+    }
+
+    [0m [90m 61 |[39m [90m// Error handler[39m
+     [90m 62 |[39m app[33m.[39muse((err[33m,[39m req[33m,[39m res[33m,[39m next) [33m=>[39m {
+    [31m[1m>[22m[39m[90m 63 |[39m   console[33m.[39merror(err)[33m;[39m
+     [90m    |[39m           [31m[1m^[22m[39m
+     [90m 64 |[39m   res[33m.[39mstatus([35m500[39m)[33m.[39mjson({ message[33m:[39m [32m'Internal server error'[39m })[33m;[39m
+     [90m 65 |[39m })[33m;[39m
+     [90m 66 |[39m[0m
+
+      at index.js:63:11
+      at Layer.handleError (node_modules/router/lib/layer.js:116:17)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/router/index.js:688:15
+      at next (node_modules/router/index.js:276:14)
+      at next (node_modules/router/lib/route.js:132:14)
+      at next (controllers/sharedController.js:145:13)
+
+PASS __tests__/integra
+tion/app.test.js 
+(6.208 s)
+  Authenticated 
+Integration Tests - 
+Full Coverage
+    Admin Controller 
+Coverage
+      √ GET 
+/api/admin/stats - 
+with token (204 ms)
+      √ GET 
+/api/admin/users - 
+with token (53 ms)
+      √ GET 
+/api/admin/dosen - 
+with token (25 ms)
+      √ GET 
+/api/admin/mahasiswa 
+- with token (48 ms)
+      √ GET 
+/api/admin/activity - 
+with token (68 ms)
+      √ GET 
+/api/admin/report - 
+with token (84 ms)
+    Auth Controller 
+Coverage
+      √ GET 
+/api/auth/profile - 
+admin (3 ms)
+      √ GET 
+/api/auth/profile - 
+mahasiswa
+      √ GET 
+/api/auth/profile - 
+dosen (26 ms)
+      √ GET 
+/api/auth/profile - 
+kaprodi (23 ms)
+      √ GET 
+/api/auth/profile - 
+koordinator (24 ms)
+      √ POST /api/auth
+/change-password - 
+missing fields
+      √ POST /api/auth
+/change-password - 
+short password
+    Mahasiswa 
+Controller Coverage
+      √ GET 
+/api/mahasiswa/profile
+      √ GET /api/mahas
+iswa/bimbingan
+      √ GET /api/mahas
+iswa/proposal
+      √ GET 
+/api/mahasiswa/dosen
+      √ GET /api/mahas
+iswa/periode-aktif
+      √ GET /api/mahas
+iswa/all-dosen
+    Dosen Controller 
+Coverage
+      √ GET 
+/api/dosen/profile 
+(25 ms)
+      √ GET 
+/api/dosen/mahasiswa 
+(26 ms)
+      √ GET 
+/api/dosen/bimbingan 
+(25 ms)
+    Koordinator 
+Controller Coverage
+      √ GET /api/koord
+inator/stats (2 ms)
+      √ GET /api/koord
+inator/mahasiswa (3 
+ms)
+      √ GET /api/koord
+inator/proposal (4 ms)
+      √ GET /api/koord
+inator/dosen (2 ms)
+      √ GET /api/koord
+inator/jadwal (2 ms)
+    Kaprodi 
+Controller Coverage
+      √ GET 
+/api/kaprodi/stats 
+(240 ms)
+      √ GET /api/kapro
+di/mahasiswa (346 ms)
+      √ GET 
+/api/kaprodi/dosen 
+(24 ms)
+      √ GET /api/kapro
+di/koordinator (24 ms)
+      √ GET 
+/api/kaprodi/penguji 
+(31 ms)
+      √ GET 
+/api/kaprodi/jadwal 
+(2 ms)
+    Bimbingan 
+Controller Coverage
+      √ GET 
+/api/bimbingan - 
+mahasiswa
+      √ GET 
+/api/bimbingan - 
+dosen (2 ms)
+    Proposal 
+Controller Coverage
+      √ GET 
+/api/proposal - 
+mahasiswa
+      √ GET 
+/api/proposal - 
+koordinator (2 ms)
+    Sidang Controller 
+Coverage
+      √ GET 
+/api/sidang - 
+mahasiswa
+    Notification 
+Controller Coverage
+      √ GET 
+/api/notifications - 
+mahasiswa
+    Profile 
+Controller Coverage
+      √ GET 
+/api/profile - 
+mahasiswa
+      √ GET 
+/api/profile - dosen 
+(2 ms)
+    Report Controller 
+Coverage
+      √ GET 
+/api/report - 
+koordinator (2 ms)
+      √ GET 
+/api/report - kaprodi 
+(2 ms)
+
+PASS __tests__/integra
+tion/api.test.js 
+(7.934 s)
+  API Integration 
+Tests
+    Health Check
+      √ should return 
+API is running (728 
+ms)
+    Auth Endpoints - 
+Multi Role Login
+      √ should login 
+as ADMIN (3655 ms)
+      √ should login 
+as MAHASISWA (157 ms)
+      √ should login 
+as DOSEN (360 ms)
+      √ should login 
+as KAPRODI (339 ms)
+      √ should login 
+as KOORDINATOR (126 
+ms)
+      √ should return 
+400 for missing 
+credentials (430 ms)
+      √ should return 
+error for invalid 
+credentials (341 ms)
+    Profile Endpoints
+      √ should return 
+401 without token 
+(391 ms)
+      √ should return 
+admin profile with 
+admin token
+    Admin Endpoints 
+(requires admin token)
+      √ should return 
+401 without token (92 
+ms)
+      √ should return 
+stats with admin 
+token (1 ms)
+      √ should return 
+users list with admin 
+token
+    Mahasiswa 
+Endpoints (requires 
+mahasiswa token)
+      √ should return 
+401 without token (94 
+ms)
+      √ should return 
+bimbingan list with 
+mahasiswa token
+    Dosen Endpoints 
+(requires dosen token)
+      √ should return 
+401 without token 
+(103 ms)
+    Koordinator 
+Endpoints (requires 
+koordinator token)
+      √ should return 
+401 without token 
+(387 ms)
+    Kaprodi Endpoints 
+(requires kaprodi 
+token)
+      √ should return 
+401 without token (91 
+ms)
+
+A worker process has 
+failed to exit 
+gracefully and has 
+been force exited. 
+This is likely caused 
+by tests leaking due 
+to improper teardown. 
+Try running with 
+--detectOpenHandles 
+to find leaks. Active 
+timers can also cause 
+this, ensure that 
+.unref() was called 
+on them.
+----------------------------|---------|----------|---------|---------|----------------------------------------------------------------------------------------
+File                        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                                                                      
+----------------------------|---------|----------|---------|---------|----------------------------------------------------------------------------------------
+All files                   |   73.07 |    66.32 |   84.39 |   73.85 |                                                                                        
+ controllers                |   74.13 |    67.47 |   85.05 |   75.18 |                                                                                        
+  adminController.js        |   87.39 |    77.77 |     100 |   86.48 | 22,27,37,46,86,123,138,151,155,169,216,230,246,260,285                                 
+  authController.js         |   88.28 |    90.54 |     100 |   88.28 | 34,68,111-112,155,178,183,197,223-224,243,277-278                                      
+  bimbinganController.js    |   76.92 |       68 |     100 |   76.92 | 10,21,25,35,49,64,85,108,119,134,146,170                                               
+  dosenController.js        |   80.55 |       50 |     100 |   80.55 | 17,22,51,70,89,110,156                                                                 
+  jadwalController.js       |   68.91 |    68.08 |     100 |   68.91 | 13,28,36,42,58,70,81,89,92,101,112,121,127,130,141,146,162-163,166-167,193-195         
+  kaprodiController.js      |   67.59 |       55 |      40 |   72.44 | 8-38,82,91,135,157,174,191,208,226,244,264,282,289,300,306,315,327,352,363,376         
+  kelompokController.js     |   71.21 |    53.33 |     100 |   71.21 | 10,21,25,29,36,59,69,80,84,88,100,105,115,126,145,159,175,191,209                      
+  koordinatorController.js  |   82.69 |    66.66 |     100 |   84.31 | 19,29,46,55,68,147,175,192                                                             
+  mahasiswaController.js    |   74.56 |    72.85 |    87.5 |   74.56 | 30-49,61,77-78,158-159,172,197-203,211-217,230,245,250,271,296,316,335,340,358,365,391 
+  notificationController.js |   54.16 |       40 |     100 |   59.09 | 39-48,55-67,72                                                                         
+  sharedController.js       |   57.83 |    58.92 |   77.77 |   56.79 | 72,90-105,132,143,154,161,171,177,182-188,194-198,208-253                              
+  sidangController.js       |   66.66 |    50.94 |      90 |   70.27 | 11,32-33,46-51,65,81,97,162-163,208,219,230,234,250,257,270-296,316,336                
+ middleware                 |   90.16 |    83.33 |   91.66 |   90.16 |                                                                                        
+  auth.js                   |     100 |      100 |     100 |     100 |                                                                                        
+  role.js                   |      85 |    81.81 |     100 |      85 | 17,29,43                                                                               
+  upload.js                 |   89.65 |       75 |   85.71 |   89.65 | 59-60,65                                                                               
+ routes                     |   51.38 |        0 |       0 |   51.38 |                                                                                        
+  adminRoutes.js            |     100 |      100 |     100 |     100 |                                                                                        
+  authRoutes.js             |     100 |      100 |     100 |     100 |                                                                                        
+  bimbinganRoutes.js        |      25 |        0 |       0 |      25 | 19-40                                                                                  
+  dosenRoutes.js            |     100 |      100 |     100 |     100 |                                                                                        
+  kaprodiRoutes.js          |     100 |      100 |     100 |     100 |                                                                                        
+  koordinatorRoutes.js      |     100 |      100 |     100 |     100 |                                                                                        
+  mahasiswaRoutes.js        |     100 |      100 |     100 |     100 |                                                                                        
+  notificationRoutes.js     |     100 |      100 |     100 |     100 |                                                                                        
+  pengujiRoutes.js          |      20 |        0 |       0 |      20 | 10-24,30-45                                                                            
+  profileRoutes.js          |    6.45 |        0 |       0 |    6.45 | 15-63                                                                                  
+  proposalRoutes.js         |   10.52 |        0 |       0 |   10.52 | 17-58                                                                                  
+  reportRoutes.js           |   11.76 |        0 |       0 |   11.76 | 17-51                                                                                  
+  sidangRoutes.js           |   33.33 |      100 |       0 |   33.33 | 19-30                                                                                  
+ utils                      |   85.71 |    86.76 |   97.14 |   87.05 |                                                                                        
+  constants.js              |     100 |      100 |     100 |     100 |                                                                                        
+  gcs.js                    |      95 |      100 |     100 |      95 | 36                                                                                     
+  gdrive.js                 |   70.14 |    65.38 |   83.33 |   73.01 | 15-28,34,40,83,141-142,155,163-164,181-182                                             
+  httpResponses.js          |     100 |      100 |     100 |     100 |                                                                                        
+  jwt.js                    |     100 |      100 |     100 |     100 |                                                                                        
+  password.js               |     100 |      100 |     100 |     100 |                                                                                        
+  roleHelper.js             |     100 |      100 |     100 |     100 |                                                                                        
+----------------------------|---------|----------|---------|---------|----------------------------------------------------------------------------------------
+Test Suites: 17 
+passed, 17 total
+Tests:       489 
+passed, 489 total
+Snapshots:   0 total
+Time:        11.221 s
+Ran all test suites.

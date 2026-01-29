@@ -2,8 +2,15 @@
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 
 // Mock the database pool before importing controllers
+// Mock the database pool before importing controllers
 const mockQuery = jest.fn();
-jest.unstable_mockModule('../../config/db.js', () => ({
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const resolvePath = (relativePath) => path.resolve(__dirname, relativePath).replace(/\\/g, '/');
+
+jest.unstable_mockModule(resolvePath('../../config/db.js'), () => ({
     default: {
         query: mockQuery
     }

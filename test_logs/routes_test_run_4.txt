@@ -1,0 +1,494 @@
+﻿
+> nggk-tau-ini-apa@1.0.0 test
+> cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --passWithNoTests --testPathPattern=unit/routes.test.js --no-cache
+
+node.exe : [baseline-b
+rowser-mapping] The 
+data in this module 
+is over two months 
+old.  To ensure 
+accurate Baseline 
+data, please update: 
+`npm i baseline-browse
+r-mapping@latest -D`
+At line:1 char:1
++ & "D:\ENV\NodeJS/nod
+e.exe" "C:\Users\Renz\
+AppData\Roaming\npm/no
+de_mo ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: ([baseline-   
+ brows...ping@late    
+st -D`:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+(node:14704) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+FAIL __tests__/unit/ro
+utes.test.js
+  Route Definitions
+    Auth Routes
+      × should define 
+POST 
+/register/mahasiswa 
+(2 ms)
+      × should define 
+POST /login (1 ms)
+      × should define 
+GET /profile with auth
+    Admin Routes
+      × should define 
+GET /users with admin 
+role (1 ms)
+      × should define 
+POST /dosen
+    Mahasiswa Routes
+      × should define 
+GET /profile
+      × should define 
+POST /proposal (1 ms)
+
+  ● Route Definitions 
+› Auth Routes › 
+should define POST 
+/register/mahasiswa
+
+    expect(received).t
+oBeDefined()
+
+    Received: 
+undefined
+
+    [0m [90m 143 
+|[39m         
+it([32m'should 
+define POST /register/
+mahasiswa'[39m[33m,
+[39m () [33m=>[39m {
+     [90m 144 |[39m 
+            
+[36mconst[39m call 
+[33m=[39m findCall(
+[32m'post'[39m[33m,
+[39m [32m'/register/m
+ahasiswa'[39m)[33m;
+[39m
+    [31m[1m>[22m[3
+9m[90m 145 |[39m    
+         expect(call)
+[33m.[39mtoBeDefined(
+)[33m;[39m
+     [90m     |[39m 
+                      
+   
+[31m[1m^[22m[39m
+     [90m 146 |[39m 
+            expect(cal
+l[[35m1[39m])[33m.
+[39mtoBe(mockAuthContr
+oller[33m.[39mregist
+erMahasiswa)[33m;[39
+m
+     [90m 147 |[39m 
+        })[33m;[39m
+     [90m 148 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/routes.te
+st.js:145:26)
+
+  ● Route Definitions 
+› Auth Routes › 
+should define POST 
+/login
+
+    expect(received).t
+oBeDefined()
+
+    Received: 
+undefined
+
+    [0m [90m 149 
+|[39m         
+it([32m'should 
+define POST /login'[3
+9m[33m,[39m () 
+[33m=>[39m {
+     [90m 150 |[39m 
+            
+[36mconst[39m call 
+[33m=[39m findCall(
+[32m'post'[39m[33m,
+[39m [32m'/login'[39
+m)[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 151 |[39m    
+         expect(call)
+[33m.[39mtoBeDefined(
+)[33m;[39m
+     [90m     |[39m 
+                      
+   
+[31m[1m^[22m[39m
+     [90m 152 |[39m 
+            expect(cal
+l[[35m1[39m])[33m.
+[39mtoBe(mockAuthContr
+oller[33m.[39mlogin)
+[33m;[39m
+     [90m 153 |[39m 
+        })[33m;[39m
+     [90m 154 
+|[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/routes.te
+st.js:151:26)
+
+  ● Route Definitions 
+› Auth Routes › 
+should define GET 
+/profile with auth
+
+    expect(received).t
+oBeDefined()
+
+    Received: 
+undefined
+
+    [0m [90m 155 
+|[39m         
+it([32m'should 
+define GET /profile 
+with 
+auth'[39m[33m,[39m 
+() [33m=>[39m {
+     [90m 156 |[39m 
+            
+[36mconst[39m call 
+[33m=[39m findCall(
+[32m'get'[39m[33m,[
+39m [32m'/profile'[3
+9m)[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 157 |[39m    
+         expect(call)
+[33m.[39mtoBeDefined(
+)[33m;[39m
+     [90m     |[39m 
+                      
+   
+[31m[1m^[22m[39m
+     [90m 158 |[39m 
+            expect(cal
+l[[35m1[39m])[33m.
+[39mtoBe(mockAuthMiddl
+eware)[33m;[39m
+     [90m 159 |[39m 
+            expect(cal
+l[[35m2[39m])[33m.
+[39mtoBe(mockAuthContr
+oller[33m.[39mgetPro
+file)[33m;[39m
+     [90m 160 |[39m 
+        
+})[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/routes.te
+st.js:157:26)
+
+  ● Route Definitions 
+› Admin Routes › 
+should define GET 
+/users with admin role
+
+    expect(received).t
+oBeDefined()
+
+    Received: 
+undefined
+
+    [0m [90m 168 
+|[39m         
+it([32m'should 
+define GET /users 
+with admin 
+role'[39m[33m,[39m 
+() [33m=>[39m {
+     [90m 169 |[39m 
+            
+[36mconst[39m call 
+[33m=[39m findCall(
+[32m'get'[39m[33m,[
+39m [32m'/users'[39m
+)[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 170 |[39m    
+         expect(call)
+[33m.[39mtoBeDefined(
+)[33m;[39m
+     [90m     |[39m 
+                      
+   
+[31m[1m^[22m[39m
+     [90m 171 |[39m 
+            expect(cal
+l[[35m1[39m])[33m.
+[39mtoBe(mockAuthMiddl
+eware)[33m;[39m
+     [90m 172 |[39m 
+            expect(cal
+l[[35m2[39m])[33m.
+[39mtoBe([32m"require
+Role(admin)"[39m)[33
+m;[39m [90m// 
+string from mock[39m
+     [90m 173 |[39m 
+            expect(cal
+l[[35m3[39m])[33m.
+[39mtoBe(mockAdminCont
+roller[33m.[39mgetAl
+lUsers)[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/routes.te
+st.js:170:26)
+
+  ● Route Definitions 
+› Admin Routes › 
+should define POST 
+/dosen
+
+    expect(received).t
+oBeDefined()
+
+    Received: 
+undefined
+
+    [0m [90m 176 
+|[39m         
+it([32m'should 
+define POST /dosen'[3
+9m[33m,[39m () 
+[33m=>[39m {
+     [90m 177 |[39m 
+            
+[36mconst[39m call 
+[33m=[39m findCall(
+[32m'post'[39m[33m,
+[39m [32m'/dosen'[39
+m)[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 178 |[39m    
+         expect(call)
+[33m.[39mtoBeDefined(
+)[33m;[39m
+     [90m     |[39m 
+                      
+   
+[31m[1m^[22m[39m
+     [90m 179 |[39m 
+            expect(cal
+l[[35m1[39m])[33m.
+[39mtoBe(mockAuthMiddl
+eware)[33m;[39m
+     [90m 180 |[39m 
+            expect(cal
+l[[35m2[39m])[33m.
+[39mtoBe([32m"require
+Role(admin)"[39m)[33
+m;[39m
+     [90m 181 |[39m 
+            expect(cal
+l[[35m3[39m])[33m.
+[39mtoBe(mockAdminCont
+roller[33m.[39mcreat
+eDosen)[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/routes.te
+st.js:178:26)
+
+  ● Route Definitions 
+› Mahasiswa Routes › 
+should define GET 
+/profile
+
+    expect(received).t
+oBeDefined()
+
+    Received: 
+undefined
+
+    [0m [90m 190 
+|[39m         
+it([32m'should 
+define GET /profile'[
+39m[33m,[39m () 
+[33m=>[39m {
+     [90m 191 |[39m 
+            
+[36mconst[39m call 
+[33m=[39m findCall(
+[32m'get'[39m[33m,[
+39m [32m'/profile'[3
+9m)[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 192 |[39m    
+         expect(call)
+[33m.[39mtoBeDefined(
+)[33m;[39m
+     [90m     |[39m 
+                      
+   
+[31m[1m^[22m[39m
+     [90m 193 |[39m 
+            expect(cal
+l[[35m1[39m])[33m.
+[39mtoBe(mockAuthMiddl
+eware)[33m;[39m
+     [90m 194 |[39m 
+            expect(cal
+l[[35m2[39m])[33m.
+[39mtoBe([32m"require
+Role(mahasiswa)"[39m)
+[33m;[39m
+     [90m 195 |[39m 
+            expect(cal
+l[[35m3[39m])[33m.
+[39mtoBe(mockMahasiswa
+Controller[33m.[39mg
+etProfile)[33m;[39m
+[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/routes.te
+st.js:192:26)
+
+  ● Route Definitions 
+› Mahasiswa Routes › 
+should define POST 
+/proposal
+
+    expect(received).t
+oBeDefined()
+
+    Received: 
+undefined
+
+    [0m [90m 198 
+|[39m         
+it([32m'should 
+define POST /proposal'
+[39m[33m,[39m () 
+[33m=>[39m {
+     [90m 199 |[39m 
+            
+[36mconst[39m call 
+[33m=[39m findCall(
+[32m'post'[39m[33m,
+[39m [32m'/proposal'
+[39m)[33m;[39m
+    [31m[1m>[22m[3
+9m[90m 200 |[39m    
+         expect(call)
+[33m.[39mtoBeDefined(
+)[33m;[39m
+     [90m     |[39m 
+                      
+   
+[31m[1m^[22m[39m
+     [90m 201 |[39m 
+            expect(cal
+l[[35m3[39m])[33m.
+[39mtoBe(mockMahasiswa
+Controller[33m.[39ms
+ubmitProposal)[33m;[
+39m
+     [90m 202 |[39m 
+        })[33m;[39m
+     [90m 203 |[39m 
+    })[33m;[39m[0m
+
+      at 
+Object.<anonymous> (__
+tests__/unit/routes.te
+st.js:200:26)
+
+----------------------------|---------|----------|---------|---------|-------------------
+File                        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------------------------|---------|----------|---------|---------|-------------------
+All files                   |    2.66 |        0 |       0 |    2.75 |                   
+ controllers                |       0 |        0 |       0 |       0 |                   
+  adminController.js        |       0 |        0 |       0 |       0 | 3-285             
+  authController.js         |       0 |        0 |       0 |       0 | 6-278             
+  bimbinganController.js    |       0 |        0 |       0 |       0 | 3-170             
+  dosenController.js        |       0 |        0 |       0 |       0 | 4-156             
+  jadwalController.js       |       0 |        0 |       0 |       0 | 3-197             
+  kaprodiController.js      |       0 |        0 |       0 |       0 | 4-376             
+  kelompokController.js     |       0 |        0 |       0 |       0 | 3-209             
+  koordinatorController.js  |       0 |        0 |       0 |       0 | 5-192             
+  mahasiswaController.js    |       0 |        0 |       0 |       0 | 4-391             
+  notificationController.js |       0 |        0 |       0 |       0 | 3-72              
+  sharedController.js       |       0 |        0 |       0 |       0 | 8-253             
+  sidangController.js       |       0 |        0 |       0 |       0 | 3-336             
+ middleware                 |       0 |        0 |       0 |       0 |                   
+  auth.js                   |       0 |        0 |       0 |       0 | 4-22              
+  role.js                   |       0 |        0 |       0 |       0 | 5-50              
+  upload.js                 |       0 |        0 |       0 |       0 | 4-67              
+ routes                     |   19.88 |        0 |       0 |   19.88 |                   
+  adminRoutes.js            |     100 |      100 |     100 |     100 |                   
+  authRoutes.js             |     100 |      100 |     100 |     100 |                   
+  bimbinganRoutes.js        |       0 |        0 |       0 |       0 | 8-40              
+  dosenRoutes.js            |       0 |      100 |     100 |       0 | 8-32              
+  kaprodiRoutes.js          |       0 |      100 |     100 |       0 | 6-27              
+  koordinatorRoutes.js      |       0 |      100 |     100 |       0 | 8-40              
+  mahasiswaRoutes.js        |     100 |      100 |     100 |     100 |                   
+  notificationRoutes.js     |       0 |      100 |     100 |       0 | 5-8               
+  pengujiRoutes.js          |       0 |        0 |       0 |       0 | 6-45              
+  profileRoutes.js          |       0 |        0 |       0 |       0 | 7-63              
+  proposalRoutes.js         |       0 |        0 |       0 |       0 | 8-58              
+  reportRoutes.js           |       0 |        0 |       0 |       0 | 8-51              
+  sidangRoutes.js           |       0 |      100 |       0 |       0 | 8-30              
+ utils                      |       0 |        0 |       0 |       0 |                   
+  constants.js              |       0 |        0 |       0 |       0 | 6-71              
+  gcs.js                    |       0 |        0 |       0 |       0 | 3-42              
+  gdrive.js                 |       0 |        0 |       0 |       0 | 12-191            
+  httpResponses.js          |       0 |        0 |       0 |       0 | 6-54              
+  jwt.js                    |       0 |        0 |       0 |       0 | 4-7               
+  password.js               |       0 |      100 |       0 |       0 | 4-9               
+  roleHelper.js             |       0 |        0 |       0 |       0 | 13-157            
+----------------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 
+failed, 1 total
+Tests:       7 
+failed, 7 total
+Snapshots:   0 total
+Time:        2.724 s
+Ran all test suites 
+matching /unit\\routes
+.test.js/i.
