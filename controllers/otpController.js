@@ -1,6 +1,6 @@
 import pool from '../config/db.js';
 import { hashPassword, comparePassword } from '../utils/password.js';
-import { generateToken } from '../utils/jwt.js';
+import { generateCustomToken, verifyToken } from '../utils/jwt.js';
 import { sendOTPEmail } from '../utils/mailer.js';
 
 // OTP config
@@ -323,7 +323,7 @@ const otpController = {
 
             await pool.query('UPDATE otp_codes SET used = TRUE WHERE id = ?', [otpRecord.id]);
 
-            const resetToken = generateToken({ email, purpose: 'reset_password' });
+            const resetToken = generateCustomToken({ email, purpose: 'reset_password' }, '10m');
 
             res.json({
                 message: 'Kode OTP berhasil diverifikasi',
@@ -353,8 +353,7 @@ const otpController = {
 
             let payload;
             try {
-                const jwt = await import('jsonwebtoken');
-                payload = jwt.default.verify(reset_token, process.env.JWT_SECRET);
+                payload = verifyToken(reset_token);
             } catch (err) {
                 return res.status(400).json({ message: 'Token tidak valid atau sudah kedaluwarsa' });
             }

@@ -13,3 +13,12 @@ export function generateToken(user) {
     { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
   );
 }
+
+// For OTP: signs arbitrary payload with custom expiry
+export function generateCustomToken(payload, expiresIn = '10m') {
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
+}
+
+export function verifyToken(token) {
+  return jwt.verify(token, process.env.JWT_SECRET);
+}
