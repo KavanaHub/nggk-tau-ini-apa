@@ -16,9 +16,13 @@ function generateOTP() {
 }
 
 /**
- * Ensure otp_codes table exists (auto-create)
+ * Ensure otp_codes table exists and is up-to-date
  */
+let tableReady = false;
 async function ensureOTPTable() {
+    if (tableReady) return; // only run once per process
+
+    // Create table if not exists
     await pool.query(`
     CREATE TABLE IF NOT EXISTS otp_codes (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -34,6 +38,16 @@ async function ensureOTPTable() {
       INDEX idx_expires (expires_at)
     )
   `);
+
+    // Migrate existing table: add 'register' to ENUM if missing + add payload column
+    try {
+        await pool.query(`ALTER TABLE otp_codes MODIFY COLUMN type ENUM('login', 'reset_password', 'register') DEFAULT 'reset_password'`);
+    } catch (e) { /* already correct */ }
+    try {
+        await pool.query(`ALTER TABLE otp_codes ADD COLUMN payload JSON NULL AFTER type`);
+    } catch (e) { /* column already exists */ }
+
+    tableReady = true;
 }
 
 /**
