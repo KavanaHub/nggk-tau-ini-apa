@@ -39,7 +39,7 @@ jobs:
             --allow-unauthenticated \
             --timeout=540s \
             --service-account=renz-cloud@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
-            --set-env-vars=DB_HOST=${{ secrets.DB_HOST }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_NAME=${{ secrets.DB_NAME }},DB_PORT=${{ secrets.DB_PORT }},JWT_SECRET=${{ secrets.JWT_SECRET }},JWT_EXPIRE_IN=${{ secrets.JWT_EXPIRE_IN}},NODE_ENV=${{ secrets.NODE_ENV }},GDRIVE_FOLDER_PROPOSALS=${{ secrets.GDRIVE_FOLDER_PROPOSALS }},GDRIVE_FOLDER_REPORTS=${{ secrets.GDRIVE_FOLDER_REPORTS }},GDRIVE_FOLDER_PROFILES=${{ secrets.GDRIVE_FOLDER_PROFILES }},GDRIVE_FOLDER_BIMBINGAN=${{ secrets.GDRIVE_FOLDER_BIMBINGAN }},GDRIVE_FOLDER_DEFAULT=${{ secrets.GDRIVE_FOLDER_DEFAULT }}
+            --set-env-vars=DB_HOST=${{ secrets.DB_HOST }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_NAME=${{ secrets.DB_NAME }},DB_PORT=${{ secrets.DB_PORT }},JWT_SECRET=${{ secrets.JWT_SECRET }},JWT_EXPIRE_IN=${{ secrets.JWT_EXPIRE_IN}},NODE_ENV=${{ secrets.NODE_ENV }},GDRIVE_FOLDER_PROPOSALS=${{ secrets.GDRIVE_FOLDER_PROPOSALS }},GDRIVE_FOLDER_REPORTS=${{ secrets.GDRIVE_FOLDER_REPORTS }},GDRIVE_FOLDER_PROFILES=${{ secrets.GDRIVE_FOLDER_PROFILES }},GDRIVE_FOLDER_BIMBINGAN=${{ secrets.GDRIVE_FOLDER_BIMBINGAN }},GDRIVE_FOLDER_DEFAULT=${{ secrets.GDRIVE_FOLDER_DEFAULT }},MAILTRAP_API_TOKEN=${{ secrets.MAILTRAP_API_TOKEN }}
 
       # 4. Optional: Cek apakah function sudah berhasil
       - name: Check Function Exists
