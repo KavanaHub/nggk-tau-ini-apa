@@ -16,6 +16,10 @@ router.post('/request-otp', otpController.requestOTP);
 router.post('/verify-otp', otpController.verifyOTP);
 router.post('/reset-password', otpController.resetPassword);
 
+// Register OTP (public)
+router.post('/request-register-otp', otpController.requestRegisterOTP);
+router.post('/verify-register-otp', otpController.verifyRegisterOTP);
+
 // PROFILE (requires auth)
 router.get('/profile', authMiddleware, authController.getProfile);
 router.patch('/profile', authMiddleware, authController.updateProfile);
