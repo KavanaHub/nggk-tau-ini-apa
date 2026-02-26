@@ -1,6 +1,16 @@
 import pool from '../config/db.js';
 import { hasRole, ROLES } from '../utils/roleHelper.js';
 
+const isProyekTrack = (track) => String(track || '').toLowerCase().includes('proyek');
+const normalizeTitle = (value) => String(value || '').trim().toLowerCase();
+const getStatusPriority = (status) => {
+  const normalized = String(status || '').toLowerCase();
+  if (['submitted', 'pending', 'waiting'].includes(normalized)) return 3;
+  if (normalized === 'rejected') return 2;
+  if (normalized === 'approved') return 1;
+  return 0;
+};
+
 const sidangController = {
   // MAHASISWA: SUBMIT LAPORAN SIDANG
   // MAHASISWA: SUBMIT LAPORAN SIDANG (GROUP SUPPORT)
@@ -136,26 +146,78 @@ const sidangController = {
 
       const [rows] = await pool.query(query, [dosenId, dosenId, dosenId]);
 
-      // 2. Group by Kelompok in JS (Safe & Robust)
-      const uniqueReports = [];
-      const processedGroups = new Set();
-      const processedStudents = new Set();
+      // Grouping logic:
+      // 1) Proyek + kelompok_id => group by kelompok_id
+      // 2) Proyek tanpa kelompok_id => fallback group by judul_proyek (for manual/legacy data)
+      // 3) Internship => tetap individual
+      const groupedReports = new Map();
 
       for (const row of rows) {
-        if (row.kelompok_id) {
-          // Group Logic: Only add if this group hasn't been added yet
-          if (!processedGroups.has(row.kelompok_id)) {
-            uniqueReports.push(row);
-            processedGroups.add(row.kelompok_id);
-          }
-        } else {
-          // Individual Logic
-          if (!processedStudents.has(row.mahasiswa_id)) {
-            uniqueReports.push(row);
-            processedStudents.add(row.mahasiswa_id);
-          }
+        const isProyek = isProyekTrack(row.track);
+        const normalizedJudul = normalizeTitle(row.judul);
+
+        let groupKey = `mhs:${row.mahasiswa_id}`;
+        let groupingMode = 'individual';
+
+        if (isProyek && row.kelompok_id) {
+          groupKey = `kelompok:${row.kelompok_id}`;
+          groupingMode = 'kelompok';
+        } else if (isProyek && normalizedJudul) {
+          groupKey = `judul:${String(row.track || '').toLowerCase()}:${normalizedJudul}`;
+          groupingMode = 'judul';
         }
+
+        const existing = groupedReports.get(groupKey);
+        if (!existing) {
+          const initial = {
+            ...row,
+            grouping_mode: groupingMode,
+            anggota_nama: row.mahasiswa_nama || '',
+            anggota_npm: row.mahasiswa_npm || '',
+          };
+
+          if (isProyek && !initial.kelompok_nama) {
+            initial.kelompok_nama = row.judul ? `Kelompok Proyek - ${row.judul}` : 'Kelompok Proyek';
+          }
+
+          groupedReports.set(groupKey, initial);
+          continue;
+        }
+
+        // Merge anggota info
+        const namaSet = new Set(String(existing.anggota_nama || '').split(', ').filter(Boolean));
+        if (row.mahasiswa_nama) namaSet.add(row.mahasiswa_nama);
+        existing.anggota_nama = Array.from(namaSet).join(', ');
+
+        const npmSet = new Set(String(existing.anggota_npm || '').split(', ').filter(Boolean));
+        if (row.mahasiswa_npm) npmSet.add(row.mahasiswa_npm);
+        existing.anggota_npm = Array.from(npmSet).join(', ');
+
+        // Keep the most actionable status for group card (pending/waiting/submitted > rejected > approved)
+        const incomingPriority = getStatusPriority(row.status);
+        const existingPriority = getStatusPriority(existing.status);
+        const incomingDate = new Date(row.tanggal_submit || 0).getTime();
+        const existingDate = new Date(existing.tanggal_submit || 0).getTime();
+        const shouldReplaceRepresentative =
+          incomingPriority > existingPriority ||
+          (incomingPriority === existingPriority && incomingDate > existingDate);
+
+        if (shouldReplaceRepresentative) {
+          existing.id = row.id;
+          existing.mahasiswa_id = row.mahasiswa_id;
+          existing.file_laporan = row.file_laporan;
+          existing.status = row.status;
+          existing.catatan_dosen = row.catatan_dosen;
+          existing.tanggal_submit = row.tanggal_submit;
+          existing.peran_pembimbing = row.peran_pembimbing;
+        }
+
+        existing.bimbingan_count = Math.max(Number(existing.bimbingan_count || 0), Number(row.bimbingan_count || 0));
       }
+
+      const uniqueReports = Array.from(groupedReports.values()).sort(
+        (a, b) => new Date(b.tanggal_submit || 0) - new Date(a.tanggal_submit || 0)
+      );
 
       res.json(uniqueReports);
     } catch (err) {
@@ -178,7 +240,7 @@ const sidangController = {
     try {
       // 1. Get Info Report ini milik siapa & kelompok mana
       const [rows] = await pool.query(
-        `SELECT m.id as mahasiswa_id, m.kelompok_id 
+        `SELECT m.id as mahasiswa_id, m.kelompok_id, m.track, m.judul_proyek, ls.file_url
          FROM laporan_sidang ls
          JOIN mahasiswa m ON ls.mahasiswa_id = m.id
          WHERE ls.id = ?`,
@@ -187,18 +249,49 @@ const sidangController = {
 
       if (rows.length === 0) return res.status(404).json({ message: 'Laporan tidak ditemukan' });
 
-      const { kelompok_id, mahasiswa_id } = rows[0];
+      const { kelompok_id, mahasiswa_id, track, judul_proyek, file_url } = rows[0];
 
       // 2. Tentukan siapa saja yang di-update
       let targetMahasiswaIds = [mahasiswa_id];
       if (kelompok_id) {
         const [members] = await pool.query('SELECT id FROM mahasiswa WHERE kelompok_id = ?', [kelompok_id]);
         targetMahasiswaIds = members.map(m => m.id);
+      } else if (isProyekTrack(track) && normalizeTitle(judul_proyek)) {
+        // Fallback: proyek manual/legacy tanpa kelompok_id -> sinkronkan by judul proyek
+        const [members] = await pool.query(
+          `SELECT id
+           FROM mahasiswa
+           WHERE LOWER(TRIM(judul_proyek)) = ?
+             AND track = ?
+             AND (dosen_id = ? OR dosen_id_2 = ?)`,
+          [normalizeTitle(judul_proyek), track, dosenId, dosenId]
+        );
+
+        if (members.length > 0) {
+          targetMahasiswaIds = members.map(m => m.id);
+        }
+      }
+      targetMahasiswaIds = [...new Set(targetMahasiswaIds)];
+
+      // 3. Pastikan semua target punya baris laporan_sidang
+      // (penting untuk data manual yang hanya insert 1 anggota proyek)
+      const placeholders = targetMahasiswaIds.map(() => '?').join(',');
+      const [existingRows] = await pool.query(
+        `SELECT mahasiswa_id FROM laporan_sidang WHERE mahasiswa_id IN (${placeholders})`,
+        targetMahasiswaIds
+      );
+      const existingSet = new Set(existingRows.map((r) => r.mahasiswa_id));
+      const missingIds = targetMahasiswaIds.filter((mid) => !existingSet.has(mid));
+
+      for (const mid of missingIds) {
+        await pool.query(
+          `INSERT INTO laporan_sidang (mahasiswa_id, file_url, status, note, approved_by, approved_at)
+           VALUES (?, ?, ?, ?, ?, NOW())`,
+          [mid, file_url, status, note || null, dosenId]
+        );
       }
 
-      // 3. Update Status untuk semua target
-      // Note: approved_by kita set ke dosen yg melakukan action
-      const placeholders = targetMahasiswaIds.map(() => '?').join(',');
+      // 4. Update status untuk semua target
       await pool.query(
         `UPDATE laporan_sidang 
          SET status = ?, note = ?, approved_by = ?, approved_at = NOW()
