@@ -1,4 +1,5 @@
 import pool from '../config/db.js';
+import { hasRole, ROLES } from '../utils/roleHelper.js';
 
 const sidangController = {
   // MAHASISWA: SUBMIT LAPORAN SIDANG
@@ -103,7 +104,6 @@ const sidangController = {
     const dosenId = req.user.id;
 
     try {
-      // 1. Get ALL reports for this lecturer (without GROUP BY to avoid SQL errors)
       const query = `
         SELECT 
             ls.id, 
@@ -171,6 +171,9 @@ const sidangController = {
     const { status, note } = req.body;
 
     if (!status) return res.status(400).json({ message: 'status wajib diisi' });
+    if (!(await hasRole(dosenId, ROLES.DOSEN))) {
+      return res.status(403).json({ message: 'Hanya akun dengan role dosen yang dapat memvalidasi laporan' });
+    }
 
     try {
       // 1. Get Info Report ini milik siapa & kelompok mana
