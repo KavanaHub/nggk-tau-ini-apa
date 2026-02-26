@@ -11,9 +11,9 @@ const bimbinganController = {
     }
 
     try {
-      // 1. Cek mahasiswa punya dosen pembimbing
+      // 1. Cek mahasiswa + track + kelompok + dosen pembimbing
       const [mhsRows] = await pool.query(
-        'SELECT dosen_id FROM mahasiswa WHERE id = ?',
+        'SELECT id, track, kelompok_id, dosen_id FROM mahasiswa WHERE id = ?',
         [mahasiswaId]
       );
 
@@ -21,45 +21,75 @@ const bimbinganController = {
         return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
       }
 
-      if (!mhsRows[0].dosen_id) {
+      const requester = mhsRows[0];
+      if (!requester.dosen_id) {
         return res.status(400).json({ message: 'Anda belum memiliki dosen pembimbing' });
       }
 
-      // 2. Cek jumlah bimbingan (max 8)
-      const [[{ total }]] = await pool.query(
-        'SELECT COUNT(*) AS total FROM bimbingan WHERE mahasiswa_id = ?',
-        [mahasiswaId]
-      );
-
-      if (total >= 8) {
-        return res.status(400).json({ message: 'Bimbingan sudah mencapai batas maksimal (8 kali)' });
+      // 2. Tentukan target submit:
+      //    - Proyek + punya kelompok => 1 submit perwakilan, tersimpan untuk semua anggota kelompok
+      //    - Internship / tidak berkelompok => tetap individual
+      let targets = [requester];
+      const isProyek = String(requester.track || '').includes('proyek');
+      if (isProyek && requester.kelompok_id) {
+        const [members] = await pool.query(
+          'SELECT id, dosen_id FROM mahasiswa WHERE kelompok_id = ?',
+          [requester.kelompok_id]
+        );
+        if (members.length > 0) {
+          targets = members;
+        }
       }
 
-      // 3. Cek Validasi Mingguan (1 Minggu Max 1 Bimbingan)
-      //    Logic: Cek apakah ada bimbingan (non-rejected) di YEARWEEK yang sama
-      const [existingWeek] = await pool.query(
-        `SELECT id, tanggal FROM bimbingan 
-         WHERE mahasiswa_id = ? 
-         AND status != 'rejected'
-         AND YEARWEEK(tanggal, 1) = YEARWEEK(?, 1)`,
-        [mahasiswaId, tanggal]
-      );
+      // 3. Validasi semua target: max 8 + 1 minggu maksimal 1 bimbingan non-rejected
+      for (const target of targets) {
+        const [[{ total }]] = await pool.query(
+          'SELECT COUNT(*) AS total FROM bimbingan WHERE mahasiswa_id = ?',
+          [target.id]
+        );
 
-      if (existingWeek.length > 0) {
-        return res.status(400).json({
-          message: 'Anda sudah melakukan bimbingan di minggu ini. Mohon ajukan di minggu berikutnya.',
-          existingDate: existingWeek[0].tanggal
-        });
+        if (total >= 8) {
+          return res.status(400).json({
+            message: 'Bimbingan sudah mencapai batas maksimal (8 kali)',
+            mahasiswa_id: target.id,
+          });
+        }
+
+        const [existingWeek] = await pool.query(
+          `SELECT id, tanggal FROM bimbingan 
+           WHERE mahasiswa_id = ? 
+           AND status != 'rejected'
+           AND YEARWEEK(tanggal, 1) = YEARWEEK(?, 1)`,
+          [target.id, tanggal]
+        );
+
+        if (existingWeek.length > 0) {
+          return res.status(400).json({
+            message: 'Sudah ada bimbingan di minggu ini. Mohon ajukan di minggu berikutnya.',
+            mahasiswa_id: target.id,
+            existingDate: existingWeek[0].tanggal,
+          });
+        }
       }
 
-      // 4. Insert data
-      const [result] = await pool.query(
-        `INSERT INTO bimbingan (mahasiswa_id, dosen_id, tanggal, minggu_ke, topik, catatan, status)
-         VALUES (?, ?, ?, ?, ?, ?, 'waiting')`,
-        [mahasiswaId, mhsRows[0].dosen_id, tanggal, minggu_ke, topik, catatan || null]
-      );
+      // 4. Insert ke semua target (proyek: semua anggota, internship: 1 mahasiswa)
+      const insertedIds = [];
+      for (const target of targets) {
+        const [result] = await pool.query(
+          `INSERT INTO bimbingan (mahasiswa_id, dosen_id, tanggal, minggu_ke, topik, catatan, status)
+           VALUES (?, ?, ?, ?, ?, ?, 'waiting')`,
+          [target.id, target.dosen_id || requester.dosen_id, tanggal, minggu_ke, topik, catatan || null]
+        );
+        insertedIds.push(result.insertId);
+      }
 
-      res.status(201).json({ message: 'Bimbingan berhasil dibuat', id: result.insertId });
+      res.status(201).json({
+        message: targets.length > 1
+          ? 'Bimbingan kelompok berhasil dibuat (submit perwakilan)'
+          : 'Bimbingan berhasil dibuat',
+        id: insertedIds[0],
+        ids: insertedIds,
+      });
     } catch (err) {
       next(err);
     }
@@ -93,9 +123,11 @@ const bimbinganController = {
     try {
       const [rows] = await pool.query(
         `SELECT b.id, b.mahasiswa_id, b.tanggal, b.minggu_ke, b.topik, b.catatan, b.status,
-                b.approved_at, b.created_at, m.nama as mahasiswa_nama, m.npm
+                b.approved_at, b.created_at, m.nama as mahasiswa_nama, m.npm,
+                m.track, m.kelompok_id, k.nama as kelompok_nama
          FROM bimbingan b
          JOIN mahasiswa m ON b.mahasiswa_id = m.id
+         LEFT JOIN kelompok k ON m.kelompok_id = k.id
          WHERE m.dosen_id = ? OR m.dosen_id_2 = ?
          ORDER BY 
            CASE b.status WHEN 'waiting' THEN 1 WHEN 'pending' THEN 2 ELSE 3 END,
@@ -124,9 +156,13 @@ const bimbinganController = {
     }
 
     try {
-      // Cek bimbingan milik dosen ini
+      // Cek bimbingan milik dosen ini + info kelompok
       const [rows] = await pool.query(
-        'SELECT id FROM bimbingan WHERE id = ? AND dosen_id = ?',
+        `SELECT b.id, b.mahasiswa_id, b.minggu_ke, b.tanggal, b.topik,
+                m.track, m.kelompok_id
+         FROM bimbingan b
+         JOIN mahasiswa m ON b.mahasiswa_id = m.id
+         WHERE b.id = ? AND b.dosen_id = ?`,
         [id, dosenId]
       );
 
@@ -134,12 +170,31 @@ const bimbinganController = {
         return res.status(404).json({ message: 'Bimbingan tidak ditemukan atau bukan milik Anda' });
       }
 
+      const target = rows[0];
+      const isProyekGroup = String(target.track || '').includes('proyek') && !!target.kelompok_id;
+
       const approvedAt = status === 'approved' ? 'NOW()' : 'NULL';
 
-      await pool.query(
-        `UPDATE bimbingan SET status = ?, approved_at = ${approvedAt} WHERE id = ?`,
-        [status, id]
-      );
+      if (isProyekGroup) {
+        // Sinkronkan status untuk seluruh anggota kelompok pada entri yang sama (minggu/tanggal/topik).
+        // Ini menjaga model "submit perwakilan" untuk track proyek.
+        await pool.query(
+          `UPDATE bimbingan b
+           JOIN mahasiswa m ON b.mahasiswa_id = m.id
+           SET b.status = ?, b.approved_at = ${approvedAt}
+           WHERE m.kelompok_id = ?
+             AND b.dosen_id = ?
+             AND b.minggu_ke = ?
+             AND DATE(b.tanggal) = DATE(?)
+             AND b.topik = ?`,
+          [status, target.kelompok_id, dosenId, target.minggu_ke, target.tanggal, target.topik]
+        );
+      } else {
+        await pool.query(
+          `UPDATE bimbingan SET status = ?, approved_at = ${approvedAt} WHERE id = ?`,
+          [status, id]
+        );
+      }
 
       res.json({ message: `Bimbingan ${status}` });
     } catch (err) {
