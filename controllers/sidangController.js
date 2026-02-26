@@ -132,6 +132,12 @@ const sidangController = {
             -- Info Kelompok
             m.kelompok_id,
             k.nama as kelompok_nama,
+            (SELECT GROUP_CONCAT(mg.nama ORDER BY mg.nama SEPARATOR ', ')
+             FROM mahasiswa mg
+             WHERE mg.kelompok_id = m.kelompok_id) as kelompok_anggota_nama,
+            (SELECT GROUP_CONCAT(mg.npm ORDER BY mg.npm SEPARATOR ', ')
+             FROM mahasiswa mg
+             WHERE mg.kelompok_id = m.kelompok_id) as kelompok_anggota_npm,
             
             -- Bimbingan Count (Subquery)
             (SELECT COUNT(*) FROM bimbingan b WHERE b.mahasiswa_id = m.id AND b.status = 'approved') as bimbingan_count,
@@ -169,11 +175,13 @@ const sidangController = {
 
         const existing = groupedReports.get(groupKey);
         if (!existing) {
+          const initialAnggotaNama = row.kelompok_anggota_nama || row.mahasiswa_nama || '';
+          const initialAnggotaNpm = row.kelompok_anggota_npm || row.mahasiswa_npm || '';
           const initial = {
             ...row,
             grouping_mode: groupingMode,
-            anggota_nama: row.mahasiswa_nama || '',
-            anggota_npm: row.mahasiswa_npm || '',
+            anggota_nama: initialAnggotaNama,
+            anggota_npm: initialAnggotaNpm,
           };
 
           if (isProyek && !initial.kelompok_nama) {
