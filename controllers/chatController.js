@@ -1,5 +1,9 @@
 import fetch from 'node-fetch';
 
+// Simple In-Memory Queue (For Polling)
+// Note: In a real production environment with multiple pods/instances, you'd want Redis here.
+let adminReplies = [];
+
 export const sendMessage = async (req, res) => {
     try {
         const { message } = req.body;
@@ -66,6 +70,15 @@ export const webhookFonnte = async (req, res) => {
         console.log(`Dari: ${sender} (${name || 'Unknown'})`);
         console.log(`Pesan: ${incomingText}`);
 
+        // Simpan ke memory untuk di-poll oleh Frontend
+        if (incomingText) {
+            adminReplies.push({
+                id: Date.now(),
+                text: incomingText,
+                sender: 'bot' // Dianggap 'bot/admin' dari kacamata web frontend
+            });
+        }
+
         // Karena HTTP Request ke Webhook dari Fonnte langsung harus segera dijawab 200 OK
         // Maka logic socket atau emit diproses setelahnya
         // TODO: (Next Phase) Tembak balasan ke Pusher/Socket.io/Supabase Realtime agar UI Next.js update
@@ -74,5 +87,22 @@ export const webhookFonnte = async (req, res) => {
     } catch (error) {
         console.error('Webhook Error:', error);
         return res.status(500).json({ status: false, message: 'Webhook processing failed' });
+    }
+};
+
+/**
+ * Sync Endpoint for Next.js to Short-Poll
+ */
+export const syncMessages = async (req, res) => {
+    try {
+        // Ambil isi array saat ini
+        const messagesToSend = [...adminReplies];
+        // Kosongkan queue setelah diambil
+        adminReplies = [];
+
+        return res.status(200).json({ success: true, messages: messagesToSend });
+    } catch (error) {
+        console.error('Sync Error:', error);
+        return res.status(500).json({ success: false, message: 'Sync failed' });
     }
 };
