@@ -17,6 +17,7 @@ import reportRoutes from './routes/reportRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
 import swaggerSpec from './swagger.js';
 
 dotenv.config();
@@ -43,6 +44,7 @@ app.use('/api/sidang', sidangRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/chat', chatRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Bimbingan Online API OK' });
