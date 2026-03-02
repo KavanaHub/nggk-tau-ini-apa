@@ -38,6 +38,7 @@
     "@google-cloud/storage": "^7.12.1",
     "bcryptjs": "^3.0.3",
     "busboy": "^1.6.0",
+    "compression": "^1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",

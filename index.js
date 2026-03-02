@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import compression from 'compression';
 import dotenv from 'dotenv';
 import functions from '@google-cloud/functions-framework';
 import swaggerUi from 'swagger-ui-express';
@@ -24,6 +25,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors());
+app.use(compression()); // Gzip/Brotli compression — reduces JSON payload up to 80%
 app.use(express.json());
 
 // Swagger documentation
