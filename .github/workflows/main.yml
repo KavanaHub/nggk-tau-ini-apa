@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   deploy:
@@ -15,52 +14,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 1. Auth ke GCP
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
 
+      # 2. Setup gcloud
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
+      # 3. Deploy Cloud Function Gen 2 (Express / Node.js)
       - name: Deploy Cloud Function (Gen 2)
-        env:
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
-          NODE_ENV: ${{ secrets.NODE_ENV }}
-          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
-          BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
-          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
-          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
-          CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
-          GDRIVE_FOLDER_PROPOSALS: ${{ secrets.GDRIVE_FOLDER_PROPOSALS }}
-          GDRIVE_FOLDER_REPORTS: ${{ secrets.GDRIVE_FOLDER_REPORTS }}
-          GDRIVE_FOLDER_PROFILES: ${{ secrets.GDRIVE_FOLDER_PROFILES }}
-          GDRIVE_FOLDER_BIMBINGAN: ${{ secrets.GDRIVE_FOLDER_BIMBINGAN }}
-          GDRIVE_FOLDER_DEFAULT: ${{ secrets.GDRIVE_FOLDER_DEFAULT }}
-          MAILTRAP_API_TOKEN: ${{ secrets.MAILTRAP_API_TOKEN }}
-          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-        run: >-
-          gcloud functions deploy kavana
-          --region=asia-southeast2
-          --runtime=nodejs22
-          --gen2
-          --source=.
-          --entry-point=kavana
-          --trigger-http
-          --allow-unauthenticated
-          --timeout=540s
-          --service-account=renz-cloud@${GCP_PROJECT_ID}.iam.gserviceaccount.com
-          --set-env-vars=DB_HOST=${DB_HOST},DB_USER=${DB_USER},DB_PASSWORD=${DB_PASSWORD},DB_NAME=${DB_NAME},DB_PORT=${DB_PORT},JWT_SECRET=${JWT_SECRET},JWT_EXPIRES_IN=${JWT_EXPIRES_IN},NODE_ENV=${NODE_ENV},BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET},BETTER_AUTH_URL=${BETTER_AUTH_URL},UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL},UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN},CORS_ORIGINS=${CORS_ORIGINS},GDRIVE_FOLDER_PROPOSALS=${GDRIVE_FOLDER_PROPOSALS},GDRIVE_FOLDER_REPORTS=${GDRIVE_FOLDER_REPORTS},GDRIVE_FOLDER_PROFILES=${GDRIVE_FOLDER_PROFILES},GDRIVE_FOLDER_BIMBINGAN=${GDRIVE_FOLDER_BIMBINGAN},GDRIVE_FOLDER_DEFAULT=${GDRIVE_FOLDER_DEFAULT},MAILTRAP_API_TOKEN=${MAILTRAP_API_TOKEN},ADMIN_EMAIL=${ADMIN_EMAIL},ADMIN_PASSWORD=${ADMIN_PASSWORD}
+        run: |
+          gcloud functions deploy kavana \
+            --region=asia-southeast2 \
+            --runtime=nodejs22 \
+            --gen2 \
+            --source=. \
+            --entry-point=kavana \
+            --trigger-http \
+            --allow-unauthenticated \
+            --timeout=540s \
+            --service-account=renz-cloud@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
+            --set-env-vars=DB_HOST=${{ secrets.DB_HOST }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_NAME=${{ secrets.DB_NAME }},DB_PORT=${{ secrets.DB_PORT }},JWT_SECRET=${{ secrets.JWT_SECRET }},JWT_EXPIRES_IN=${{ secrets.JWT_EXPIRES_IN }},NODE_ENV=${{ secrets.NODE_ENV }},BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET }},BETTER_AUTH_URL=${{ secrets.BETTER_AUTH_URL }},UPSTASH_REDIS_REST_URL=${{ secrets.UPSTASH_REDIS_REST_URL }},UPSTASH_REDIS_REST_TOKEN=${{ secrets.UPSTASH_REDIS_REST_TOKEN }},CORS_ORIGINS=${{ secrets.CORS_ORIGINS }},GDRIVE_FOLDER_PROPOSALS=${{ secrets.GDRIVE_FOLDER_PROPOSALS }},GDRIVE_FOLDER_REPORTS=${{ secrets.GDRIVE_FOLDER_REPORTS }},GDRIVE_FOLDER_PROFILES=${{ secrets.GDRIVE_FOLDER_PROFILES }},GDRIVE_FOLDER_BIMBINGAN=${{ secrets.GDRIVE_FOLDER_BIMBINGAN }},GDRIVE_FOLDER_DEFAULT=${{ secrets.GDRIVE_FOLDER_DEFAULT }},MAILTRAP_API_TOKEN=${{ secrets.MAILTRAP_API_TOKEN }},ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }},ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
 
+      # 4. Optional: Cek apakah function sudah berhasil
       - name: Check Function Exists
         run: gcloud functions describe kavana --region=asia-southeast2
