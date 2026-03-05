@@ -1,10 +1,12 @@
 import pool from '../config/db.js';
 import { hashPassword, comparePassword } from '../utils/password.js';
 import { generateToken } from '../utils/jwt.js';
+import { auditLogin } from '../middleware/audit.js';
+import { env } from '../config/env.js';
 
-// Hardcoded admin credentials
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@kavanahub.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+// Admin credentials from env only (no insecure defaults)
+const ADMIN_EMAIL = env.ADMIN_EMAIL;
+const ADMIN_PASSWORD = env.ADMIN_PASSWORD;
 
 const authController = {
   // Register Mahasiswa (hanya mahasiswa yang bisa register sendiri - prodi D4 saja)
@@ -46,9 +48,10 @@ const authController = {
         return res.status(400).json({ message: 'Email dan password harus diisi' });
       }
 
-      // Check hardcoded admin
+      // Check admin credentials from env
       if (identifier === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
         const token = generateToken({ id: 0, email: ADMIN_EMAIL, role: 'admin' });
+        await auditLogin(req, 0, 'admin', true);
         return res.json({ token, role: 'admin', user_id: 0 });
       }
 
@@ -96,16 +99,19 @@ const authController = {
       }
 
       if (rows.length === 0) {
+        await auditLogin(req, null, null, false);
         return res.status(400).json({ message: 'Email atau password salah' });
       }
 
       const user = rows[0];
       const match = await comparePassword(password, user.password_hash);
       if (!match) {
+        await auditLogin(req, user.id, user.role, false);
         return res.status(400).json({ message: 'Email atau password salah' });
       }
 
       const token = generateToken({ id: user.id, email: user.email, role: user.role });
+      await auditLogin(req, user.id, user.role, true);
       res.json({ token, role: user.role, user_id: user.id });
     } catch (err) {
       console.error('Login error:', err);
