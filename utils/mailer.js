@@ -25,17 +25,25 @@ const sender = {
  * @returns {Promise}
  */
 export async function sendOTPEmail(to, otp, type = 'reset_password') {
-    const subject = type === 'reset_password'
-        ? 'Reset Password - KavanaHub'
-        : 'Kode Verifikasi Login - KavanaHub';
+    const templates = {
+        reset_password: {
+            subject: 'Reset Password - KavanaHub',
+            heading: 'Reset Password',
+            description: 'Anda meminta untuk mereset password akun Anda.',
+        },
+        register: {
+            subject: 'Verifikasi Registrasi - KavanaHub',
+            heading: 'Verifikasi Registrasi',
+            description: 'Masukkan kode di bawah ini untuk menyelesaikan pendaftaran akun Anda.',
+        },
+        login: {
+            subject: 'Kode Verifikasi Login - KavanaHub',
+            heading: 'Verifikasi Login',
+            description: 'Masukkan kode di bawah ini untuk melanjutkan login.',
+        },
+    };
 
-    const heading = type === 'reset_password'
-        ? 'Reset Password'
-        : 'Verifikasi Login';
-
-    const description = type === 'reset_password'
-        ? 'Anda meminta untuk mereset password akun Anda.'
-        : 'Masukkan kode di bawah ini untuk melanjutkan login.';
+    const { subject, heading, description } = templates[type] || templates.login;
 
     return transport.sendMail({
         from: sender,

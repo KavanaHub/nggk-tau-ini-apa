@@ -98,6 +98,7 @@ app.use(express.json());
     const adminLimiter = await createAdminLimiter();
 
     // Strict rate limit on auth endpoints
+    app.use('/api/auth/register', authLimiter);
     app.use('/api/auth/login', authLimiter);
     app.use('/api/auth/request-otp', authLimiter);
     app.use('/api/auth/verify-otp', authLimiter);
