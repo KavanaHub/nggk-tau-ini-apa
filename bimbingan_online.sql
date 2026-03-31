@@ -30,12 +30,13 @@ CREATE TABLE IF NOT EXISTS `bimbingan` (
   `minggu_ke` tinyint NOT NULL,
   `topik` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `catatan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `status` enum('waiting','approved','rejected') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'waiting',
+  `status` enum('waiting','pending','approved','rejected') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'waiting',
   `approved_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `mahasiswa_id` (`mahasiswa_id`),
   KEY `dosen_id` (`dosen_id`),
+  KEY `idx_bimbingan_status` (`status`),
   CONSTRAINT `bimbingan_ibfk_1` FOREIGN KEY (`mahasiswa_id`) REFERENCES `mahasiswa` (`id`) ON DELETE CASCADE,
   CONSTRAINT `bimbingan_ibfk_2` FOREIGN KEY (`dosen_id`) REFERENCES `dosen` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -89,7 +90,8 @@ CREATE TABLE IF NOT EXISTS `dosen` (
   `is_active` tinyint(1) DEFAULT '1',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
+  UNIQUE KEY `email` (`email`),
+  KEY `idx_is_active` (`is_active`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table bimbingan_online.dosen: ~9 rows (approximately)
@@ -182,7 +184,7 @@ CREATE TABLE IF NOT EXISTS `laporan_sidang` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `mahasiswa_id` bigint NOT NULL,
   `file_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` enum('submitted','approved','rejected') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'submitted',
+  `status` enum('submitted','pending','approved','rejected') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'submitted',
   `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `approved_by` bigint DEFAULT NULL,
   `approved_at` datetime DEFAULT NULL,
@@ -208,6 +210,7 @@ CREATE TABLE IF NOT EXISTS `mahasiswa` (
   `nama` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `no_wa` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `angkatan` int DEFAULT NULL,
+  `semester` int DEFAULT NULL,
   `track` enum('proyek1','proyek2','proyek3','internship1','internship2') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `kelompok_id` bigint DEFAULT NULL,
   `judul_proyek` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -216,7 +219,9 @@ CREATE TABLE IF NOT EXISTS `mahasiswa` (
   `usulan_dosen_id` bigint DEFAULT NULL,
   `dosen_id` bigint DEFAULT NULL,
   `dosen_id_2` bigint DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT '1',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `pending_partner_npm` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
@@ -225,6 +230,10 @@ CREATE TABLE IF NOT EXISTS `mahasiswa` (
   KEY `usulan_dosen_id` (`usulan_dosen_id`),
   KEY `dosen_id` (`dosen_id`),
   KEY `dosen_id_2` (`dosen_id_2`),
+  KEY `idx_status_proposal` (`status_proposal`),
+  KEY `idx_track` (`track`),
+  KEY `idx_nama` (`nama`),
+  KEY `idx_pending_partner` (`pending_partner_npm`),
   CONSTRAINT `mahasiswa_ibfk_1` FOREIGN KEY (`kelompok_id`) REFERENCES `kelompok` (`id`) ON DELETE SET NULL,
   CONSTRAINT `mahasiswa_ibfk_2` FOREIGN KEY (`usulan_dosen_id`) REFERENCES `dosen` (`id`) ON DELETE SET NULL,
   CONSTRAINT `mahasiswa_ibfk_3` FOREIGN KEY (`dosen_id`) REFERENCES `dosen` (`id`) ON DELETE SET NULL,
@@ -258,7 +267,7 @@ INSERT INTO `mahasiswa` (`id`, `email`, `password_hash`, `npm`, `nama`, `no_wa`,
 	(23, 'new@test.com', '$2b$10$7oA41z4awCcHZTp0lBWRc.tyguRjFnJWzNmM6MPDqJxmC6UxJA5au', '12345', 'Test Mhs', '0812', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-29 12:14:44', NULL),
 	(24, 'baagas7474@gmail.com', '$2b$10$sM.iTV1rsNKOVL7QS6oZHOe8.C5v3JmnvucRyA3sBqgkiXdcZ3KYi', '12345678', 'Bagas Agung Wiyono', '085179935117', 2025, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-16 14:54:03', NULL);
 
--- Dumping structure for table bimbingan_online.otp_codes
+-- Dumping structure for table bimbingan_online.otp_codesng
 DROP TABLE IF EXISTS `otp_codes`;
 CREATE TABLE IF NOT EXISTS `otp_codes` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -294,6 +303,158 @@ INSERT INTO `role` (`id`, `nama_role`) VALUES
 	(2, 'koordinator'),
 	(3, 'kaprodi');
 
+-- Dumping structure for table bimbingan_online.user
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` varchar(36) NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `emailVerified` tinyint(1) DEFAULT '0',
+  `image` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `role` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'user',
+  `banned` tinyint(1) DEFAULT '0',
+  `banReason` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `banExpires` datetime DEFAULT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  KEY `idx_user_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping structure for table bimbingan_online.session
+DROP TABLE IF EXISTS `session`;
+CREATE TABLE IF NOT EXISTS `session` (
+  `id` varchar(36) NOT NULL,
+  `userId` varchar(36) NOT NULL,
+  `token` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiresAt` datetime NOT NULL,
+  `ipAddress` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `userAgent` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `token` (`token`),
+  KEY `idx_session_user` (`userId`),
+  KEY `idx_session_token` (`token`),
+  CONSTRAINT `session_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping structure for table bimbingan_online.account
+DROP TABLE IF EXISTS `account`;
+CREATE TABLE IF NOT EXISTS `account` (
+  `id` varchar(36) NOT NULL,
+  `userId` varchar(36) NOT NULL,
+  `accountId` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `providerId` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `accessToken` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `refreshToken` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `accessTokenExpiresAt` datetime DEFAULT NULL,
+  `refreshTokenExpiresAt` datetime DEFAULT NULL,
+  `scope` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `idToken` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_account_user` (`userId`),
+  CONSTRAINT `account_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping structure for table bimbingan_online.verification
+DROP TABLE IF EXISTS `verification`;
+CREATE TABLE IF NOT EXISTS `verification` (
+  `id` varchar(36) NOT NULL,
+  `identifier` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiresAt` datetime NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_verification_identifier` (`identifier`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping structure for table bimbingan_online.audit_logs
+DROP TABLE IF EXISTS `audit_logs`;
+CREATE TABLE IF NOT EXISTS `audit_logs` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `request_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `role` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `action` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `target` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `target_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `result` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'success',
+  `details` json DEFAULT NULL,
+  `ip_address` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_audit_created` (`created_at`),
+  KEY `idx_audit_user` (`user_id`),
+  KEY `idx_audit_action` (`action`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Compatibility tables for legacy backend paths
+DROP TABLE IF EXISTS `koordinator`;
+CREATE TABLE IF NOT EXISTS `koordinator` (
+  `id` bigint NOT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nidn` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nip` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `no_wa` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `foto_profil` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT '1',
+  `assigned_semester` int DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `uk_assigned_semester` (`assigned_semester`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `koordinator` (`id`, `email`, `password_hash`, `nidn`, `nip`, `nama`, `no_wa`, `foto_profil`, `is_active`, `assigned_semester`, `created_at`)
+SELECT d.`id`, d.`email`, d.`password_hash`, d.`nidn`, d.`nidn`, d.`nama`, d.`no_wa`, NULL, d.`is_active`, dr.`assigned_semester`, d.`created_at`
+FROM `dosen` d
+JOIN `dosen_role` dr ON dr.`dosen_id` = d.`id`
+JOIN `role` r ON r.`id` = dr.`role_id`
+WHERE r.`nama_role` = 'koordinator';
+
+DROP TABLE IF EXISTS `penguji`;
+CREATE TABLE IF NOT EXISTS `penguji` (
+  `id` bigint NOT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nidn` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nip` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `no_wa` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `foto_profil` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT '1',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_penguji_active` (`is_active`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `penguji` (`id`, `email`, `password_hash`, `nidn`, `nip`, `nama`, `no_wa`, `foto_profil`, `is_active`, `created_at`)
+SELECT d.`id`, d.`email`, d.`password_hash`, d.`nidn`, d.`nidn`, d.`nama`, d.`no_wa`, NULL, d.`is_active`, d.`created_at`
+FROM `dosen` d;
+
+DROP TABLE IF EXISTS `dosen_pembimbing`;
+CREATE TABLE IF NOT EXISTS `dosen_pembimbing` (
+  `id` bigint NOT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nidn` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `dosen_pembimbing` (`id`, `email`, `nidn`, `nama`, `created_at`)
+SELECT d.`id`, d.`email`, d.`nidn`, d.`nama`, d.`created_at`
+FROM `dosen` d;
+
 -- Dumping structure for table bimbingan_online.sidang
 DROP TABLE IF EXISTS `sidang`;
 CREATE TABLE IF NOT EXISTS `sidang` (
@@ -302,11 +463,20 @@ CREATE TABLE IF NOT EXISTS `sidang` (
   `tanggal` date NOT NULL,
   `waktu` time NOT NULL,
   `ruangan` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status` enum('scheduled','ongoing','completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'scheduled',
+  `dosen_id` bigint DEFAULT NULL,
+  `penguji_id` bigint DEFAULT NULL,
+  `dosen_pembimbing_id` bigint DEFAULT NULL,
+  `status` enum('scheduled','ongoing','completed','lulus') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'scheduled',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `mahasiswa_id` (`mahasiswa_id`),
-  CONSTRAINT `sidang_ibfk_1` FOREIGN KEY (`mahasiswa_id`) REFERENCES `mahasiswa` (`id`) ON DELETE CASCADE
+  KEY `dosen_id` (`dosen_id`),
+  KEY `penguji_id` (`penguji_id`),
+  KEY `dosen_pembimbing_id` (`dosen_pembimbing_id`),
+  CONSTRAINT `sidang_ibfk_1` FOREIGN KEY (`mahasiswa_id`) REFERENCES `mahasiswa` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `sidang_ibfk_2` FOREIGN KEY (`dosen_id`) REFERENCES `dosen` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `sidang_ibfk_3` FOREIGN KEY (`penguji_id`) REFERENCES `dosen` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `sidang_ibfk_4` FOREIGN KEY (`dosen_pembimbing_id`) REFERENCES `dosen_pembimbing` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table bimbingan_online.sidang: ~0 rows (approximately)
@@ -324,6 +494,129 @@ CREATE TABLE IF NOT EXISTS `sidang_penguji` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table bimbingan_online.sidang_penguji: ~0 rows (approximately)
+
+-- Lightweight compatibility triggers for legacy backend paths
+DROP TRIGGER IF EXISTS `trg_sidang_set_pembimbing_bi`;
+CREATE TRIGGER `trg_sidang_set_pembimbing_bi`
+BEFORE INSERT ON `sidang`
+FOR EACH ROW
+SET NEW.`dosen_pembimbing_id` = COALESCE(NEW.`dosen_pembimbing_id`, NEW.`dosen_id`);
+
+DROP TRIGGER IF EXISTS `trg_sidang_set_pembimbing_bu`;
+CREATE TRIGGER `trg_sidang_set_pembimbing_bu`
+BEFORE UPDATE ON `sidang`
+FOR EACH ROW
+SET NEW.`dosen_pembimbing_id` = COALESCE(NEW.`dosen_pembimbing_id`, NEW.`dosen_id`);
+
+DROP TRIGGER IF EXISTS `trg_dosen_sync_penguji_ai`;
+CREATE TRIGGER `trg_dosen_sync_penguji_ai`
+AFTER INSERT ON `dosen`
+FOR EACH ROW
+INSERT INTO `penguji` (`id`, `email`, `password_hash`, `nidn`, `nip`, `nama`, `no_wa`, `foto_profil`, `is_active`, `created_at`)
+VALUES (NEW.`id`, NEW.`email`, NEW.`password_hash`, NEW.`nidn`, NEW.`nidn`, NEW.`nama`, NEW.`no_wa`, NULL, NEW.`is_active`, NEW.`created_at`)
+ON DUPLICATE KEY UPDATE
+  `email` = VALUES(`email`),
+  `password_hash` = VALUES(`password_hash`),
+  `nidn` = VALUES(`nidn`),
+  `nip` = VALUES(`nip`),
+  `nama` = VALUES(`nama`),
+  `no_wa` = VALUES(`no_wa`),
+  `is_active` = VALUES(`is_active`);
+
+DROP TRIGGER IF EXISTS `trg_dosen_sync_penguji_au`;
+CREATE TRIGGER `trg_dosen_sync_penguji_au`
+AFTER UPDATE ON `dosen`
+FOR EACH ROW
+INSERT INTO `penguji` (`id`, `email`, `password_hash`, `nidn`, `nip`, `nama`, `no_wa`, `foto_profil`, `is_active`, `created_at`)
+VALUES (NEW.`id`, NEW.`email`, NEW.`password_hash`, NEW.`nidn`, NEW.`nidn`, NEW.`nama`, NEW.`no_wa`, NULL, NEW.`is_active`, NEW.`created_at`)
+ON DUPLICATE KEY UPDATE
+  `email` = VALUES(`email`),
+  `password_hash` = VALUES(`password_hash`),
+  `nidn` = VALUES(`nidn`),
+  `nip` = VALUES(`nip`),
+  `nama` = VALUES(`nama`),
+  `no_wa` = VALUES(`no_wa`),
+  `is_active` = VALUES(`is_active`);
+
+DROP TRIGGER IF EXISTS `trg_dosen_sync_pembimbing_ai`;
+CREATE TRIGGER `trg_dosen_sync_pembimbing_ai`
+AFTER INSERT ON `dosen`
+FOR EACH ROW
+INSERT INTO `dosen_pembimbing` (`id`, `email`, `nidn`, `nama`, `created_at`)
+VALUES (NEW.`id`, NEW.`email`, NEW.`nidn`, NEW.`nama`, NEW.`created_at`)
+ON DUPLICATE KEY UPDATE
+  `email` = VALUES(`email`),
+  `nidn` = VALUES(`nidn`),
+  `nama` = VALUES(`nama`);
+
+DROP TRIGGER IF EXISTS `trg_dosen_sync_pembimbing_au`;
+CREATE TRIGGER `trg_dosen_sync_pembimbing_au`
+AFTER UPDATE ON `dosen`
+FOR EACH ROW
+INSERT INTO `dosen_pembimbing` (`id`, `email`, `nidn`, `nama`, `created_at`)
+VALUES (NEW.`id`, NEW.`email`, NEW.`nidn`, NEW.`nama`, NEW.`created_at`)
+ON DUPLICATE KEY UPDATE
+  `email` = VALUES(`email`),
+  `nidn` = VALUES(`nidn`),
+  `nama` = VALUES(`nama`);
+
+DROP TRIGGER IF EXISTS `trg_dosen_sync_penguji_ad`;
+CREATE TRIGGER `trg_dosen_sync_penguji_ad`
+AFTER DELETE ON `dosen`
+FOR EACH ROW
+DELETE FROM `penguji` WHERE `id` = OLD.`id`;
+
+DROP TRIGGER IF EXISTS `trg_dosen_sync_pembimbing_ad`;
+CREATE TRIGGER `trg_dosen_sync_pembimbing_ad`
+AFTER DELETE ON `dosen`
+FOR EACH ROW
+DELETE FROM `dosen_pembimbing` WHERE `id` = OLD.`id`;
+
+DROP TRIGGER IF EXISTS `trg_dosen_role_sync_koordinator_ai`;
+CREATE TRIGGER `trg_dosen_role_sync_koordinator_ai`
+AFTER INSERT ON `dosen_role`
+FOR EACH ROW
+INSERT INTO `koordinator` (`id`, `email`, `password_hash`, `nidn`, `nip`, `nama`, `no_wa`, `foto_profil`, `is_active`, `assigned_semester`, `created_at`)
+SELECT d.`id`, d.`email`, d.`password_hash`, d.`nidn`, d.`nidn`, d.`nama`, d.`no_wa`, NULL, d.`is_active`, NEW.`assigned_semester`, d.`created_at`
+FROM `dosen` d
+JOIN `role` r ON r.`id` = NEW.`role_id`
+WHERE d.`id` = NEW.`dosen_id` AND r.`nama_role` = 'koordinator'
+ON DUPLICATE KEY UPDATE
+  `email` = VALUES(`email`),
+  `password_hash` = VALUES(`password_hash`),
+  `nidn` = VALUES(`nidn`),
+  `nip` = VALUES(`nip`),
+  `nama` = VALUES(`nama`),
+  `no_wa` = VALUES(`no_wa`),
+  `is_active` = VALUES(`is_active`),
+  `assigned_semester` = VALUES(`assigned_semester`);
+
+DROP TRIGGER IF EXISTS `trg_dosen_role_sync_koordinator_au`;
+CREATE TRIGGER `trg_dosen_role_sync_koordinator_au`
+AFTER UPDATE ON `dosen_role`
+FOR EACH ROW
+INSERT INTO `koordinator` (`id`, `email`, `password_hash`, `nidn`, `nip`, `nama`, `no_wa`, `foto_profil`, `is_active`, `assigned_semester`, `created_at`)
+SELECT d.`id`, d.`email`, d.`password_hash`, d.`nidn`, d.`nidn`, d.`nama`, d.`no_wa`, NULL, d.`is_active`, NEW.`assigned_semester`, d.`created_at`
+FROM `dosen` d
+JOIN `role` r ON r.`id` = NEW.`role_id`
+WHERE d.`id` = NEW.`dosen_id` AND r.`nama_role` = 'koordinator'
+ON DUPLICATE KEY UPDATE
+  `email` = VALUES(`email`),
+  `password_hash` = VALUES(`password_hash`),
+  `nidn` = VALUES(`nidn`),
+  `nip` = VALUES(`nip`),
+  `nama` = VALUES(`nama`),
+  `no_wa` = VALUES(`no_wa`),
+  `is_active` = VALUES(`is_active`),
+  `assigned_semester` = VALUES(`assigned_semester`);
+
+DROP TRIGGER IF EXISTS `trg_dosen_role_sync_koordinator_ad`;
+CREATE TRIGGER `trg_dosen_role_sync_koordinator_ad`
+AFTER DELETE ON `dosen_role`
+FOR EACH ROW
+DELETE k FROM `koordinator` k
+JOIN `role` r ON r.`id` = OLD.`role_id`
+WHERE k.`id` = OLD.`dosen_id` AND r.`nama_role` = 'koordinator';
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
