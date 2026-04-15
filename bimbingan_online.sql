@@ -184,6 +184,7 @@ CREATE TABLE IF NOT EXISTS `laporan_sidang` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `mahasiswa_id` bigint NOT NULL,
   `file_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `file_luaran` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` enum('submitted','pending','approved','rejected') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'submitted',
   `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `approved_by` bigint DEFAULT NULL,
@@ -197,8 +198,8 @@ CREATE TABLE IF NOT EXISTS `laporan_sidang` (
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table bimbingan_online.laporan_sidang: ~2 rows (approximately)
-INSERT INTO `laporan_sidang` (`id`, `mahasiswa_id`, `file_url`, `status`, `note`, `approved_by`, `approved_at`, `created_at`) VALUES
-	(8, 2, 'https://youtube.com', 'submitted', NULL, NULL, NULL, '2026-02-26 17:52:37');
+INSERT INTO `laporan_sidang` (`id`, `mahasiswa_id`, `file_url`, `file_luaran`, `status`, `note`, `approved_by`, `approved_at`, `created_at`) VALUES
+	(8, 2, 'https://youtube.com', 'https://drive.google.com/file/d/luaran-proyek-1', 'submitted', NULL, NULL, NULL, '2026-02-26 17:52:37');
 
 -- Dumping structure for table bimbingan_online.mahasiswa
 DROP TABLE IF EXISTS `mahasiswa`;

@@ -16,10 +16,14 @@ const sidangController = {
   // MAHASISWA: SUBMIT LAPORAN SIDANG (GROUP SUPPORT)
   submitLaporan: async (req, res, next) => {
     const mahasiswaId = req.user.id;
-    const { file_url } = req.body;
+    const fileLaporan = String(req.body.file_url || '').trim();
+    const fileLuaran = String(req.body.file_luaran || '').trim();
 
-    if (!file_url) {
+    if (!fileLaporan) {
       return res.status(400).json({ message: 'file_url wajib diisi' });
+    }
+    if (!fileLuaran) {
+      return res.status(400).json({ message: 'file_luaran wajib diisi' });
     }
 
     try {
@@ -74,19 +78,23 @@ const sidangController = {
 
         if (existing.length > 0) {
           await pool.query(
-            "UPDATE laporan_sidang SET file_url = ?, status = 'submitted', created_at = NOW() WHERE mahasiswa_id = ?",
-            [file_url, id]
+            `UPDATE laporan_sidang
+             SET file_url = ?, file_luaran = ?, status = 'submitted', note = NULL, approved_by = NULL, approved_at = NULL, created_at = NOW()
+             WHERE mahasiswa_id = ?`,
+            [fileLaporan, fileLuaran, id]
           );
         } else {
           await pool.query(
-            "INSERT INTO laporan_sidang (mahasiswa_id, file_url, status) VALUES (?, ?, 'submitted')",
-            [id, file_url]
+            "INSERT INTO laporan_sidang (mahasiswa_id, file_url, file_luaran, status) VALUES (?, ?, ?, 'submitted')",
+            [id, fileLaporan, fileLuaran]
           );
         }
       }
 
       res.status(201).json({
-        message: kelompokId ? 'Laporan berhasil disubmit untuk seluruh anggota kelompok' : 'Laporan berhasil disubmit'
+        message: kelompokId
+          ? 'Laporan dan luaran berhasil disubmit untuk seluruh anggota kelompok'
+          : 'Laporan dan luaran berhasil disubmit'
       });
     } catch (err) {
       next(err);
@@ -119,6 +127,7 @@ const sidangController = {
             ls.id, 
             ls.mahasiswa_id, 
             ls.file_url as file_laporan, 
+            ls.file_luaran,
             ls.status, 
             ls.note as catatan_dosen, 
             ls.created_at as tanggal_submit,
@@ -214,6 +223,7 @@ const sidangController = {
           existing.id = row.id;
           existing.mahasiswa_id = row.mahasiswa_id;
           existing.file_laporan = row.file_laporan;
+          existing.file_luaran = row.file_luaran;
           existing.status = row.status;
           existing.catatan_dosen = row.catatan_dosen;
           existing.tanggal_submit = row.tanggal_submit;
@@ -248,7 +258,7 @@ const sidangController = {
     try {
       // 1. Get Info Report ini milik siapa & kelompok mana
       const [rows] = await pool.query(
-        `SELECT m.id as mahasiswa_id, m.kelompok_id, m.track, m.judul_proyek, ls.file_url
+        `SELECT m.id as mahasiswa_id, m.kelompok_id, m.track, m.judul_proyek, ls.file_url, ls.file_luaran
          FROM laporan_sidang ls
          JOIN mahasiswa m ON ls.mahasiswa_id = m.id
          WHERE ls.id = ?`,
@@ -257,7 +267,7 @@ const sidangController = {
 
       if (rows.length === 0) return res.status(404).json({ message: 'Laporan tidak ditemukan' });
 
-      const { kelompok_id, mahasiswa_id, track, judul_proyek, file_url } = rows[0];
+      const { kelompok_id, mahasiswa_id, track, judul_proyek, file_url, file_luaran } = rows[0];
 
       // 2. Tentukan siapa saja yang di-update
       let targetMahasiswaIds = [mahasiswa_id];
@@ -293,9 +303,9 @@ const sidangController = {
 
       for (const mid of missingIds) {
         await pool.query(
-          `INSERT INTO laporan_sidang (mahasiswa_id, file_url, status, note, approved_by, approved_at)
-           VALUES (?, ?, ?, ?, ?, NOW())`,
-          [mid, file_url, status, note || null, dosenId]
+          `INSERT INTO laporan_sidang (mahasiswa_id, file_url, file_luaran, status, note, approved_by, approved_at)
+           VALUES (?, ?, ?, ?, ?, ?, NOW())`,
+          [mid, file_url, file_luaran, status, note || null, dosenId]
         );
       }
 

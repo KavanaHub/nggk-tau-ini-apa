@@ -262,6 +262,7 @@ const authController = {
           id bigint NOT NULL AUTO_INCREMENT,
           mahasiswa_id bigint NOT NULL,
           file_url varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+          file_luaran varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
           status enum('submitted','approved','rejected') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'submitted',
           note text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
           approved_by bigint DEFAULT NULL,
@@ -274,6 +275,22 @@ const authController = {
           CONSTRAINT laporan_sidang_ibfk_2 FOREIGN KEY (approved_by) REFERENCES dosen (id) ON DELETE SET NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
       `);
+
+      const [[fileLuaranColumn]] = await pool.query(`
+        SELECT COUNT(*) as total
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'laporan_sidang'
+          AND COLUMN_NAME = 'file_luaran'
+      `);
+
+      if (!fileLuaranColumn.total) {
+        await pool.query(`
+          ALTER TABLE laporan_sidang
+          ADD COLUMN file_luaran varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
+          AFTER file_url
+        `);
+      }
 
       res.json({
         message: 'Database schema fixed successfully.',

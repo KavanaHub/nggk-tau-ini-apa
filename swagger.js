@@ -214,9 +214,10 @@ const swaggerDefinition = {
       // Laporan Schemas
       SubmitLaporanRequest: {
         type: 'object',
-        required: ['file_url'],
+        required: ['file_url', 'file_luaran'],
         properties: {
-          file_url: { type: 'string', example: 'https://drive.google.com/file/xxx' }
+          file_url: { type: 'string', example: 'https://drive.google.com/file/xxx' },
+          file_luaran: { type: 'string', example: 'https://drive.google.com/file/luaran-xxx' }
         }
       },
 
@@ -611,7 +612,7 @@ const swaggerDefinition = {
     '/api/mahasiswa/laporan': {
       post: {
         tags: ['Mahasiswa'],
-        summary: 'Submit laporan sidang',
+        summary: 'Submit laporan sidang dan luaran proyek',
         requestBody: {
           required: true,
           content: {
@@ -620,7 +621,7 @@ const swaggerDefinition = {
             }
           }
         },
-        responses: { 201: { description: 'Laporan berhasil disubmit' } }
+        responses: { 201: { description: 'Laporan dan luaran berhasil disubmit' } }
       },
       get: {
         tags: ['Mahasiswa'],
